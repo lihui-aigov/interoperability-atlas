@@ -168,6 +168,21 @@ ${instrumentsCatalog}`;
                   type: Type.STRING,
                   description: 'Exact real clause, article, section, or control ID.',
                 },
+                clauseExcerpt: {
+                  type: Type.STRING,
+                  description:
+                    'Concise substantive summary or key normative requirement of the cited clause (1-2 sentences) for the in-app Clause Reader.',
+                },
+                sectionAnchor: {
+                  type: Type.STRING,
+                  description:
+                    'Exact heading or search keyword inside the official document (e.g., "Article 10", "MEASURE 2.11", "Section 3.2").',
+                },
+                verificationSteps: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                  description: '2-3 concrete engineering or audit verification steps.',
+                },
                 rationale: {
                   type: Type.STRING,
                   description: 'Concise 1-2 sentence operational explanation.',
@@ -182,6 +197,9 @@ ${instrumentsCatalog}`;
                 'instrumentId',
                 'alignmentType',
                 'clauseCitation',
+                'clauseExcerpt',
+                'sectionAnchor',
+                'verificationSteps',
                 'rationale',
                 'sourceUrl',
               ],
@@ -256,9 +274,10 @@ ${instrumentsCatalog}`;
               m.alignmentType === 'delta' ||
               m.alignmentType === 'friction')
         )
-        .map((m: Record<string, string>, idx: number) => {
+        .map((m: Record<string, unknown>, idx: number) => {
           const fallbackUrl =
-            instrumentUrlMap.get(m.instrumentId) || 'https://www.unesco.org/en/artificial-intelligence/recommendation-ethics';
+            instrumentUrlMap.get(String(m.instrumentId)) ||
+            'https://www.unesco.org/en/artificial-intelligence/recommendation-ethics';
           const candidateUrl =
             typeof m.sourceUrl === 'string' && m.sourceUrl.startsWith('http')
               ? m.sourceUrl
@@ -266,10 +285,15 @@ ${instrumentsCatalog}`;
           return {
             id: `map-${useCaseId}-${idx + 1}`,
             useCaseId,
-            controlId: m.controlId,
-            instrumentId: m.instrumentId,
+            controlId: String(m.controlId),
+            instrumentId: String(m.instrumentId),
             alignmentType: m.alignmentType as 'equivalent' | 'delta' | 'friction',
             clauseCitation: String(m.clauseCitation || '').trim(),
+            clauseExcerpt: String(m.clauseExcerpt || m.rationale || '').trim(),
+            sectionAnchor: String(m.sectionAnchor || '').trim() || undefined,
+            verificationSteps: Array.isArray(m.verificationSteps)
+              ? m.verificationSteps.map(String).slice(0, 4)
+              : undefined,
             rationale: String(m.rationale || '').trim(),
             sourceUrl: candidateUrl,
             lastVerified: todayIso,

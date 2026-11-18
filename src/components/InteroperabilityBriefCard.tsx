@@ -1,12 +1,14 @@
-import { ExternalLink, FileCheck2 } from 'lucide-react';
-import type { AtlasDataset } from '../types/atlas';
+import { BookOpen, ExternalLink, FileCheck2 } from 'lucide-react';
+import type { AtlasDataset, InteropMapping } from '../types/atlas';
 import type { FocusSelection, InteroperabilityBrief } from '../utils/atlasAnalytics';
+import { resolveDeepLinkUrl } from '../utils/clauseNavigation';
 import { AlignmentIndicator } from './AlignmentIndicator';
 
 interface InteroperabilityBriefCardProps {
   dataset: AtlasDataset;
   brief: InteroperabilityBrief;
   onSelectEntity: (selection: FocusSelection) => void;
+  onInspectClause: (mapping: InteropMapping) => void;
   onOpenExportModal: () => void;
 }
 
@@ -20,6 +22,7 @@ export function InteroperabilityBriefCard({
   dataset,
   brief,
   onSelectEntity,
+  onInspectClause,
   onOpenExportModal,
 }: InteroperabilityBriefCardProps) {
   const instMap = new Map(dataset.instruments.map((i) => [i.id, i]));
@@ -52,6 +55,12 @@ export function InteroperabilityBriefCard({
               </h3>
               <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed">
                 {brief.summary}
+              </p>
+              <p className="mt-3 text-xs text-slate-500 flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-slate-600 shrink-0" aria-hidden="true" />
+                <span>
+                  Click any clause citation below to read its substantive text &amp; verification steps inside the app, or use <ExternalLink className="w-3 h-3 inline" aria-hidden="true" /> to jump directly to the anchored section.
+                </span>
               </p>
             </div>
 
@@ -146,10 +155,13 @@ export function InteroperabilityBriefCard({
                       </div>
 
                       <p className="text-xs text-slate-600 mt-1">
-                        Artifact: <span className="font-medium text-slate-800">{item.control.artifactName}</span>
+                        Artifact:{' '}
+                        <span className="font-medium text-slate-800">
+                          {item.control.artifactName}
+                        </span>
                       </p>
 
-                      <ul className="mt-2.5 space-y-1.5">
+                      <ul className="mt-3 space-y-2.5">
                         {item.equivalentMappings.map((eq) => {
                           const inst = instMap.get(eq.instrumentId);
                           const uc = ucMap.get(eq.useCaseId);
@@ -157,19 +169,50 @@ export function InteroperabilityBriefCard({
                             brief.focusType === 'instrument'
                               ? uc?.title ?? eq.useCaseId
                               : inst?.shortName ?? eq.instrumentId;
+                          const { url: deepLinkUrl } = resolveDeepLinkUrl(eq);
+
                           return (
-                            <li key={eq.id} className="text-xs text-slate-600 leading-relaxed">
-                              <span className="font-medium text-slate-800">{contextName}</span>
-                              {' · '}
-                              <a
-                                href={eq.sourceUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="font-mono text-emerald-800 hover:underline inline-flex items-center gap-1"
-                              >
-                                <span>{eq.clauseCitation}</span>
-                                <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
-                              </a>
+                            <li
+                              key={eq.id}
+                              className="p-2.5 rounded-md bg-slate-50/80 hover:bg-emerald-50/50 border border-slate-200/80 transition-colors"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => onInspectClause(eq)}
+                                  className="text-left group cursor-pointer min-w-0 flex-1"
+                                >
+                                  <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                                    <span className="font-semibold text-slate-900">
+                                      {contextName}
+                                    </span>
+                                    <span aria-hidden="true" className="text-slate-300">
+                                      ·
+                                    </span>
+                                    <span className="font-mono text-emerald-800 group-hover:underline inline-flex items-center gap-1">
+                                      <BookOpen
+                                        className="w-3 h-3 shrink-0"
+                                        aria-hidden="true"
+                                      />
+                                      <span>{eq.clauseCitation}</span>
+                                    </span>
+                                  </div>
+                                  <p className="text-[11.5px] text-slate-600 mt-1 line-clamp-2 leading-snug">
+                                    {eq.rationale}
+                                  </p>
+                                </button>
+
+                                <a
+                                  href={deepLinkUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`Jump directly to ${eq.clauseCitation} in official source`}
+                                  title="Open official text at anchored section"
+                                  className="p-1 text-slate-400 hover:text-slate-900 rounded hover:bg-white shrink-0"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                                </a>
+                              </div>
                             </li>
                           );
                         })}
@@ -202,38 +245,52 @@ export function InteroperabilityBriefCard({
                   const inst = instMap.get(dm.instrumentId);
                   const ctrl = ctrlMap.get(dm.controlId);
                   const uc = ucMap.get(dm.useCaseId);
+                  const { url: deepLinkUrl } = resolveDeepLinkUrl(dm);
+
                   return (
                     <div key={dm.id} className="py-4">
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            onSelectEntity({ type: 'instrument', id: dm.instrumentId })
-                          }
-                          className="font-semibold text-slate-900 hover:underline underline-offset-4 cursor-pointer"
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onSelectEntity({ type: 'instrument', id: dm.instrumentId })
+                            }
+                            className="font-semibold text-slate-900 hover:underline underline-offset-4 cursor-pointer"
+                          >
+                            {inst?.shortName ?? dm.instrumentId}
+                          </button>
+                          <span aria-hidden="true" className="text-slate-300">
+                            ·
+                          </span>
+                          <span className="text-slate-600">
+                            {brief.focusType === 'control'
+                              ? uc?.title ?? dm.useCaseId
+                              : ctrl?.title ?? dm.controlId}
+                          </span>
+                        </div>
+
+                        <a
+                          href={deepLinkUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Jump directly to ${dm.clauseCitation} in official source`}
+                          title="Open official text at anchored section"
+                          className="p-1 text-slate-400 hover:text-slate-900 rounded hover:bg-slate-100 shrink-0"
                         >
-                          {inst?.shortName ?? dm.instrumentId}
-                        </button>
-                        <span aria-hidden="true" className="text-slate-300">
-                          ·
-                        </span>
-                        <span className="text-slate-600">
-                          {brief.focusType === 'control'
-                            ? uc?.title ?? dm.useCaseId
-                            : ctrl?.title ?? dm.controlId}
-                        </span>
+                          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                        </a>
                       </div>
 
                       <div className="mt-1">
-                        <a
-                          href={dm.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs font-mono text-amber-800 hover:underline inline-flex items-center gap-1"
+                        <button
+                          type="button"
+                          onClick={() => onInspectClause(dm)}
+                          className="text-xs font-mono text-amber-800 hover:underline inline-flex items-center gap-1 text-left cursor-pointer"
                         >
+                          <BookOpen className="w-3 h-3 shrink-0" aria-hidden="true" />
                           <span>{dm.clauseCitation}</span>
-                          <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
-                        </a>
+                        </button>
                       </div>
 
                       <p className="mt-1.5 text-xs text-slate-700 leading-relaxed">
@@ -268,38 +325,52 @@ export function InteroperabilityBriefCard({
                   const inst = instMap.get(fm.instrumentId);
                   const ctrl = ctrlMap.get(fm.controlId);
                   const uc = ucMap.get(fm.useCaseId);
+                  const { url: deepLinkUrl } = resolveDeepLinkUrl(fm);
+
                   return (
                     <div key={fm.id} className="py-4">
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            onSelectEntity({ type: 'instrument', id: fm.instrumentId })
-                          }
-                          className="font-semibold text-rose-900 hover:underline underline-offset-4 cursor-pointer"
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onSelectEntity({ type: 'instrument', id: fm.instrumentId })
+                            }
+                            className="font-semibold text-rose-900 hover:underline underline-offset-4 cursor-pointer"
+                          >
+                            {inst?.shortName ?? fm.instrumentId}
+                          </button>
+                          <span aria-hidden="true" className="text-slate-300">
+                            ·
+                          </span>
+                          <span className="text-slate-600">
+                            {brief.focusType === 'control'
+                              ? uc?.title ?? fm.useCaseId
+                              : ctrl?.title ?? fm.controlId}
+                          </span>
+                        </div>
+
+                        <a
+                          href={deepLinkUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Jump directly to ${fm.clauseCitation} in official source`}
+                          title="Open official text at anchored section"
+                          className="p-1 text-slate-400 hover:text-rose-900 rounded hover:bg-rose-100/60 shrink-0"
                         >
-                          {inst?.shortName ?? fm.instrumentId}
-                        </button>
-                        <span aria-hidden="true" className="text-slate-300">
-                          ·
-                        </span>
-                        <span className="text-slate-600">
-                          {brief.focusType === 'control'
-                            ? uc?.title ?? fm.useCaseId
-                            : ctrl?.title ?? fm.controlId}
-                        </span>
+                          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                        </a>
                       </div>
 
                       <div className="mt-1">
-                        <a
-                          href={fm.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs font-mono text-rose-800 hover:underline inline-flex items-center gap-1"
+                        <button
+                          type="button"
+                          onClick={() => onInspectClause(fm)}
+                          className="text-xs font-mono text-rose-800 hover:underline inline-flex items-center gap-1 text-left cursor-pointer"
                         >
+                          <BookOpen className="w-3 h-3 shrink-0" aria-hidden="true" />
                           <span>{fm.clauseCitation}</span>
-                          <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
-                        </a>
+                        </button>
                       </div>
 
                       <p className="mt-1.5 text-xs text-slate-800 leading-relaxed">

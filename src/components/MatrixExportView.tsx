@@ -1,4 +1,4 @@
-import { Download, ExternalLink, FileCode2, FileText, Search, X } from 'lucide-react';
+import { BookOpen, Download, ExternalLink, FileCode2, FileText, Search, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { AlignmentType, AtlasDataset, InteropMapping, UseCase } from '../types/atlas';
 import {
@@ -6,6 +6,7 @@ import {
   generateProcurementMarkdown,
   generateUseCaseJsonExport,
 } from '../utils/atlasAnalytics';
+import { resolveDeepLinkUrl } from '../utils/clauseNavigation';
 import { AlignmentIndicator } from './AlignmentIndicator';
 import { triggerFileDownload } from './ExportPreviewModal';
 
@@ -13,6 +14,7 @@ interface MatrixExportViewProps {
   dataset: AtlasDataset;
   selectedUseCase: UseCase;
   onChangeUseCase: (useCaseId: string) => void;
+  onInspectClause: (mapping: InteropMapping) => void;
   onOpenExportModal: () => void;
 }
 
@@ -20,6 +22,7 @@ export function MatrixExportView({
   dataset,
   selectedUseCase,
   onChangeUseCase,
+  onInspectClause,
   onOpenExportModal,
 }: MatrixExportViewProps) {
   const [matrixFilter, setMatrixFilter] = useState<AlignmentType | 'all'>('all');
@@ -72,9 +75,9 @@ export function MatrixExportView({
               Interoperability Matrix &amp; Procurement Readiness Export
             </h2>
             <p className="text-sm text-slate-600 mt-1.5 max-w-2xl">
-              Compare how all seven global instruments map across operational controls for the
-              selected use case, inspect exact statutory citations, or export a vendor procurement
-              checklist in one click.
+              Compare how all {dataset.instruments.length} global instruments map across operational
+              controls for the selected use case, read full clause excerpts inline, or export a
+              vendor procurement checklist in one click.
             </p>
           </div>
 
@@ -187,7 +190,7 @@ export function MatrixExportView({
         {/* Inspected Citation Detail Bar (when a matrix cell is clicked) */}
         {inspectedMapping && (
           <div className="mt-4 p-4 bg-slate-50 border border-slate-300 rounded-md flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="space-y-1.5 max-w-4xl">
+            <div className="space-y-2 max-w-4xl">
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">
                 <AlignmentIndicator type={inspectedMapping.alignmentType} />
                 <span aria-hidden="true" className="text-slate-300">
@@ -206,18 +209,33 @@ export function MatrixExportView({
               <p className="text-xs font-mono text-slate-900 font-medium">
                 {inspectedMapping.clauseCitation} · Verified {inspectedMapping.lastVerified}
               </p>
-              <p className="text-sm text-slate-700 leading-relaxed">
+              {inspectedMapping.clauseExcerpt && (
+                <p className="text-xs sm:text-sm text-slate-800 bg-white p-3 border border-slate-200 rounded leading-relaxed">
+                  {inspectedMapping.clauseExcerpt}
+                </p>
+              )}
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {inspectedMapping.rationale}
               </p>
-              <a
-                href={inspectedMapping.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-medium text-slate-900 underline underline-offset-4 hover:text-emerald-800"
-              >
-                <span>Open Official Instrument Reference</span>
-                <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-              </a>
+              <div className="flex flex-wrap items-center gap-4 pt-1">
+                <button
+                  type="button"
+                  onClick={() => onInspectClause(inspectedMapping)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Open Full Clause Reader &amp; Verification Steps</span>
+                </button>
+                <a
+                  href={resolveDeepLinkUrl(inspectedMapping).url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-slate-900 underline underline-offset-4 hover:text-emerald-800"
+                >
+                  <span>Jump to Section in Official Text</span>
+                  <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                </a>
+              </div>
             </div>
             <button
               type="button"
@@ -252,12 +270,12 @@ export function MatrixExportView({
           </div>
         ) : (
           <div className="mt-6 border border-slate-200 rounded-lg overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[1060px]">
+            <table className="w-full text-left border-collapse min-w-[1260px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th
                     scope="col"
-                    className="py-3.5 px-4 text-xs font-semibold text-slate-900 w-64 border-r border-slate-200"
+                    className="py-3.5 px-4 text-xs font-semibold text-slate-900 w-60 border-r border-slate-200"
                   >
                     Operational Control &amp; Artifact
                   </th>
@@ -265,7 +283,7 @@ export function MatrixExportView({
                     <th
                       key={inst.id}
                       scope="col"
-                      className="py-3.5 px-3 text-xs font-semibold text-slate-900 align-top border-r last:border-r-0 border-slate-200 w-40"
+                      className="py-3.5 px-2.5 text-xs font-semibold text-slate-900 align-top border-r last:border-r-0 border-slate-200 w-36"
                     >
                       <div className="leading-snug">{inst.shortName}</div>
                       <div className="text-[11px] font-normal text-slate-500 font-mono tabular-nums mt-0.5">
@@ -295,7 +313,7 @@ export function MatrixExportView({
                       return (
                         <td
                           key={inst.id}
-                          className="p-2.5 align-top border-r last:border-r-0 border-slate-200"
+                          className="p-2 align-top border-r last:border-r-0 border-slate-200"
                         >
                           {cellItems.length === 0 ? (
                             <span className="text-[11px] text-slate-300 font-mono select-none">
@@ -317,6 +335,7 @@ export function MatrixExportView({
                                     key={m.id}
                                     type="button"
                                     onClick={() => setInspectedMapping(m)}
+                                    onDoubleClick={() => onInspectClause(m)}
                                     aria-label={`Inspect ${inst.shortName} ${m.clauseCitation} for ${row.control.title}`}
                                     className={`w-full text-left p-2 rounded border transition-colors cursor-pointer ${bgTone} ${
                                       isSelected ? 'ring-2 ring-slate-900' : ''

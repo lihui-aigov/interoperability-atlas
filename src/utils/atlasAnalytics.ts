@@ -6,6 +6,7 @@ import type {
   OperationalControl,
   UseCase,
 } from '../types/atlas';
+import { deriveSectionAnchor, resolveDeepLinkUrl } from './clauseNavigation';
 
 export type NodeFocusType = 'useCase' | 'control' | 'instrument';
 
@@ -204,7 +205,8 @@ export function buildUseCaseMatrix(
     if (!q) return true;
     return (
       m.clauseCitation.toLowerCase().includes(q) ||
-      m.rationale.toLowerCase().includes(q)
+      m.rationale.toLowerCase().includes(q) ||
+      (m.clauseExcerpt?.toLowerCase().includes(q) ?? false)
     );
   });
 
@@ -301,7 +303,11 @@ export function generateProcurementMarkdown(
     lines.push(`- **Satisfies Frameworks (${item.coveredInstruments.length}/${dataset.instruments.length}):** ${instNames}`);
     for (const eq of item.equivalentMappings) {
       const inst = instMap.get(eq.instrumentId);
-      lines.push(`  - **${inst?.shortName ?? eq.instrumentId}** (\`${eq.clauseCitation}\`): ${eq.rationale}`);
+      const deep = resolveDeepLinkUrl(eq);
+      const excerptNote = eq.clauseExcerpt ? ` — *"${eq.clauseExcerpt}"*` : '';
+      lines.push(
+        `  - **${inst?.shortName ?? eq.instrumentId}** ([\`${eq.clauseCitation}\`](${deep.url})): ${eq.rationale}${excerptNote}`
+      );
     }
     lines.push(``);
   }
@@ -313,8 +319,11 @@ export function generateProcurementMarkdown(
     for (const dm of brief.deltaMappings) {
       const inst = instMap.get(dm.instrumentId);
       const ctrl = ctrlMap.get(dm.controlId);
+      const deep = resolveDeepLinkUrl(dm);
+      const anchorLabel = deriveSectionAnchor(dm.clauseCitation, dm.sectionAnchor);
+      const excerptNote = dm.clauseExcerpt ? ` — *"${dm.clauseExcerpt}"*` : '';
       lines.push(
-        `- [ ] **${inst?.shortName ?? dm.instrumentId}** — *${ctrl?.title ?? dm.controlId}* (\`${dm.clauseCitation}\`): ${dm.rationale} ([Official Source](${dm.sourceUrl}))`
+        `- [ ] **${inst?.shortName ?? dm.instrumentId}** — *${ctrl?.title ?? dm.controlId}* (\`${dm.clauseCitation}\`): ${dm.rationale}${excerptNote} ([Jump to ${anchorLabel}](${deep.url}))`
       );
     }
     lines.push(``);
@@ -327,8 +336,11 @@ export function generateProcurementMarkdown(
     for (const fm of brief.frictionMappings) {
       const inst = instMap.get(fm.instrumentId);
       const ctrl = ctrlMap.get(fm.controlId);
+      const deep = resolveDeepLinkUrl(fm);
+      const anchorLabel = deriveSectionAnchor(fm.clauseCitation, fm.sectionAnchor);
+      const excerptNote = fm.clauseExcerpt ? ` — *"${fm.clauseExcerpt}"*` : '';
       lines.push(
-        `- **FRICTION ALERT — ${inst?.shortName ?? fm.instrumentId}** / *${ctrl?.title ?? fm.controlId}* (\`${fm.clauseCitation}\`): ${fm.rationale} ([Official Source](${fm.sourceUrl}))`
+        `- **FRICTION ALERT — ${inst?.shortName ?? fm.instrumentId}** / *${ctrl?.title ?? fm.controlId}* (\`${fm.clauseCitation}\`): ${fm.rationale}${excerptNote} ([Jump to ${anchorLabel}](${deep.url}))`
       );
     }
     lines.push(``);

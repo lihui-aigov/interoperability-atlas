@@ -6,14 +6,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import rawAtlasData from './data/atlas.json';
 import { AtlasHeader } from './components/AtlasHeader';
+import { ClauseReaderDrawer } from './components/ClauseReaderDrawer';
 import { ExportPreviewModal } from './components/ExportPreviewModal';
+import { GlobalClauseFinder } from './components/GlobalClauseFinder';
 import { InteroperabilityBriefCard } from './components/InteroperabilityBriefCard';
 import { InteroperabilityFlow } from './components/InteroperabilityFlow';
 import { MatrixExportView } from './components/MatrixExportView';
 import { MethodologySchemaSection } from './components/MethodologySchemaSection';
 import { RecentUpdatesDrawer } from './components/RecentUpdatesDrawer';
 import { UseCaseSandbox } from './components/UseCaseSandbox';
-import type { AlignmentType, AtlasDataset, SandboxMappingResult } from './types/atlas';
+import type {
+  AlignmentType,
+  AtlasDataset,
+  InteropMapping,
+  SandboxMappingResult,
+} from './types/atlas';
 import {
   buildInteroperabilityBrief,
   type FocusSelection,
@@ -64,6 +71,7 @@ export default function App() {
   const [alignmentFilter, setAlignmentFilter] = useState<AlignmentType | 'all'>('all');
   const [isUpdatesDrawerOpen, setIsUpdatesDrawerOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [activeClauseMapping, setActiveClauseMapping] = useState<InteropMapping | null>(null);
 
   const handleSelectEntity = (next: FocusSelection) => {
     setSelection(next);
@@ -75,6 +83,12 @@ export default function App() {
   const handleChangeMatrixUseCase = (useCaseId: string) => {
     setSelectedMatrixUseCaseId(useCaseId);
     setSelection({ type: 'useCase', id: useCaseId });
+  };
+
+  const handleOpenClauseFromFinder = (mapping: InteropMapping) => {
+    setSelection({ type: 'useCase', id: mapping.useCaseId });
+    setSelectedMatrixUseCaseId(mapping.useCaseId);
+    setActiveClauseMapping(mapping);
   };
 
   const handleAddSandboxResult = (result: SandboxMappingResult) => {
@@ -114,6 +128,11 @@ export default function App() {
         onOpenExportModal={() => setIsExportModalOpen(true)}
       />
 
+      <GlobalClauseFinder
+        dataset={activeDataset}
+        onOpenClause={handleOpenClauseFromFinder}
+      />
+
       <main className="flex-1">
         <InteroperabilityFlow
           dataset={activeDataset}
@@ -127,6 +146,7 @@ export default function App() {
           dataset={activeDataset}
           brief={brief}
           onSelectEntity={handleSelectEntity}
+          onInspectClause={setActiveClauseMapping}
           onOpenExportModal={() => setIsExportModalOpen(true)}
         />
 
@@ -134,6 +154,7 @@ export default function App() {
           dataset={activeDataset}
           selectedUseCase={selectedUseCase}
           onChangeUseCase={handleChangeMatrixUseCase}
+          onInspectClause={setActiveClauseMapping}
           onOpenExportModal={() => setIsExportModalOpen(true)}
         />
 
@@ -171,6 +192,14 @@ export default function App() {
         isOpen={isUpdatesDrawerOpen}
         onClose={() => setIsUpdatesDrawerOpen(false)}
         dataset={activeDataset}
+        onSelectEntity={handleSelectEntity}
+      />
+
+      <ClauseReaderDrawer
+        mapping={activeClauseMapping}
+        dataset={activeDataset}
+        onClose={() => setActiveClauseMapping(null)}
+        onSelectMapping={setActiveClauseMapping}
         onSelectEntity={handleSelectEntity}
       />
 

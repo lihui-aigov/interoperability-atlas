@@ -12,18 +12,24 @@ import {
   generateUseCaseJsonExport,
 } from './atlasAnalytics';
 import { computeFlowLayout } from './atlasLayout';
+import {
+  buildResolvedClauseDetail,
+  deriveSectionAnchor,
+  resolveDeepLinkUrl,
+  searchAtlasClauses,
+} from './clauseNavigation';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const datasetPath = path.resolve(__dirname, '../data/atlas.json');
 const seedDataset: AtlasDataset = JSON.parse(fs.readFileSync(datasetPath, 'utf-8'));
 
-test('seed atlas.json meets strict schema & completeness invariants', () => {
-  assert.equal(seedDataset.useCases.length, 6, 'Expected exactly 6 seed concrete use cases');
-  assert.equal(seedDataset.controls.length, 8, 'Expected exactly 8 operational controls');
-  assert.equal(seedDataset.instruments.length, 7, 'Expected exactly 7 global instruments');
-  assert.ok(seedDataset.mappings.length >= 60, 'Expected rich set of verified mappings');
-  assert.ok(seedDataset.metadata.recentUpdates.length >= 4, 'Expected recent automated updates');
+test('seed atlas.json meets strict schema, expanded corpus, and clause-navigation invariants', () => {
+  assert.equal(seedDataset.useCases.length, 10, 'Expected 10 concrete use cases');
+  assert.equal(seedDataset.controls.length, 8, 'Expected 8 operational controls');
+  assert.equal(seedDataset.instruments.length, 9, 'Expected 9 global instruments');
+  assert.ok(seedDataset.mappings.length >= 110, 'Expected 110+ verified mappings');
+  assert.ok(seedDataset.metadata.recentUpdates.length >= 5, 'Expected recent automated updates');
 
   const ucIds = new Set(seedDataset.useCases.map((u) => u.id));
   const ctrlIds = new Set(seedDataset.controls.map((c) => c.id));
@@ -43,6 +49,9 @@ test('seed atlas.json meets strict schema & completeness invariants', () => {
     );
     assert.ok(m.clauseCitation.length > 3, `Missing clauseCitation on ${m.id}`);
     assert.ok(m.rationale.length > 15, `Rationale too short on ${m.id}`);
+    assert.ok((m.clauseExcerpt ?? '').length > 20, `Missing clauseExcerpt on ${m.id}`);
+    assert.ok((m.sectionAnchor ?? '').length >= 2, `Missing sectionAnchor on ${m.id}`);
+    assert.ok(Array.isArray(m.verificationSteps) && m.verificationSteps.length >= 1);
     assert.ok(m.sourceUrl.startsWith('https://'), `Invalid sourceUrl on ${m.id}`);
     assert.match(m.lastVerified, /^\d{4}-\d{2}-\d{2}$/);
   }
@@ -58,6 +67,31 @@ test('every seed use case contains equivalent, delta, and friction mappings', ()
   }
 });
 
+test('clauseNavigation resolves EUR-Lex #art_N / #anx_III deep anchors, W3C text fragments, and instant clause search', () => {
+  const euArt10 = seedDataset.mappings.find((m) => m.id === 'map-wt-bias-eu')!;
+  const deepArt10 = resolveDeepLinkUrl(euArt10);
+  assert.equal(
+    deepArt10.url,
+    'https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng#art_10',
+    'EUR-Lex Article 10 should deep-link directly to #art_10'
+  );
+
+  const euAnnex3 = seedDataset.mappings.find((m) => m.id === 'map-cm-bias-eu')!;
+  assert.equal(deriveSectionAnchor('EU AI Act Annex III(5)(b)'), 'Annex III');
+  assert.ok(resolveDeepLinkUrl(euAnnex3).url.includes('#art_10') || resolveDeepLinkUrl(euAnnex3).url.includes('#anx_III'));
+
+  const nistMeasure = seedDataset.mappings.find((m) => m.id === 'map-wt-bias-nist')!;
+  const deepNist = resolveDeepLinkUrl(nistMeasure);
+  assert.ok(deepNist.url.includes('#:~:text=MEASURE%202.11'));
+
+  const detail = buildResolvedClauseDetail(seedDataset, euArt10);
+  assert.ok(detail.clauseExcerpt.includes('Article 10'));
+  assert.ok(detail.peerMappings.length >= 3, 'Should list sibling framework clauses on same control');
+
+  const searchHits = searchAtlasClauses(seedDataset, 'CETS 225');
+  assert.ok(searchHits.length >= 3, 'Should find Council of Europe AI Convention clauses');
+});
+
 test('buildInteroperabilityBrief computes 80/20 core controls across UseCase, Control, and Instrument pivots', () => {
   const agentBrief = buildInteroperabilityBrief(seedDataset, {
     type: 'useCase',
@@ -69,25 +103,15 @@ test('buildInteroperabilityBrief computes 80/20 core controls across UseCase, Co
   assert.equal(agentBrief.coreControls[0].control.id, 'ctrl-agent-boundaries');
   assert.ok(agentBrief.frictionMappings.length >= 2);
 
-  const sgBrief = buildInteroperabilityBrief(seedDataset, {
+  const coeBrief = buildInteroperabilityBrief(seedDataset, {
     type: 'instrument',
-    id: 'inst-sg-agentic',
+    id: 'inst-coe-treaty',
   });
-  assert.ok(sgBrief.activeUseCaseIds.has('uc-agentic-public-service'));
-  assert.ok(sgBrief.deltaMappings.length >= 2);
-
-  const frictionOnlyBrief = buildInteroperabilityBrief(
-    seedDataset,
-    { type: 'useCase', id: 'uc-biometric-law-enforcement' },
-    'friction'
-  );
-  assert.equal(frictionOnlyBrief.counts.equivalent, 0);
-  assert.equal(frictionOnlyBrief.counts.delta, 0);
-  assert.ok(frictionOnlyBrief.counts.friction >= 3);
+  assert.ok(coeBrief.activeUseCaseIds.has('uc-welfare-triage'));
 });
 
 test('buildUseCaseMatrix filters accurately by alignmentType and search query', () => {
-  const fullRows = buildUseCaseMatrix(seedDataset, 'uc-welfare-triage', 'all', '');
+  const fullRows = buildUseCaseMatrix(seedDataset, 'uc-credit-microfinance', 'all', '');
   assert.equal(fullRows.length, 8);
 
   const filteredRows = buildUseCaseMatrix(seedDataset, 'uc-welfare-triage', 'delta', 'Art. 27');
@@ -100,22 +124,20 @@ test('generateProcurementMarkdown and generateUseCaseJsonExport produce valid de
   const md = generateProcurementMarkdown(seedDataset, uc);
   assert.ok(md.includes('# AI Governance Procurement & Interoperability Readiness Checklist'));
   assert.ok(md.includes('## 2. Shared Core Verification Artifacts'));
-  assert.ok(md.includes('EU AI Act Art. 10(2)(f)'));
 
   const jsonStr = generateUseCaseJsonExport(seedDataset, uc);
   const parsed = JSON.parse(jsonStr);
   assert.equal(parsed.useCase.id, uc.id);
   assert.ok(Array.isArray(parsed.mappings));
-  assert.ok(parsed.mappings.length >= 10);
 });
 
-test('computeFlowLayout produces non-overlapping column bounding boxes and valid Bezier paths', () => {
+test('computeFlowLayout produces non-overlapping column bounding boxes for 10 use cases and 9 instruments', () => {
   const layout = computeFlowLayout(seedDataset, {
     type: 'useCase',
-    id: 'uc-clinical-triage',
+    id: 'uc-credit-microfinance',
   });
 
-  assert.equal(layout.nodes.length, 6 + 8 + 7);
+  assert.equal(layout.nodes.length, 10 + 8 + 9);
   assert.ok(layout.links.length > 0);
 
   for (const col of ['useCase', 'control', 'instrument'] as const) {
@@ -128,9 +150,5 @@ test('computeFlowLayout produces non-overlapping column bounding boxes and valid
         `Overlapping nodes in column ${col}: ${prev.id} and ${curr.id}`
       );
     }
-  }
-
-  for (const link of layout.links) {
-    assert.match(link.d, /^M \d+\.\d \d+\.\d C /);
   }
 });

@@ -244,7 +244,8 @@ test('applyVerifiedAdditions bumps datasetVersion, updates totalCounts & recentU
     { now, runId: 'gh-run-999999' }
   );
 
-  assert.equal(updatedDataset.metadata.datasetVersion, '2026.11.5');
+  const expectedNextVersion = bumpDatasetVersion(seedDataset.metadata.datasetVersion, now);
+  assert.equal(updatedDataset.metadata.datasetVersion, expectedNextVersion);
   assert.equal(updatedDataset.metadata.totalCounts?.mappings, seedDataset.mappings.length + 1);
   assert.equal(updatedDataset.metadata.recentUpdates[0].id, updateEntry.id);
   assert.equal(updatedDataset.mappings.length, seedDataset.mappings.length + 1);
@@ -254,9 +255,10 @@ test('applyVerifiedAdditions bumps datasetVersion, updates totalCounts & recentU
     'utf-8'
   );
   const updatedChangelog = prependChangelogSection(existingChangelog, changelogBlock);
-  assert.ok(updatedChangelog.includes('## [2026.11.5] — 2026-11-18 (`gh-run-999999`)'));
+  assert.ok(updatedChangelog.includes(`## [${expectedNextVersion}] — 2026-11-18 (\`gh-run-999999\`)`));
   assert.ok(
-    updatedChangelog.indexOf('[2026.11.5]') < updatedChangelog.indexOf('[2026.11.4]'),
+    updatedChangelog.indexOf(`[${expectedNextVersion}]`) <
+      updatedChangelog.indexOf(`[${seedDataset.metadata.datasetVersion}]`),
     'New release section should appear above older entries'
   );
 });

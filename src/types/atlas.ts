@@ -56,6 +56,12 @@ export interface InteropMapping {
   rationale: string;
   sourceUrl: string;
   lastVerified: string;
+  /** Concise authoritative normative excerpt or structured clause scope so users do not have to hunt inside external PDFs. */
+  clauseExcerpt?: string;
+  /** Exact document heading or search phrase (e.g., "Article 10", "MEASURE 2.11") used for deep-linking and 1-click search copy. */
+  sectionAnchor?: string;
+  /** Concrete operational verification steps to satisfy or audit this specific clause. */
+  verificationSteps?: string[];
 }
 
 export type UpdateChangeType =

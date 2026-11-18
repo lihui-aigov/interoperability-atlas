@@ -448,6 +448,19 @@ export async function runDeterministicQualityGate(
         ? sourceUrl
         : urlStatus.finalUrl || sourceUrl;
 
+    const clauseExcerpt =
+      typeof raw.clauseExcerpt === 'string' && raw.clauseExcerpt.trim().length > 15
+        ? raw.clauseExcerpt.trim()
+        : undefined;
+    const sectionAnchor =
+      typeof raw.sectionAnchor === 'string' && raw.sectionAnchor.trim().length > 1
+        ? raw.sectionAnchor.trim()
+        : undefined;
+    const verificationSteps =
+      Array.isArray(raw.verificationSteps) && raw.verificationSteps.filter(Boolean).length > 0
+        ? raw.verificationSteps.map((s) => String(s).trim()).filter(Boolean).slice(0, 4)
+        : undefined;
+
     acceptedMappings.push({
       id: mappingId,
       useCaseId: targetUseCaseId,
@@ -458,6 +471,9 @@ export async function runDeterministicQualityGate(
       rationale,
       sourceUrl: resolvedUrl,
       lastVerified: verifiedDate,
+      ...(sectionAnchor ? { sectionAnchor } : {}),
+      ...(clauseExcerpt ? { clauseExcerpt } : {}),
+      ...(verificationSteps ? { verificationSteps } : {}),
     });
   }
 
@@ -800,6 +816,21 @@ export async function extractStructuredAdditions(
               type: Type.STRING,
               description: 'Concise 1-2 sentence operational policy/engineering explanation.',
             },
+            clauseExcerpt: {
+              type: Type.STRING,
+              description:
+                'Concise 2-3 sentence authoritative summary or provision text of the specific cited clause so readers do not need to search inside the external PDF/HTML.',
+            },
+            sectionAnchor: {
+              type: Type.STRING,
+              description:
+                'Exact heading or search keyword inside the official document (e.g., "Article 10", "MEASURE 2.11", "Control A.6.2.6").',
+            },
+            verificationSteps: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: '2 to 3 concrete engineering or procurement verification steps.',
+            },
             sourceUrl: {
               type: Type.STRING,
               description:
@@ -813,6 +844,9 @@ export async function extractStructuredAdditions(
             'alignmentType',
             'clauseCitation',
             'rationale',
+            'clauseExcerpt',
+            'sectionAnchor',
+            'verificationSteps',
             'sourceUrl',
           ],
         },
