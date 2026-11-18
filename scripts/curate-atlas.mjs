@@ -519,7 +519,6 @@ export async function runDeterministicQualityGate(
     const existingSpotlights = Array.isArray(dataset.spotlights) ? dataset.spotlights : [];
     const existingSpotIds = new Set(existingSpotlights.map((s) => s.id));
     const existingSpotHeadlines = new Set(existingSpotlights.map((s) => normalizeKey(s.headline)));
-    const existingSpotUrls = new Set(existingSpotlights.map((s) => String(s.newsSourceUrl || '').trim()));
 
     const candidateSpotId = sanitizeSpotlightId(rawSpot.id, rawSpot.headline);
     const headline = String(rawSpot.headline || '').trim();
@@ -594,8 +593,7 @@ export async function runDeterministicQualityGate(
       newSpotlightDropReason = 'Candidate newSpotlight missing headline, summary, or coreGovernanceQuestion';
     } else if (
       existingSpotIds.has(candidateSpotId) ||
-      existingSpotHeadlines.has(normalizeKey(headline)) ||
-      existingSpotUrls.has(newsSourceUrlRaw)
+      existingSpotHeadlines.has(normalizeKey(headline))
     ) {
       newSpotlightDropReason = `Duplicate of existing spotlight (${candidateSpotId})`;
     } else if (!postGateUseCaseIds.has(linkedUseCaseId)) {

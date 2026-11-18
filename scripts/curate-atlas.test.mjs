@@ -270,8 +270,8 @@ test('runDeterministicQualityGate and applyVerifiedAdditions validate and prepen
     newSpotlight: {
       id: 'spot-procurement-transparency-ruling',
       headline: 'Municipal Public Procurement Tender AI Faces Mandatory Disclosure Challenge',
-      newsSourceTitle: 'EUR-Lex Official AI Act Guidance',
-      newsSourceUrl: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj',
+      newsSourceTitle: 'EU AI Office Regulatory Guidance Update',
+      newsSourceUrl: 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai',
       regionTag: 'EU / Global',
       linkedUseCaseId: 'uc-procurement-screening',
       eventSummary:
