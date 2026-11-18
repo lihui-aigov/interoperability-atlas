@@ -213,7 +213,7 @@ test('seoSlugs resolves bidirectional pair slugs, canonical ordering, and plain 
     matrix.cellsByPair[instEu.id][instNist.id]
   );
   assert.ok(verdictOverlap.headline.includes('% shared compliance baseline'));
-  assert.ok(verdictOverlap.summary.includes('satisfy'));
+  assert.ok(verdictOverlap.summary.includes('satisfied once'));
 
   const verdictNoOverlap = buildPlainPairwiseVerdict(
     instAu,
