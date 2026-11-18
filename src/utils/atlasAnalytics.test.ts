@@ -229,7 +229,7 @@ test('UNESCO 2021 AI Ethics Recommendation is cleanly separated from the 2023 EI
   const recInst = seedDataset.instruments.find((i) => i.id === 'inst-unesco-rec');
   assert.ok(recInst, 'Expected inst-unesco-rec in atlas.json');
   assert.equal(recInst.title, 'UNESCO Recommendation on the Ethics of AI');
-  assert.equal(recInst.shortName, 'UNESCO AI Ethics Recommendation');
+  assert.equal(recInst.shortName, 'UNESCO Recommendation on the Ethics of AI');
   assert.equal(
     seedDataset.instruments.some((i) => i.id === 'inst-unesco-eia'),
     false,

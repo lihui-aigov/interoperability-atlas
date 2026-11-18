@@ -577,7 +577,7 @@ function main() {
       .join('\n');
 
     const html = renderStaticShell({
-      title: `${inst.shortName} (${inst.adoptionYear}): Tracked Clauses, Use-Case Duties & Global Crosswalk`,
+      title: `${inst.title} (${inst.adoptionYear}): Tracked Clauses, Use-Case Duties & Global Crosswalk`,
       description: directSummary.slice(0, 158),
       canonicalUrl,
       keywords: `${inst.shortName}, ${inst.title}, ${inst.issuingBody}, AI regulation clauses, AI compliance crosswalk`,
@@ -611,7 +611,7 @@ function main() {
           </div>
           <a class="cta-btn" href="${escapeHtml(appDeepLink)}">Compare Against Other Regimes &rarr;</a>
         </div>
-        <h1>${escapeHtml(inst.shortName)}: Tracked Clauses &amp; Cross-Regime Obligations</h1>
+        <h1>${escapeHtml(inst.title)}: Tracked Clauses &amp; Cross-Regime Obligations</h1>
         <div class="capsule">
           <strong>Direct Summary:</strong> ${escapeHtml(directSummary)} <a href="${escapeHtml(inst.officialUrl)}" target="_blank" rel="noopener noreferrer">Read official primary text &rarr;</a>
         </div>
@@ -1022,7 +1022,7 @@ function main() {
           keywords: [
             'EU AI Act vs NIST AI RMF',
             'ISO 42001 vs EU AI Act',
-            'UNESCO AI Ethics Recommendation',
+            'UNESCO Recommendation on the Ethics of AI',
             'AI governance interoperability',
             'CoE CETS 225',
             'Singapore Agentic AI Framework',

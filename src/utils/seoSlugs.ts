@@ -99,7 +99,7 @@ export function buildPlainPairwiseVerdict(
           ? `These two frameworks address ${themeCount} related governance themes (such as human oversight or impact assessment), yet do not share directly co-mapped deployment contexts here.`
           : `No directly co-mapped use-case controls currently link ${instA.shortName} and ${instB.shortName} in this snapshot.`,
       actionAdvice:
-        'Try pairing either framework with EU AI Act, UNESCO AI Ethics Recommendation, NIST AI RMF 1.0, or ISO/IEC 42001, or inspect an individual AI use case in Tab 3.',
+        'Try pairing either framework with EU AI Act, UNESCO Recommendation on the Ethics of AI, NIST AI RMF 1.0, or ISO/IEC 42001, or inspect an individual AI use case in Tab 3.',
     };
   }
 

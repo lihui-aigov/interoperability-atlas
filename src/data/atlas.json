@@ -333,7 +333,7 @@
   "instruments": [
     {
       "id": "inst-unesco-rec",
-      "shortName": "UNESCO AI Ethics Recommendation",
+      "shortName": "UNESCO Recommendation on the Ethics of AI",
       "title": "UNESCO Recommendation on the Ethics of AI",
       "issuingBody": "UNESCO General Conference (194 Member States)",
       "jurisdictionOrScope": "Global Multilateral",
