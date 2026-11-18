@@ -16,9 +16,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm install
 
       - name: Discover, map, and verify new governance interoperability edges
         env:
@@ -32,6 +32,6 @@ jobs:
         run: |
           git config user.name "atlas-curator[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          touch CHANGELOG.md
           git add src/data/atlas.json CHANGELOG.md
-          git diff --staged --quiet || git commit -m "data(atlas): autonomous verified governance mapping update"
-          git push
+          git diff --staged --quiet || (git commit -m "data(atlas): autonomous verified governance mapping update" && git push)
