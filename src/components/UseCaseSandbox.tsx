@@ -68,16 +68,10 @@ export function UseCaseSandbox({
     const existing = sandboxResults.find((r) => r.useCase.id === preset.result.useCase.id);
     if (existing) {
       onFocusUseCaseInFlow(existing.useCase.id);
-      document
-        .getElementById('interoperability-flow')
-        ?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
     onAddSandboxResult(preset.result);
-    document
-      .getElementById('interoperability-flow')
-      ?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -238,7 +232,7 @@ export function UseCaseSandbox({
                           {isLoaded ? (
                             <>
                               <CheckCircle2 className="w-3 h-3 shrink-0" aria-hidden="true" />
-                              <span>View in Flow</span>
+                              <span>Open Checklist</span>
                             </>
                           ) : (
                             <>
@@ -442,7 +436,7 @@ export function UseCaseSandbox({
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <p className="text-xs font-mono text-slate-500 tabular-nums">
-                            {res.useCase.sector} · {eqCount}E · {dlCount}D · {frCount}F
+                            {res.useCase.sector} · {eqCount} once · {dlCount} extra · {frCount} clash
                           </p>
                           <h4 className="text-base font-semibold text-slate-950 mt-0.5">
                             {res.useCase.title}
@@ -490,15 +484,10 @@ export function UseCaseSandbox({
                       <div className="mt-4 flex flex-wrap items-center gap-3">
                         <button
                           type="button"
-                          onClick={() => {
-                            onFocusUseCaseInFlow(res.useCase.id);
-                            document
-                              .getElementById('interoperability-flow')
-                              ?.scrollIntoView({ behavior: 'smooth' });
-                          }}
+                          onClick={() => onFocusUseCaseInFlow(res.useCase.id)}
                           className="px-3.5 py-1.5 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                         >
-                          Inspect in 3-Column Flow
+                          Open Compliance Checklist
                         </button>
 
                         <button

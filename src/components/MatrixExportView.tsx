@@ -85,18 +85,17 @@ export function MatrixExportView({
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-200">
           <div>
             <p className="text-xs font-mono text-slate-500">
-              02. Side-by-Side Control-by-Instrument Crosswalk
+              Use-Case Compliance Table · Control-by-Framework Breakdown
             </p>
             <h2
               id="matrix-section-heading"
               className="font-editorial text-2xl sm:text-3xl font-medium text-slate-950 mt-1"
             >
-              Interoperability Matrix &amp; Procurement Readiness Export
+              System Obligations Checklist &amp; Procurement Export
             </h2>
             <p className="text-sm text-slate-600 mt-1.5 max-w-2xl">
-              Compare how all {dataset.instruments.length} global instruments map across operational
-              controls for the selected use case, read full clause excerpts inline, or export a
-              vendor procurement checklist in one click.
+              Review what all {dataset.instruments.length} global regimes require for the selected AI
+              use case, read exact primary clauses in the sidebar, or export a team checklist.
             </p>
           </div>
 
@@ -184,9 +183,9 @@ export function MatrixExportView({
             {(
               [
                 { value: 'all', label: 'All' },
-                { value: 'equivalent', label: 'Equivalent' },
-                { value: 'delta', label: 'Delta' },
-                { value: 'friction', label: 'Friction' },
+                { value: 'equivalent', label: 'Comply Once' },
+                { value: 'delta', label: 'Extra Step' },
+                { value: 'friction', label: 'Rule Clash' },
               ] as const
             ).map((opt) => (
               <button
@@ -311,9 +310,9 @@ export function MatrixExportView({
                           {inst.adoptionYear} · {inst.legalNature.split(' ')[0]}
                         </div>
                         <div className="text-[10px] font-mono tabular-nums mt-1 text-slate-600">
-                          <span className="text-emerald-700">{summary.eq}E</span> ·{' '}
-                          <span className="text-amber-700">{summary.dl}D</span> ·{' '}
-                          <span className="text-rose-700">{summary.fr}F</span>
+                          <span className="text-emerald-700">{summary.eq} once</span> ·{' '}
+                          <span className="text-amber-700">{summary.dl} extra</span> ·{' '}
+                          <span className="text-rose-700">{summary.fr} clash</span>
                         </div>
                       </th>
                     );

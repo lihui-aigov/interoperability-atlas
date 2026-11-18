@@ -20,6 +20,13 @@ import {
   resolveDeepLinkUrl,
   searchAtlasClauses,
 } from './clauseNavigation';
+import {
+  buildCanonicalPairSlug,
+  buildPairSlug,
+  buildPlainPairwiseVerdict,
+  instrumentToSlug,
+  parsePairSlug,
+} from './seoSlugs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -175,4 +182,44 @@ test('computeInstrumentBreakdown and computePairwiseRegimeMatrix accurately summ
 
   const euBrKr = matrix.cellsByPair['inst-eu-ai-act']['inst-br-kr-laws'];
   assert.ok(euBrKr.frictionSharedCount >= 1);
+});
+
+test('seoSlugs resolves bidirectional pair slugs, canonical ordering, and plain pairwise verdicts', () => {
+  assert.equal(instrumentToSlug('inst-eu-ai-act'), 'eu-ai-act');
+  assert.equal(instrumentToSlug('inst-unesco-eia'), 'unesco-ai-ethics');
+  assert.equal(
+    buildPairSlug('inst-eu-ai-act', 'inst-nist-ai-rmf'),
+    'eu-ai-act-vs-nist-ai-rmf'
+  );
+  assert.equal(
+    buildCanonicalPairSlug('inst-nist-ai-rmf', 'inst-eu-ai-act', seedDataset.instruments),
+    'eu-ai-act-vs-nist-ai-rmf'
+  );
+
+  const parsed = parsePairSlug('nist-ai-rmf-vs-eu-ai-act', seedDataset.instruments);
+  assert.deepEqual(parsed, { aId: 'inst-nist-ai-rmf', bId: 'inst-eu-ai-act' });
+  assert.equal(parsePairSlug('eu-ai-act-vs-eu-ai-act', seedDataset.instruments), null);
+  assert.equal(parsePairSlug('invalid-pair', seedDataset.instruments), null);
+
+  const matrix = computePairwiseRegimeMatrix(seedDataset);
+  const instEu = seedDataset.instruments.find((i) => i.id === 'inst-eu-ai-act')!;
+  const instNist = seedDataset.instruments.find((i) => i.id === 'inst-nist-ai-rmf')!;
+  const instAu = seedDataset.instruments.find((i) => i.id === 'inst-au-strategy')!;
+  const instAsean = seedDataset.instruments.find((i) => i.id === 'inst-asean-guide')!;
+
+  const verdictOverlap = buildPlainPairwiseVerdict(
+    instEu,
+    instNist,
+    matrix.cellsByPair[instEu.id][instNist.id]
+  );
+  assert.ok(verdictOverlap.headline.includes('% shared compliance baseline'));
+  assert.ok(verdictOverlap.summary.includes('satisfy'));
+
+  const verdictNoOverlap = buildPlainPairwiseVerdict(
+    instAu,
+    instAsean,
+    matrix.cellsByPair[instAu.id][instAsean.id]
+  );
+  assert.ok(verdictNoOverlap.headline.includes('separate AI deployments'));
+  assert.ok(verdictNoOverlap.actionAdvice.includes('Tab 3'));
 });

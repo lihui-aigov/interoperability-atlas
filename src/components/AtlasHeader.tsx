@@ -2,15 +2,28 @@ import { ArrowDownToLine, ArrowUpRight, BookMarked, History } from 'lucide-react
 import type { AtlasDataset } from '../types/atlas';
 import { countAlignments } from '../utils/atlasAnalytics';
 
+export type WorkspaceTabId = 'spotlights' | 'compare' | 'use-cases' | 'sandbox';
+
 interface AtlasHeaderProps {
   dataset: AtlasDataset;
+  activeTab: WorkspaceTabId;
+  onSelectTab: (tab: WorkspaceTabId) => void;
   onOpenUpdates: () => void;
   onOpenExportModal: () => void;
   onOpenCiteModal: () => void;
 }
 
+const HEADER_TABS: { id: WorkspaceTabId; label: string }[] = [
+  { id: 'spotlights', label: 'News Briefings' },
+  { id: 'compare', label: 'Compare Frameworks' },
+  { id: 'use-cases', label: 'Use-Case Checklists' },
+  { id: 'sandbox', label: 'Custom Scenario & Data' },
+];
+
 export function AtlasHeader({
   dataset,
+  activeTab,
+  onSelectTab,
   onOpenUpdates,
   onOpenExportModal,
   onOpenCiteModal,
@@ -21,6 +34,11 @@ export function AtlasHeader({
   const eqPct = Math.round((globalCounts.equivalent / totalSafe) * 100);
   const dlPct = Math.round((globalCounts.delta / totalSafe) * 100);
   const frPct = Math.max(0, 100 - eqPct - dlPct);
+
+  const handleHeaderTabClick = (tab: WorkspaceTabId) => {
+    onSelectTab(tab);
+    document.getElementById('workspace-tabs')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <>
@@ -35,45 +53,26 @@ export function AtlasHeader({
           </a>
 
           <nav
-            aria-label="Primary sections"
-            className="hidden xl:flex items-center gap-5 text-sm font-medium text-slate-600"
+            aria-label="Primary workbench views"
+            className="hidden xl:flex items-center gap-1.5 text-sm font-medium text-slate-600"
           >
-            <a
-              href="#news-spotlight"
-              className="text-slate-950 font-semibold hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
-            >
-              News Spotlight
-            </a>
-            <a
-              href="#regime-overview"
-              className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
-            >
-              Convergence
-            </a>
-            <a
-              href="#interoperability-flow"
-              className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
-            >
-              Topology Flow
-            </a>
-            <a
-              href="#comparison-matrix"
-              className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
-            >
-              Matrix
-            </a>
-            <a
-              href="#use-case-sandbox"
-              className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
-            >
-              Sandbox
-            </a>
-            <a
-              href="#methodology-schema"
-              className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
-            >
-              Methodology
-            </a>
+            {HEADER_TABS.map((t) => {
+              const isActive = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => handleHeaderTabClick(t.id)}
+                  className={`px-3 py-1.5 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    isActive
+                      ? 'bg-slate-900 text-white font-semibold'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
@@ -143,7 +142,7 @@ export function AtlasHeader({
           </div>
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-9 sm:py-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 sm:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <div className="lg:col-span-7">
               <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5 px-2.5 py-1 rounded border border-slate-200 bg-white text-[11px] font-mono text-slate-600 mb-3">
@@ -152,34 +151,39 @@ export function AtlasHeader({
                 <span>CC-BY-4.0 CORPUS</span>
               </div>
 
-              <h1 className="font-editorial text-3xl sm:text-4xl lg:text-[2.65rem] font-medium tracking-tight text-slate-950 leading-[1.13]">
-                Comply Once Where Norms Converge. Isolate Deltas Where Jurisdictions Diverge.
+              <h1 className="font-editorial text-3xl sm:text-4xl lg:text-[2.55rem] font-medium tracking-tight text-slate-950 leading-[1.13]">
+                Turn Global AI Rules into Practical Briefings, Gap Checks, and Checklists.
               </h1>
 
               <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
-                Rather than comparing abstract legal texts in isolation, this observatory anchors
-                global AI governance on concrete operational deployments: showing policymakers,
-                procurement officers, and engineering teams which verification artifacts satisfy
-                multiple regimes at once and where statutory friction demands targeted escalation.
+                Translate live AI policy debates, framework-to-framework gaps, and system
+                compliance duties into verified primary clauses across {instruments.length} global
+                regimes.
               </p>
 
               <dl className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div className="bg-white/95 border border-emerald-200/80 rounded-md px-3.5 py-2.5">
-                  <dt className="font-semibold text-emerald-800">01. Equivalent Core ({eqPct}%)</dt>
+                  <dt className="font-semibold text-emerald-800 tabular-nums">
+                    Comply Once ({eqPct}% · {globalCounts.equivalent} clauses)
+                  </dt>
                   <dd className="text-slate-600 mt-0.5">
-                    Shared control satisfies multiple frameworks
+                    One shared test, audit, or log satisfies multiple regimes
                   </dd>
                 </div>
                 <div className="bg-white/95 border border-amber-200/80 rounded-md px-3.5 py-2.5">
-                  <dt className="font-semibold text-amber-800">02. Jurisdictional Delta ({dlPct}%)</dt>
+                  <dt className="font-semibold text-amber-800 tabular-nums">
+                    Extra Local Step ({dlPct}% · {globalCounts.delta} clauses)
+                  </dt>
                   <dd className="text-slate-600 mt-0.5">
-                    Extra local filing, scope, or audit threshold
+                    Additional national filing, public notice, or local threshold
                   </dd>
                 </div>
                 <div className="bg-white/95 border border-rose-200/80 rounded-md px-3.5 py-2.5">
-                  <dt className="font-semibold text-rose-800">03. Interop Friction ({frPct}%)</dt>
+                  <dt className="font-semibold text-rose-800 tabular-nums">
+                    Direct Rule Clash ({frPct}% · {globalCounts.friction} clauses)
+                  </dt>
                   <dd className="text-slate-600 mt-0.5">
-                    Conflicting ban, clock, or copyright duty
+                    Conflicting ban, reporting clock, or disclosure rule
                   </dd>
                 </div>
               </dl>
@@ -233,10 +237,11 @@ export function AtlasHeader({
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-slate-200">
-                  <div className="flex items-center justify-between text-[11px] font-mono tabular-nums text-slate-600 mb-1.5">
+                  <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] font-mono tabular-nums text-slate-600 mb-1.5">
                     <span>Portfolio Mix</span>
                     <span>
-                      {globalCounts.equivalent}E · {globalCounts.delta}D · {globalCounts.friction}F
+                      {globalCounts.equivalent} Comply Once · {globalCounts.delta} Extra Steps ·{' '}
+                      {globalCounts.friction} Clashes
                     </span>
                   </div>
                   <div className="h-2 w-full bg-slate-100 rounded-sm overflow-hidden flex" aria-hidden="true">

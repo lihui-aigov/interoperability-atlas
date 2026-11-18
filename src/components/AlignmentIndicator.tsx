@@ -17,20 +17,20 @@ const ALIGNMENT_CONFIG: Record<
   }
 > = {
   equivalent: {
-    label: 'Equivalent Core',
-    shortLabel: 'Equivalent',
+    label: 'Comply Once (Shared Core)',
+    shortLabel: 'Comply Once',
     textClass: 'text-emerald-800',
     Icon: CheckCircle2,
   },
   delta: {
-    label: 'Jurisdictional Delta',
-    shortLabel: 'Delta',
+    label: 'Extra Local Step',
+    shortLabel: 'Extra Step',
     textClass: 'text-amber-800',
     Icon: PlusSquare,
   },
   friction: {
-    label: 'Interoperability Friction',
-    shortLabel: 'Friction',
+    label: 'Direct Rule Clash',
+    shortLabel: 'Rule Clash',
     textClass: 'text-rose-800',
     Icon: AlertTriangle,
   },

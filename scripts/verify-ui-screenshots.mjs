@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Headless Chromium Visual & Functional Audit (`scripts/verify-ui-screenshots.mjs`)
- * Serves `dist/` locally, captures desktop and mobile screenshots into `dist-standalone/screenshots/`,
- * exercises core interactive features (Heatmap, Flow, Clause Reader, Citation Modal, Sandbox Presets),
- * and verifies `dist-standalone/open-atlas-interactive.html` renders cleanly via `file://`.
+ * Verifies SEO/GEO static artifacts in `dist/`, audits the 4-tab workbench across
+ * desktop (1440x900), mobile (390x844), deep links, and offline `file://` execution,
+ * and saves clean visual captures into `dist-standalone/screenshots/`.
  */
 
 import fs from 'node:fs';
@@ -24,6 +24,8 @@ const MIME_TYPES = {
   '.js': 'application/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -49,19 +51,42 @@ function startStaticServer(rootDir) {
   });
 }
 
-async function main() {
-  for (const seoRel of [
+function verifySeoArtifacts() {
+  const requiredFiles = [
     'sitemap.xml',
     'robots.txt',
     'llms.txt',
+    'llms-full.txt',
+    'atlas-dataset.json',
+    'feed.xml',
+    'og-card.svg',
+    'a8f4c2e9b1d7463095e2c1a4b8d3f6e1.txt',
+    'indexnow-urls.json',
+    'directory.html',
+    'compare/eu-ai-act-vs-nist-ai-rmf.html',
+    'compare/eu-ai-act-vs-iso-42001.html',
+    'instruments/eu-ai-act.html',
     'spotlights/spot-agentic-public-oversight.html',
-  ]) {
-    const seoFile = path.join(DIST_DIR, seoRel);
-    if (!fs.existsSync(seoFile)) {
-      throw new Error(`Expected SEO artifact missing from dist/: ${seoFile}`);
+    'use-cases/uc-hiring-workforce.html',
+  ];
+
+  for (const rel of requiredFiles) {
+    const full = path.join(DIST_DIR, rel);
+    if (!fs.existsSync(full)) {
+      throw new Error(`Expected SEO/GEO artifact missing from dist/: ${full}`);
     }
   }
 
+  const sitemapText = fs.readFileSync(path.join(DIST_DIR, 'sitemap.xml'), 'utf-8');
+  const locCount = (sitemapText.match(/<loc>/g) || []).length;
+  if (locCount < 50) {
+    throw new Error(`Expected >= 50 sitemap URLs, found only ${locCount}`);
+  }
+  console.log(`[verify-ui] Verified ${requiredFiles.length} SEO/GEO artifacts and ${locCount} sitemap URLs.`);
+}
+
+async function main() {
+  verifySeoArtifacts();
   fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
 
   const { server, port } = await startStaticServer(DIST_DIR);
@@ -82,7 +107,6 @@ async function main() {
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         const text = msg.text();
-        // Ignore font-CDN hiccups if offline, fail on any app error
         if (!text.includes('fonts.googleapis.com') && !text.includes('fonts.gstatic.com')) {
           consoleErrors.push(`console.error: ${text}`);
         }
@@ -91,51 +115,91 @@ async function main() {
 
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
     await page.waitForSelector('h1');
+    await page.waitForSelector('#workspace-tabs');
     await page.waitForSelector('#news-spotlight');
-    await page.waitForSelector('#regime-overview table');
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(300);
 
-    // 0. Click European Union lens in #news-spotlight, reset scrollY=0, then capture Masthead & Spotlight cleanly
+    // 1. Capture Desktop Masthead + Personal Note + 4-Mode Task Switcher at scrollY=0
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(150);
+    const tabsBox = await page.locator('#workspace-tabs').boundingBox();
+    const tabsBottom = tabsBox ? Math.ceil(tabsBox.y + tabsBox.height) : 780;
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-and-tabs.png'),
+      fullPage: true,
+      clip: { x: 0, y: 0, width: 1440, height: tabsBottom },
+    });
+
+    // 2. Tab 1: Click European Union lens in #news-spotlight, reset scrollY=0, capture full #news-spotlight
     await page.locator('#news-spotlight button[role="tab"]:has-text("European Union")').click();
     await page.waitForSelector('#news-spotlight:has-text("EU AI Act Art. 12")');
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(150);
     const spotBox = await page.locator('#news-spotlight').boundingBox();
-    const spotY = spotBox ? Math.max(0, Math.floor(spotBox.y)) : 640;
-    const spotH = spotBox ? Math.ceil(spotBox.height) : 920;
-    await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '05-desktop-masthead-origin.png'),
-      fullPage: true,
-      clip: { x: 0, y: 0, width: 1440, height: Math.max(600, spotY) },
-    });
-    await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '00-desktop-news-spotlight.png'),
-      fullPage: true,
-      clip: { x: 0, y: spotY, width: 1440, height: spotH },
-    });
+    if (spotBox) {
+      await page.screenshot({
+        path: path.join(SCREENSHOTS_DIR, '02-desktop-news-spotlight.png'),
+        fullPage: true,
+        clip: {
+          x: 0,
+          y: Math.max(0, Math.floor(spotBox.y)),
+          width: 1440,
+          height: Math.ceil(spotBox.height),
+        },
+      });
+    }
 
-    // 1. Capture #regime-overview (Instrument Footprint + 9x9 Heatmap + Pairwise Comparison Strip)
+    // 3. Tab 2: Switch to Compare Two Frameworks & test Quick Pairs live above-the-fold updates
+    await page.locator('#workspace-tab-compare').click();
+    await page.waitForSelector('#pairwise-verdict-card');
+    await page.locator('#regime-overview button:has-text("EU AI Act × NIST RMF")').click();
+    await page.waitForSelector('#pairwise-verdict-card:has-text("78%")');
+    await page.locator('#regime-overview button:has-text("EU AI Act × Brazil / Korea Laws")').click();
+    await page.waitForSelector('#pairwise-verdict-card:has-text("40%")');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(200);
     const overviewBox = await page.locator('#regime-overview').boundingBox();
     if (overviewBox) {
       await page.screenshot({
-        path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-heatmap.png'),
+        path: path.join(SCREENSHOTS_DIR, '03-desktop-compare-frameworks.png'),
         fullPage: true,
         clip: {
           x: 0,
           y: Math.max(0, Math.floor(overviewBox.y)),
           width: 1440,
-          height: Math.ceil(overviewBox.height),
+          height: Math.min(Math.ceil(overviewBox.height), 1450),
         },
       });
     }
 
-    // 2. Capture full #interoperability-flow cleanly at scrollY=0 via fullPage clip so sticky header stays at page top
-    await page.evaluate(() => window.scrollTo(0, 0));
+    // 4. Tab 3: Check an AI Use Case -> Sticky Crosswalk Matrix + Clause Reader Drawer
+    await page.locator('#workspace-tab-use-cases').click();
+    await page.waitForSelector('#use-case-quick-picker');
+    await page.waitForSelector('#comparison-matrix');
+    const matrixSection = page.locator('#comparison-matrix');
+    await matrixSection.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(200);
+    await page.locator('#comparison-matrix table tbody button').first().click();
+    await page.waitForSelector('text=Open Full Clause Reader & Verification Steps');
+    await page.locator('button:has-text("Open Full Clause Reader & Verification Steps")').click();
+    await page.waitForSelector('#clause-reader-title');
+    await page.waitForTimeout(250);
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, '04-desktop-use-case-checklist.png'),
+      fullPage: false,
+    });
+    await page.keyboard.press('Escape');
     await page.waitForTimeout(150);
+
+    // 5. Tab 3 Optional Visual Pathway Diagram toggle
+    await page.locator('#visual-topology-toggle-bar button').click();
+    await page.waitForSelector('#interoperability-flow button');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(200);
     const flowBox = await page.locator('#interoperability-flow').boundingBox();
     if (flowBox) {
       await page.screenshot({
-        path: path.join(SCREENSHOTS_DIR, '02-desktop-alluvial-flow.png'),
+        path: path.join(SCREENSHOTS_DIR, '05-desktop-visual-topology.png'),
         fullPage: true,
         clip: {
           x: 0,
@@ -146,59 +210,53 @@ async function main() {
       });
     }
 
-    // 3. Verify Sticky Crosswalk Matrix + open ClauseReaderDrawer
-    const matrixSection = page.locator('#comparison-matrix');
-    await matrixSection.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(200);
-    const firstMatrixButton = page.locator('#comparison-matrix table tbody button').first();
-    await firstMatrixButton.click();
-    await page.waitForSelector('text=Open Full Clause Reader & Verification Steps');
-    await page.locator('button:has-text("Open Full Clause Reader & Verification Steps")').click();
-    await page.waitForSelector('#clause-reader-title');
-    await page.waitForTimeout(250);
-    await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '03-desktop-matrix-and-clause-reader.png'),
-      fullPage: false,
-    });
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(150);
-
-    // 4. Verify CitationModal opens cleanly
+    // 6. Verify Cite modal opens cleanly
     await page.locator('header button:has-text("Cite")').click();
     await page.waitForSelector('#citation-modal-title');
     await page.keyboard.press('Escape');
     await page.waitForTimeout(150);
 
-    // 5. Verify Instant Preset Sandbox simulation injects live use case without network/key
-    const sandboxSection = page.locator('#use-case-sandbox');
-    await sandboxSection.scrollIntoViewIfNeeded();
+    // 7. Tab 4: Sandbox instant preset switches into Tab 3 with mapped checklist banner
+    await page.locator('#workspace-tab-sandbox').click();
+    await page.waitForSelector('#use-case-sandbox');
     await page.locator('#use-case-sandbox button:has-text("Run Instant Demo")').first().click();
-    await page.waitForSelector('text=Session Sandbox Mappings (1)');
+    await page.waitForSelector('text=Scenario mapped — reviewing your cross-border compliance checklist below.');
 
-    // 6. Switch to Mobile 390x844 viewport and capture complete mobile #top header + masthead
+    // 8. Capture Mobile 390x844 (#top + #workspace-tabs) cleanly at scrollY=0
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.locator('#workspace-tab-compare').click();
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(250);
-    const mobileTopBox = await page.locator('#top').boundingBox();
+    const mobileTabsBox = await page.locator('#workspace-tabs').boundingBox();
     await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '04-mobile-responsive.png'),
+      path: path.join(SCREENSHOTS_DIR, '06-mobile-task-navigation.png'),
       fullPage: true,
       clip: {
         x: 0,
         y: 0,
         width: 390,
-        height: mobileTopBox ? Math.ceil(mobileTopBox.y + mobileTopBox.height) : 920,
+        height: mobileTabsBox ? Math.ceil(mobileTabsBox.y + mobileTabsBox.height) : 1380,
       },
     });
 
-    // 7. Verify standalone single-file HTML opens cleanly over file:// protocol
+    // 9. Verify URL deep link ?tab=compare&pair=eu-ai-act-vs-iso-42001
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${baseUrl}?tab=compare&pair=eu-ai-act-vs-iso-42001`, {
+      waitUntil: 'networkidle',
+    });
+    await page.waitForSelector('#pairwise-verdict-card:has-text("ISO/IEC 42001")');
+
+    // 10. Verify standalone single-file HTML opens cleanly over file:// protocol across tabs
     if (fs.existsSync(STANDALONE_HTML)) {
       const standalonePage = await context.newPage();
       await standalonePage.setViewportSize({ width: 1440, height: 900 });
       standalonePage.on('pageerror', (err) => pageErrors.push(`standalone pageerror: ${err.message}`));
       await standalonePage.goto(pathToFileURL(STANDALONE_HTML).href, { waitUntil: 'load' });
-      await standalonePage.waitForSelector('h1');
-      await standalonePage.waitForSelector('#regime-overview table');
+      await standalonePage.waitForSelector('#workspace-tab-compare');
+      await standalonePage.locator('#workspace-tab-compare').click();
+      await standalonePage.waitForSelector('#pairwise-verdict-card');
+      await standalonePage.locator('#workspace-tab-use-cases').click();
+      await standalonePage.locator('#visual-topology-toggle-bar button').click();
       await standalonePage.waitForSelector('#interoperability-flow button');
       await standalonePage.close();
     }
@@ -210,7 +268,7 @@ async function main() {
     }
 
     console.log(
-      '[verify-ui] Passed all desktop (1440x900), mobile (390x844), interactive workflow, and file:// standalone checks with 0 runtime errors.'
+      '[verify-ui] Passed all 4-tab desktop (1440x900), mobile (390x844), Quick Pairs, SEO/GEO, deep-link, and file:// standalone checks with 0 runtime errors.'
     );
   } finally {
     await browser.close();

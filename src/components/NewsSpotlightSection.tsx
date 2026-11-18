@@ -18,6 +18,7 @@ interface NewsSpotlightSectionProps {
   initialSpotlightId?: string;
   onSelectSpotlight?: (spotlightId: string) => void;
   onTraceUseCase: (useCaseId: string) => void;
+  onOpenCompareTab?: () => void;
 }
 
 const CANONICAL_SITE_URL = 'https://lihui-aigov.github.io/interoperability-atlas/';
@@ -75,6 +76,7 @@ export function NewsSpotlightSection({
   initialSpotlightId,
   onSelectSpotlight,
   onTraceUseCase,
+  onOpenCompareTab,
 }: NewsSpotlightSectionProps) {
   const spotlights = dataset.spotlights ?? [];
 
@@ -138,10 +140,17 @@ export function NewsSpotlightSection({
     }
   };
 
-  const handleTraceTopology = () => {
+  const handleOpenUseCaseChecklist = () => {
     onTraceUseCase(activeSpotlight.linkedUseCaseId);
     document
-      .getElementById('interoperability-flow')
+      .getElementById('workspace-tabs')
+      ?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleOpenCompare = () => {
+    onOpenCompareTab?.();
+    document
+      .getElementById('workspace-tabs')
       ?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -292,12 +301,22 @@ export function NewsSpotlightSection({
             <div className="pt-1 flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
-                onClick={handleTraceTopology}
+                onClick={handleOpenUseCaseChecklist}
                 className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-[#0B1220] rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <Compass className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                <span>Trace in 3-Column Topology</span>
+                <span>Open Use-Case Compliance Checklist &rarr;</span>
               </button>
+
+              {onOpenCompareTab && (
+                <button
+                  type="button"
+                  onClick={handleOpenCompare}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-800 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 transition-colors cursor-pointer"
+                >
+                  <span>Compare Frameworks Side by Side &rarr;</span>
+                </button>
+              )}
 
               <button
                 type="button"

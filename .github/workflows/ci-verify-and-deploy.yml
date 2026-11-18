@@ -84,3 +84,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Submit updated URLs to IndexNow (Bing, DuckDuckGo, ChatGPT Search)
+        continue-on-error: true
+        run: |
+          if [ -f dist/indexnow-urls.json ]; then
+            curl -sS -i -X POST https://api.indexnow.org/indexnow \
+              -H "Content-Type: application/json; charset=utf-8" \
+              --data-binary @dist/indexnow-urls.json || true
+          fi

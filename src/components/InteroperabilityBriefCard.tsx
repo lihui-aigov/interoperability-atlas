@@ -65,10 +65,10 @@ export function InteroperabilityBriefCard({
             </div>
 
             <div className="lg:w-80 shrink-0 flex flex-col gap-3">
-              <div className="flex items-baseline justify-between text-xs font-mono tabular-nums text-slate-600">
+              <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs font-mono tabular-nums text-slate-600">
                 <span>{brief.counts.total} Active Clause Mappings</span>
                 <span>
-                  {brief.counts.equivalent}E · {brief.counts.delta}D · {brief.counts.friction}F
+                  {brief.counts.equivalent} Once · {brief.counts.delta} Extra · {brief.counts.friction} Clash
                 </span>
               </div>
 
@@ -98,9 +98,9 @@ export function InteroperabilityBriefCard({
               </div>
 
               <div className="flex items-center justify-between text-xs font-mono tabular-nums text-slate-600">
-                <span className="text-emerald-800">{eqPct}% Core</span>
-                <span className="text-amber-800">{dlPct}% Delta</span>
-                <span className="text-rose-800">{frPct}% Friction</span>
+                <span className="text-emerald-800">{eqPct}% Comply Once</span>
+                <span className="text-amber-800">{dlPct}% Extra Step</span>
+                <span className="text-rose-800">{frPct}% Rule Clash</span>
               </div>
 
               <button
