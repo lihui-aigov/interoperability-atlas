@@ -95,16 +95,23 @@ async function main() {
     await page.waitForSelector('#regime-overview table');
     await page.waitForTimeout(350);
 
-    // 0. Click European Union lens in #news-spotlight, verify stance updates, and capture Masthead + Spotlight
+    // 0. Click European Union lens in #news-spotlight, reset scrollY=0, then capture Masthead & Spotlight cleanly
     await page.locator('#news-spotlight button[role="tab"]:has-text("European Union")').click();
     await page.waitForSelector('#news-spotlight:has-text("EU AI Act Art. 12")');
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(200);
     const spotBox = await page.locator('#news-spotlight').boundingBox();
-    const spotBottom = spotBox ? Math.ceil(spotBox.y + spotBox.height) : 1460;
+    const spotY = spotBox ? Math.max(0, Math.floor(spotBox.y)) : 640;
+    const spotH = spotBox ? Math.ceil(spotBox.height) : 920;
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, '05-desktop-masthead-origin.png'),
+      fullPage: true,
+      clip: { x: 0, y: 0, width: 1440, height: Math.max(600, spotY) },
+    });
     await page.screenshot({
       path: path.join(SCREENSHOTS_DIR, '00-desktop-news-spotlight.png'),
       fullPage: true,
-      clip: { x: 0, y: 0, width: 1440, height: Math.min(spotBottom + 12, 1650) },
+      clip: { x: 0, y: spotY, width: 1440, height: spotH },
     });
 
     // 1. Capture #regime-overview (Instrument Footprint + 9x9 Heatmap + Pairwise Comparison Strip)
@@ -168,13 +175,20 @@ async function main() {
     await page.locator('#use-case-sandbox button:has-text("Run Instant Demo")').first().click();
     await page.waitForSelector('text=Session Sandbox Mappings (1)');
 
-    // 6. Switch to Mobile 390x844 viewport and capture mobile view
+    // 6. Switch to Mobile 390x844 viewport and capture complete mobile #top header + masthead
     await page.setViewportSize({ width: 390, height: 844 });
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(250);
+    const mobileTopBox = await page.locator('#top').boundingBox();
     await page.screenshot({
       path: path.join(SCREENSHOTS_DIR, '04-mobile-responsive.png'),
-      fullPage: false,
+      fullPage: true,
+      clip: {
+        x: 0,
+        y: 0,
+        width: 390,
+        height: mobileTopBox ? Math.ceil(mobileTopBox.y + mobileTopBox.height) : 920,
+      },
     });
 
     // 7. Verify standalone single-file HTML opens cleanly over file:// protocol
