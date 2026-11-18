@@ -1,0 +1,90 @@
+# Reference GitHub Actions Workflow for Autonomous Atlas Curation
+# To activate in your GitHub repository, copy this file to:
+#   .github/workflows/autonomous-curator.yml
+# and configure `GEMINI_API_KEY` in Repository Settings -> Secrets and variables -> Actions.
+
+name: Autonomous AI Governance Atlas Curator
+
+on:
+  schedule:
+    # Runs every Monday and Thursday at 06:00 UTC
+    - cron: '0 6 * * 1,4'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run discovery and HTTP/schema verification without writing files'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      gemini_model:
+        description: 'Gemini model ID for two-step grounded discovery & extraction'
+        required: false
+        default: 'gemini-2.5-flash'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: atlas-autonomous-curator
+  cancel-in-progress: false
+
+jobs:
+  curate-atlas:
+    name: Discover, Verify & Append Governance Citations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run autonomous curation pipeline (Dry Run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ github.event.inputs.gemini_model || 'gemini-2.5-flash' }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: npm run curate:dry
+
+      - name: Run autonomous curation pipeline (Write Verified Additions)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ github.event.inputs.gemini_model || 'gemini-2.5-flash' }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: npm run curate
+
+      - name: Verify dataset invariants, unit tests, TypeScript types & production build
+        run: |
+          npx tsx --test src/utils/atlasAnalytics.test.ts scripts/curate-atlas.test.mjs
+          npm run lint
+          npm run build
+
+      - name: Commit and push verified dataset updates
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          if git diff --quiet src/data/atlas.json CHANGELOG.md; then
+            echo "No new verified additions passed quality gate in this cycle."
+            exit 0
+          fi
+
+          git config user.name "open-atlas-curator[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/atlas.json CHANGELOG.md
+          DATASET_VER=$(node -p "JSON.parse(require('fs').readFileSync('src/data/atlas.json','utf8')).metadata.datasetVersion")
+          git commit -m "chore(atlas): autonomous verified governance sync v${DATASET_VER} [run ${GITHUB_RUN_ID}]"
+          git push

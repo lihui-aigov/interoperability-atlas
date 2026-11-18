@@ -1,0 +1,1107 @@
+{
+  "metadata": {
+    "atlasName": "Open Atlas of AI Governance Interoperability",
+    "datasetVersion": "2026.11.4",
+    "schemaVersion": "1.2.0",
+    "lastUpdated": "2026-11-17T06:00:00Z",
+    "maintainer": "Open AI Governance Interoperability Working Group",
+    "repositoryWorkflow": "docs/autonomous-curator.workflow.yml",
+    "totalCounts": {
+      "useCases": 6,
+      "controls": 8,
+      "instruments": 7,
+      "mappings": 76
+    },
+    "recentUpdates": [
+      {
+        "id": "upd-2026-11-17-01",
+        "timestamp": "2026-11-17T06:00:00Z",
+        "runId": "gh-run-11940284",
+        "changeType": "new_mapping",
+        "summary": "Mapped Singapore Model AI Governance Framework for Agentic AI tool-scoping checkpoints (§3.2 & §4.1) to Autonomous Public-Service Agent runtime boundaries and human approval gates.",
+        "affectedIds": ["uc-agentic-public-service", "ctrl-agent-boundaries", "inst-sg-agentic"],
+        "sourceReference": "IMDA Singapore / AI Verify Foundation Agentic AI Governance Release"
+      },
+      {
+        "id": "upd-2026-11-12-02",
+        "timestamp": "2026-11-12T06:00:00Z",
+        "runId": "gh-run-11883109",
+        "changeType": "friction_alert",
+        "summary": "Flagged statutory enforcement clash between South Korea AI Basic Act High-Impact AI obligations (effective Jan 2026) and EU AI Act Art. 5(1)(h) prohibition on real-time public biometric identification.",
+        "affectedIds": ["uc-biometric-law-enforcement", "ctrl-ex-ante-fria", "inst-eu-ai-act", "inst-br-kr-laws"],
+        "sourceReference": "MSIT Korea AI Basic Act Enforcement Decree & EUR-Lex Reg. 2024/1689"
+      },
+      {
+        "id": "upd-2026-11-05-03",
+        "timestamp": "2026-11-05T06:00:00Z",
+        "runId": "gh-run-11790452",
+        "changeType": "citation_verified",
+        "summary": "Re-verified EU AI Act Art. 27 Fundamental Rights Impact Assessment template alignment with UNESCO Ethical Impact Assessment (EIA) participatory consultation questions across public welfare triage.",
+        "affectedIds": ["uc-welfare-triage", "ctrl-ex-ante-fria", "inst-eu-ai-act", "inst-unesco-eia"],
+        "sourceReference": "European AI Office Art. 27 Guidance & UNESCO EIA Methodology"
+      },
+      {
+        "id": "upd-2026-10-28-04",
+        "timestamp": "2026-10-28T06:00:00Z",
+        "runId": "gh-run-11642018",
+        "changeType": "instrument_update",
+        "summary": "Added African Union Continental AI Strategy data-representativeness and local clinical cohort validation deltas for Hospital Clinical Diagnostic & Triage Decision Support.",
+        "affectedIds": ["uc-clinical-triage", "ctrl-data-aibom", "inst-au-strategy"],
+        "sourceReference": "AU Executive Council Endorsed Continental AI Strategy (§2.3 & §3.1)"
+      },
+      {
+        "id": "upd-2026-10-19-05",
+        "timestamp": "2026-10-19T06:00:00Z",
+        "runId": "gh-run-11509871",
+        "changeType": "new_mapping",
+        "summary": "Linked UNESCO Recommendation §84–86 water and compute lifecycle disclosure provisions to Automated Public Procurement & Tender Screening evaluation criteria.",
+        "affectedIds": ["uc-procurement-screening", "ctrl-env-footprint", "inst-unesco-eia"],
+        "sourceReference": "UNESCO Recommendation on the Ethics of AI, Policy Area 9"
+      }
+    ]
+  },
+  "useCases": [
+    {
+      "id": "uc-welfare-triage",
+      "title": "Public Welfare & Social Benefit Eligibility Triage",
+      "sector": "Public Administration",
+      "summary": "Algorithmic eligibility scoring, household income verification, and fraud-anomaly flagging for municipal or national social protection benefits.",
+      "deploymentContext": "Deployed by social security ministries and municipal welfare agencies to prioritize caseworker review queues or trigger benefit suspension audits.",
+      "riskProfile": "High-Impact Public Entitlements",
+      "primaryActors": ["Social Protection Ministries", "Municipal Caseworkers", "Benefit Applicants"]
+    },
+    {
+      "id": "uc-clinical-triage",
+      "title": "Hospital Clinical Diagnostic & Triage Decision Support",
+      "sector": "Healthcare & Life Sciences",
+      "summary": "Multimodal emergency-department acuity prioritization, sepsis deterioration alerts, and radiology diagnostic triage integrated into electronic health records.",
+      "deploymentContext": "Operated inside acute-care hospital networks where clinicians allocate ICU beds, imaging priority, and urgent therapeutic interventions under time pressure.",
+      "riskProfile": "Safety-Critical Clinical Care",
+      "primaryActors": ["Hospital Networks", "Emergency Physicians", "Medical Device Regulators", "Patients"]
+    },
+    {
+      "id": "uc-procurement-screening",
+      "title": "Automated Public Procurement & Tender Screening",
+      "sector": "Public Finance & Contracting",
+      "summary": "AI-assisted vendor pre-qualification, bid-rigging anomaly detection, and technical proposal scoring in government infrastructure and IT tenders.",
+      "deploymentContext": "Used by central procurement authorities and multilateral development projects to evaluate supplier submissions and detect collusive bidding patterns.",
+      "riskProfile": "Public Fiscal Integrity & Fair Competition",
+      "primaryActors": ["Central Procurement Offices", "Bidding Vendors", "Supreme Audit Institutions"]
+    },
+    {
+      "id": "uc-agentic-public-service",
+      "title": "Autonomous Public-Service Agent with External Tool/Database Write Access",
+      "sector": "Digital Government & Agentic AI",
+      "summary": "Multi-step foundation-model agent authorized to invoke municipal APIs, update licensing registries, issue tax payment adjustments, and send binding notices.",
+      "deploymentContext": "Embedded in e-government citizen portals where autonomous tool-calling plans and executes state-mutating transactions across backend databases.",
+      "riskProfile": "Autonomous State-Mutating Execution",
+      "primaryActors": ["Digital Government Agencies", "Platform Security Engineers", "Citizens & Businesses"]
+    },
+    {
+      "id": "uc-exam-proctoring",
+      "title": "Adaptive Student Assessment & Remote Exam Proctoring",
+      "sector": "Education & Credentialing",
+      "summary": "Dynamic university entrance item routing paired with automated webcam gaze, keystroke, audio, and room-scan academic integrity scoring.",
+      "deploymentContext": "Adopted by public universities, national examination boards, and professional licensing bodies to administer high-stakes remote credentials.",
+      "riskProfile": "Educational Access & Youth Surveillance",
+      "primaryActors": ["Universities & Exam Boards", "EdTech Vendors", "Students & Test-Takers"]
+    },
+    {
+      "id": "uc-biometric-law-enforcement",
+      "title": "Law Enforcement Biometric Identification in Public Spaces",
+      "sector": "Justice & Public Security",
+      "summary": "Real-time and retrospective remote facial and gait biometric matching across transit hubs and civic spaces to locate missing persons or criminal suspects.",
+      "deploymentContext": "Operated by national police and transit security authorities linking live CCTV feeds or body-worn footage against watchlist biometric templates.",
+      "riskProfile": "Fundamental Rights & Civic Surveillance",
+      "primaryActors": ["Law Enforcement Agencies", "Judicial Oversight Bodies", "Data Protection Authorities", "General Public"]
+    }
+  ],
+  "controls": [
+    {
+      "id": "ctrl-bias-audit",
+      "title": "Subgroup Disparity & Bias Audit",
+      "category": "Fairness & Non-Discrimination",
+      "artifactName": "Disaggregated Demographic Parity & Error-Rate Dossier",
+      "description": "Pre-deployment and periodic empirical evaluation of false-positive, false-negative, and calibration disparities across protected demographic and intersectional subgroups.",
+      "verificationMethod": "Stratified holdout testing across sex, age, disability, linguistic, and regional cohorts with documented confidence intervals."
+    },
+    {
+      "id": "ctrl-human-override",
+      "title": "Meaningful Human Override & Escalation Protocol",
+      "category": "Human-AI Teaming",
+      "artifactName": "Trained Operator Override SOP & Stop-Switch Validation Log",
+      "description": "Operationalized authority, UI friction against automation bias, and technical stop-switches enabling qualified personnel to inspect, override, or halt AI outputs.",
+      "verificationMethod": "Simulated escalation drills, operator competency certification, and UI telemetry proving non-rubber-stamp review rates."
+    },
+    {
+      "id": "ctrl-ex-ante-fria",
+      "title": "Ex-Ante Ethical & Fundamental Rights Impact Assessment",
+      "category": "Pre-Deployment Governance",
+      "artifactName": "Structured FRIA / EIA Dossier & Stakeholder Consultation Record",
+      "description": "Systematic prior assessment of harms to fundamental rights, vulnerable populations, rule of law, and proportionality prior to system commissioning.",
+      "verificationMethod": "Signed multidisciplinary review board sign-off, affected-community consultation minutes, and public registry filing where mandated."
+    },
+    {
+      "id": "ctrl-data-aibom",
+      "title": "Training Data Provenance & AIBOM",
+      "category": "Supply Chain & Data Governance",
+      "artifactName": "Signed AI Bill of Materials (AIBOM) & Dataset Lineage Manifest",
+      "description": "Machine-readable inventory of base models, fine-tuning datasets, licensing/consent basis, geographic representativeness, and synthetic data ratios.",
+      "verificationMethod": "Cryptographically signed CycloneDX/SPDX AIBOM manifest and dataset datasheets audited against lawful collection records."
+    },
+    {
+      "id": "ctrl-agent-boundaries",
+      "title": "Runtime Agent Action Boundaries & Audit Logs",
+      "category": "Runtime Safety & Security",
+      "artifactName": "Least-Privilege Tool Sandbox Policy & Immutable Execution Trace",
+      "description": "Deterministic action-space allowlists, monetary/record blast-radius caps, human confirmation gates for write actions, and tamper-evident step traces.",
+      "verificationMethod": "Red-team prompt-injection/tool-misuse testing and automated policy-engine enforcement logs for every external API invocation."
+    },
+    {
+      "id": "ctrl-contestability",
+      "title": "Citizen Contestability & Redress Workflow",
+      "category": "Transparency & Accountability",
+      "artifactName": "Adverse-Decision Explanation Notice & Human Appeal SLA Workflow",
+      "description": "Plain-language notification when AI informs an individual decision, paired with counterfactual or factor explanations and accessible human reconsideration.",
+      "verificationMethod": "End-to-end audit of citizen notice clarity, appeal turnaround SLAs, and reversal-rate tracking independent of the automated score."
+    },
+    {
+      "id": "ctrl-env-footprint",
+      "title": "Environmental Compute/Water Footprint Disclosure",
+      "category": "Sustainability & Resource Governance",
+      "artifactName": "Lifecycle Compute Energy, Carbon & Water Consumption Ledger",
+      "description": "Measurement and procurement disclosure of training and inference energy use (kWh), location-based carbon intensity, and data-center cooling water draw.",
+      "verificationMethod": "Standardized telemetry per 1,000 inferences and cloud provider regional sustainability attestations."
+    },
+    {
+      "id": "ctrl-post-market",
+      "title": "Post-Market Incident Monitoring",
+      "category": "Continuous Assurance",
+      "artifactName": "Production Drift Telemetry & Serious-Incident Reporting Playbook",
+      "description": "Continuous production monitoring for distribution shift, emergent failure modes, and time-bound statutory reporting of serious harms or rights breaches.",
+      "verificationMethod": "Automated drift alerting thresholds and rehearsed incident notification pipelines mapped to national regulator deadlines."
+    }
+  ],
+  "instruments": [
+    {
+      "id": "inst-unesco-eia",
+      "shortName": "UNESCO Ethics & EIA",
+      "title": "UNESCO Recommendation on the Ethics of AI & Ethical Impact Assessment (EIA)",
+      "issuingBody": "UNESCO (194 Member States)",
+      "jurisdictionOrScope": "Global Multilateral",
+      "legalNature": "Multilateral Norm",
+      "adoptionYear": 2021,
+      "officialUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "summary": "First global normative standard on AI ethics adopted by 194 Member States, operationalized via the UNESCO Ethical Impact Assessment (EIA) procurement and lifecycle tool."
+    },
+    {
+      "id": "inst-eu-ai-act",
+      "shortName": "EU AI Act",
+      "title": "EU Artificial Intelligence Act (Regulation (EU) 2024/1689)",
+      "issuingBody": "European Parliament & Council of the EU",
+      "jurisdictionOrScope": "European Union (Extraterritorial Market Scope)",
+      "legalNature": "Binding Regulation",
+      "adoptionYear": 2024,
+      "officialUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "summary": "Comprehensive binding horizontal regulation establishing prohibited AI practices, strict conformity obligations for Annex I/III high-risk systems, and deployer FRIA duties."
+    },
+    {
+      "id": "inst-iso-42001",
+      "shortName": "ISO/IEC 42001",
+      "title": "ISO/IEC 42001:2023 — AI Management Systems (AIMS)",
+      "issuingBody": "ISO / IEC JTC 1/SC 42",
+      "jurisdictionOrScope": "International Technical Standard",
+      "legalNature": "Certifiable Standard",
+      "adoptionYear": 2023,
+      "officialUrl": "https://www.iso.org/standard/81230.html",
+      "summary": "Auditable international management system standard specifying organizational clauses and Annex A operational controls across AI risk, impact, data, and lifecycle oversight."
+    },
+    {
+      "id": "inst-nist-ai-rmf",
+      "shortName": "NIST AI RMF 1.0",
+      "title": "NIST AI Risk Management Framework (AI RMF 1.0 & GenAI Profile)",
+      "issuingBody": "U.S. National Institute of Standards and Technology",
+      "jurisdictionOrScope": "United States / Global Voluntary Benchmark",
+      "legalNature": "Voluntary Risk Framework",
+      "adoptionYear": 2023,
+      "officialUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "summary": "Widely adopted socio-technical risk engineering framework structured around GOVERN, MAP, MEASURE, and MANAGE functions with companion Generative AI controls."
+    },
+    {
+      "id": "inst-sg-agentic",
+      "shortName": "Singapore Agentic AI",
+      "title": "Singapore Model AI Governance Framework for Agentic AI",
+      "issuingBody": "Infocomm Media Development Authority (IMDA) & AI Verify",
+      "jurisdictionOrScope": "Singapore / ASEAN Reference",
+      "legalNature": "Voluntary Risk Framework",
+      "adoptionYear": 2025,
+      "officialUrl": "https://aiverifyfoundation.sg/",
+      "summary": "Operational governance blueprint addressing autonomous multi-step AI agents, focusing on action-space bounding, tool-permission scoping, reversibility, and human checkpoints."
+    },
+    {
+      "id": "inst-au-strategy",
+      "shortName": "AU Continental AI Strategy",
+      "title": "African Union Continental Artificial Intelligence Strategy",
+      "issuingBody": "African Union Commission (55 Member States)",
+      "jurisdictionOrScope": "Pan-African Continental",
+      "legalNature": "Continental Strategy",
+      "adoptionYear": 2024,
+      "officialUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "summary": "People-centric developmental governance strategy prioritizing African data sovereignty, linguistic/cultural representativeness, public-sector inclusion, and tiered risk regulation."
+    },
+    {
+      "id": "inst-br-kr-laws",
+      "shortName": "Brazil PL 2338 & Korea AI Act",
+      "title": "Brazil AI Regulatory Framework (PL 2338) / South Korea AI Basic Act",
+      "issuingBody": "Federal Senate of Brazil / National Assembly of Korea",
+      "jurisdictionOrScope": "Major G20 Statutory Regimes (LATAM & East Asia)",
+      "legalNature": "Binding Regulation",
+      "adoptionYear": 2025,
+      "officialUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "summary": "Leading non-EU statutory AI laws combining rights-based algorithmic contestability and public registry rules (Brazil PL 2338) with High-Impact AI safety duties (Korea AI Basic Act)."
+    }
+  ],
+  "mappings": [
+    {
+      "id": "map-wt-bias-eu",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 10(2)(f)–(g) & Annex III(5)(a)",
+      "rationale": "Classifies public-assistance eligibility systems as high-risk and mandates examination of training/validation data for biases likely to affect health, safety, or fundamental rights.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-wt-bias-unesco",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO Recommendation §62 & EIA Tool §3.4",
+      "rationale": "Requires empirical fairness testing across gender, socioeconomic, and marginalized subgroups before deploying automated public-benefit allocation tools.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-wt-bias-nist",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 MEASURE 2.11",
+      "rationale": "Specifies disaggregated evaluation of computational and systemic socio-technical bias across demographic subgroups using standardized error-rate metrics.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-wt-bias-iso",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Annex A Control A.6.2.6 & A.7.4",
+      "rationale": "Satisfies AIMS verification and validation controls requiring documented evidence that model performance meets defined fairness and data quality criteria.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-wt-bias-au",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-au-strategy",
+      "alignmentType": "delta",
+      "clauseCitation": "AU Continental AI Strategy §3.2 (Inclusion & Diversity)",
+      "rationale": "Adds requirement to validate welfare triage models across informal-economy income patterns, rural/urban divides, and indigenous linguistic groups absent from standard Western benchmarks.",
+      "sourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "lastVerified": "2026-10-28"
+    },
+    {
+      "id": "map-wt-bias-friction-eu",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "friction",
+      "clauseCitation": "EU AI Act Art. 10(5) vs. GDPR Art. 9(1)",
+      "rationale": "Disaggregated subgroup auditing requires sensitive ethnic/demographic attributes; Art. 10(5) permits processing strictly by high-risk providers as a last resort with immediate deletion, clashing with continuous deployer subgroup telemetry expected in NIST MEASURE 2.11.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-10"
+    },
+    {
+      "id": "map-wt-human-eu",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 14(4)(b)–(d) & Art. 26(2)",
+      "rationale": "Requires technical measures countering automation bias and compels public agencies to assign oversight exclusively to caseworkers with necessary competence, training, and authority.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-wt-human-iso",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Control A.9.3 (Human Oversight)",
+      "rationale": "Direct operational match for defining human oversight roles, override thresholds, and escalation procedures throughout production AI operation.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-wt-human-brkr",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "equivalent",
+      "clauseCitation": "Brazil PL 2338 Art. 18 & Korea AI Basic Act Art. 34(1)",
+      "rationale": "Both statutory regimes classify public benefit eligibility as high-risk/high-impact AI requiring documented human supervision and intervention mechanisms.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-08"
+    },
+    {
+      "id": "map-wt-fria-eu",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 27(1)–(3) & Art. 49(3)",
+      "rationale": "Beyond internal risk assessment, public-body deployers must complete a statutory Fundamental Rights Impact Assessment prior to first use, notify the national market surveillance authority, and register in the EU database.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-wt-fria-unesco",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "delta",
+      "clauseCitation": "UNESCO Recommendation §50–53 & EIA Tool §2.3",
+      "rationale": "Mandates structured ex-ante participatory consultation with affected vulnerable communities and civil society representatives—an explicit procedural delta absent from ISO/IEC 42001.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-wt-fria-brkr",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "delta",
+      "clauseCitation": "Brazil PL 2338 Art. 23–25",
+      "rationale": "Requires public conclusions of the Algorithmic Impact Assessment (AIA) to be published in an accessible national public repository while safeguarding trade secrets.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-08"
+    },
+    {
+      "id": "map-wt-fria-iso",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Clause 6.1.4 & Annex A.5",
+      "rationale": "Core AI System Impact Assessment documentation assessing societal and individual consequences satisfies the foundational baseline prior to jurisdictional filing.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-wt-contest-eu",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 86(1)",
+      "rationale": "Grants affected citizens an enforceable statutory right to obtain clear and meaningful explanations from the deployer on the role of the high-risk AI system and the main elements of the decision.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-wt-contest-unesco",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO Recommendation §37–41 & §45",
+      "rationale": "Establishes intelligibility, notice of AI use, and effective administrative redress workflows as core prerequisites for public-sector social protection decisions.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-wt-contest-brkr",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "delta",
+      "clauseCitation": "Brazil PL 2338 Art. 17–19",
+      "rationale": "Mandates explanation within a statutory 15-day response window detailing technical criteria, feature contribution weights, and immediate right to human re-examination.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-08"
+    },
+    {
+      "id": "map-wt-contest-nist",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 GOVERN 4.3 & MEASURE 2.9",
+      "rationale": "Aligns model explainability outputs and external stakeholder feedback channels with operational contestability procedures.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-wt-post-eu",
+      "useCaseId": "uc-welfare-triage",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 72 & Art. 73",
+      "rationale": "Requires continuous post-market monitoring plan and mandatory reporting of widespread fundamental-rights infringements within strict 2-to-15-day clocks.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+
+    {
+      "id": "map-ct-human-eu",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 14 & Annex I Section A(11) (MDR)",
+      "rationale": "Clinical decision-support devices covered by Medical Device Regulation (EU) 2017/745 are high-risk AI systems requiring clinician interpretability, confidence bounds, and override controls.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ct-human-unesco",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO Recommendation §35 & §121 (Health & Well-Being)",
+      "rationale": "Affirms as a non-derogable norm that life-and-death clinical decisions must never be ceded to autonomous AI systems and must preserve patient-physician oversight.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-ct-human-nist",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 GOVERN 3.2 & MANAGE 2.4",
+      "rationale": "Maps directly to defined clinician-in-the-loop responsibilities, safe-state fallback procedures, and disengagement triggers when diagnostic uncertainty spikes.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-ct-human-brkr",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "equivalent",
+      "clauseCitation": "Korea AI Basic Act Art. 31 & Art. 34 (High-Impact Healthcare AI)",
+      "rationale": "Explicitly designates medical-device and healthcare life-safety AI as 'High-Impact AI' requiring human oversight plans and advance patient notification.",
+      "sourceUrl": "https://www.law.go.kr/",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-ct-bias-eu",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 10(3)–(4) & Art. 15(1)",
+      "rationale": "Mandates representative clinical datasets reflecting the intended patient demographics and consistent accuracy across physiological subgroups.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ct-bias-iso",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Control A.6.2.6 & A.7.4",
+      "rationale": "Single subgroup performance dossier satisfies ISO/IEC 42001 verification controls alongside clinical validation audits.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ct-aibom-au",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-au-strategy",
+      "alignmentType": "delta",
+      "clauseCitation": "AU Continental AI Strategy §2.3 (Data Governance & Local Cohorts)",
+      "rationale": "Requires provenance disclosure proving local African epidemiological and phenotypic cohort validation rather than uncalibrated import of Global North hospital training datasets.",
+      "sourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "lastVerified": "2026-10-28"
+    },
+    {
+      "id": "map-ct-aibom-iso",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Controls A.7.2, A.7.3 & A.7.5",
+      "rationale": "Covers data acquisition basis, lineage documentation, and data preparation provenance across model versions.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ct-aibom-nist",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 MAP 2.3 & MAP 4.1",
+      "rationale": "Establishes scientific integrity, training dataset documentation, and third-party pre-trained foundation model supply-chain tracking.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-ct-post-eu",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 73(2)–(4) (2/10/15-Day Incident Clocks)",
+      "rationale": "Imposes rigid statutory reporting deadlines: max 10 days where death of a patient occurs, 2 days for widespread infringement, and 15 days for other serious incidents.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ct-post-friction",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "friction",
+      "clauseCitation": "EU AI Act Art. 73 & MDR Art. 87 vs. ANVISA / Korea MFDS Vigilance",
+      "rationale": "Overlapping but non-identical definitions of 'serious incident', root-cause investigation windows, and sectoral health-device vs. horizontal AI regulator portals create conflicting multi-jurisdictional disclosure triggers.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-10"
+    },
+    {
+      "id": "map-ct-post-iso",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Clause 9.1 & Control A.6.2.8",
+      "rationale": "Requires continuous operational telemetry, drift detection, and corrective-action logging across deployed clinical environments.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ct-fria-eu",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 27(1) (Public Healthcare Deployer Duty)",
+      "rationale": "Public hospitals and private entities providing public emergency healthcare services must execute a deployer FRIA in addition to the vendor's CE conformity assessment.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ct-contest-unesco",
+      "useCaseId": "uc-clinical-triage",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO Recommendation §122–123",
+      "rationale": "Requires transparent patient informed consent and accessible second-opinion contestability when AI triage scores affect care allocation.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+
+    {
+      "id": "map-ps-contest-unesco",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO EIA Tool §4.1 (Public Procurement Accountability)",
+      "rationale": "Requires transparent scoring disclosures and administrative bid-protest contestability for vendors screened or disqualified by automated tender evaluation.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-10-19"
+    },
+    {
+      "id": "map-ps-contest-iso",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Controls A.8.4 & A.8.5",
+      "rationale": "Establishes external communication of system limitations to affected external parties and structured incident/concern reporting channels.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ps-contest-brkr",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "equivalent",
+      "clauseCitation": "Brazil PL 2338 Art. 17 & Public Administration AI Rules",
+      "rationale": "Guarantees affected economic actors prior notice of automated evaluation and intelligible explanation of disqualification criteria in public contracting.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-08"
+    },
+    {
+      "id": "map-ps-aibom-iso",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Control A.10.2 & A.10.3 (Supplier & Customer)",
+      "rationale": "Mandates supply-chain provenance and allocation of responsibilities across third-party model and dataset suppliers in procurement toolchains.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ps-aibom-nist",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 GOVERN 6.1 & MAP 4.1",
+      "rationale": "Addresses third-party AI acquisition due diligence, software/AI bill of materials verification, and historical procurement dataset lineage.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-ps-bias-nist",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 MEASURE 2.11",
+      "rationale": "Tests historical award data for entrenched incumbent bias against SMEs, minority-owned suppliers, or newer regional entrants.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-ps-bias-au",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-au-strategy",
+      "alignmentType": "delta",
+      "clauseCitation": "AU Continental AI Strategy §2.1 (Local Ecosystem & SME Inclusion)",
+      "rationale": "Requires procurement screening algorithms to be audited against exclusionary bias penalizing domestic African SMEs and local-language tender documentation.",
+      "sourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "lastVerified": "2026-10-28"
+    },
+    {
+      "id": "map-ps-env-unesco",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-env-footprint",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "delta",
+      "clauseCitation": "UNESCO Recommendation §84–86 (Environment & Ecosystems)",
+      "rationale": "Explicitly instructs states to evaluate direct and indirect carbon, energy, and water impacts when procuring or operating public-sector AI systems.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-10-19"
+    },
+    {
+      "id": "map-ps-env-eu",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-env-footprint",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 40(2), Art. 53(1)(a) & Annex XI",
+      "rationale": "Mandatory compute energy reporting applies primarily to General-Purpose AI model providers and high-risk harmonized standards, requiring procurement officers to add voluntary green clauses (Art. 95) for non-Annex III tools.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-10-25"
+    },
+    {
+      "id": "map-ps-env-iso",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-env-footprint",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Annex B.5 (Environmental Societal Impact)",
+      "rationale": "Includes environmental resource consumption within optional/contextual AIMS impact assessment scopes when relevant to organizational sustainability commitments.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ps-fria-friction",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "friction",
+      "clauseCitation": "EU AI Act Annex III Scope Gap vs. UNESCO EIA §1.2",
+      "rationale": "B2G automated tender screening is omitted from EU AI Act Annex III high-risk categories (falling only under Art. 50 transparency if generative), creating a regulatory blind spot compared to UNESCO EIA and Brazil public-administration algorithmic impact mandates.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-04"
+    },
+    {
+      "id": "map-ps-human-nist",
+      "useCaseId": "uc-procurement-screening",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 GOVERN 1.4 & MANAGE 2.4",
+      "rationale": "Requires human contracting officer sign-off prior to any binding vendor exclusion or bid-rigging referral.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+
+    {
+      "id": "map-ag-bound-sg",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-sg-agentic",
+      "alignmentType": "delta",
+      "clauseCitation": "Singapore Agentic AI Framework §3.1–3.3 (Action-Space Bounding)",
+      "rationale": "Defines dedicated agent-specific obligations: least-privilege per-tool credential scoping, monetary/database blast-radius limits, reversible staging sandboxes, and sub-agent delegation controls absent from older horizontal frameworks.",
+      "sourceUrl": "https://aiverifyfoundation.sg/",
+      "lastVerified": "2026-11-17"
+    },
+    {
+      "id": "map-ag-bound-nist",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF GenAI Profile (GV-6.1, MP-5.1, MS-2.7)",
+      "rationale": "Maps adversarial prompt-injection defenses, external API tool-invocation guardrails, and runtime execution logging to core socio-technical risk controls.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-14"
+    },
+    {
+      "id": "map-ag-bound-iso",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Control A.6.2.7 (Event Logging) & A.6.2.5",
+      "rationale": "Immutable step-level tool execution traces satisfy ISO/IEC 42001 system recording and deployment security verification artifacts.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-ag-bound-eu",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 12 (Record-Keeping) & Art. 15(5) (Cybersecurity)",
+      "rationale": "Mandates automatic lifetime event logging and technical resilience against indirect prompt injection or unauthorized model/tool manipulation.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-15"
+    },
+    {
+      "id": "map-ag-human-sg",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-sg-agentic",
+      "alignmentType": "delta",
+      "clauseCitation": "Singapore Agentic AI Framework §4.1–4.2 (Meaningful Checkpoints)",
+      "rationale": "Requires risk-tiered synchronous human approval gates specifically before irreversible external database writes or citizen-facing legal notices, preventing alert fatigue from approving trivial read steps.",
+      "sourceUrl": "https://aiverifyfoundation.sg/",
+      "lastVerified": "2026-11-17"
+    },
+    {
+      "id": "map-ag-human-eu",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 14(4)(e) ('Stop' Button & Safe Halt)",
+      "rationale": "Requires an immediate interrupt control allowing human operators to halt multi-step agent execution cleanly in a safe state.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-15"
+    },
+    {
+      "id": "map-ag-friction-eu",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "friction",
+      "clauseCitation": "EU AI Act Art. 3(23) & Art. 43(4) ('Substantial Modification')",
+      "rationale": "EU AI Act conformity assessment assumes bounded, pre-specified intended purpose; dynamic agentic tool composition and runtime MCP/API updates risk triggering continuous 'substantial modification' re-certification or shifting deployer-to-provider liability under Art. 25.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-16"
+    },
+    {
+      "id": "map-ag-friction-brkr",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "friction",
+      "clauseCitation": "Brazil PL 2338 Art. 27–29 (Strict vs. Presumed Civil Liability)",
+      "rationale": "When a public-service foundation-model agent chains third-party APIs and mutates records erroneously, strict/presumed liability allocation between base GPAI vendor and public-agency deployer diverges sharply from voluntary shared-responsibility norms.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-08"
+    },
+    {
+      "id": "map-ag-contest-unesco",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO Recommendation §35 & §40",
+      "rationale": "Requires explicit disclosure that a citizen is interacting with an autonomous agent and clear attribution of a human administrative officer accountable for reversing erroneous writes.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-ag-env-unesco",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-env-footprint",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "delta",
+      "clauseCitation": "UNESCO Recommendation §84–85",
+      "rationale": "Recursive multi-agent reasoning loops multiply token and compute intensity 5–20x per citizen transaction; UNESCO calls for proportional environmental footprint tracking.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-10-19"
+    },
+    {
+      "id": "map-ag-aibom-eu",
+      "useCaseId": "uc-agentic-public-service",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 53(1)(c)–(d) (GPAI Training Content Summary)",
+      "rationale": "Underlying general-purpose model must provide a public summary of training data using the European AI Office template and verifiable copyright opt-out compliance.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-15"
+    },
+
+    {
+      "id": "map-ep-bias-eu",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Annex III(3)(b) & (d) & Art. 10(2)(f)",
+      "rationale": "Explicitly lists both adaptive learning-outcome assessment and remote test-behavior monitoring as high-risk AI requiring subgroup false-flag bias auditing.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ep-bias-unesco",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "equivalent",
+      "clauseCitation": "UNESCO Recommendation §102–105 (Education & Research)",
+      "rationale": "Requires empirical validation that automated assessment and proctoring do not penalize neurodivergent learners, students with disabilities, or non-standard home environments.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-ep-bias-au",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-au-strategy",
+      "alignmentType": "delta",
+      "clauseCitation": "AU Continental AI Strategy §3.1 (Education, Youth & Connectivity)",
+      "rationale": "Adds mandatory testing for low-bandwidth packet drop, intermittent lighting, skin-tone facial detection parity, and multilingual accent fairness in oral assessments.",
+      "sourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "lastVerified": "2026-10-28"
+    },
+    {
+      "id": "map-ep-bias-nist",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 MEASURE 2.6 & 2.11",
+      "rationale": "Evaluates construct validity and differential false-positive rates across demographic and assistive-technology subgroups.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-ep-friction-emotion",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "friction",
+      "clauseCitation": "EU AI Act Art. 5(1)(f) vs. Voluntary Risk Frameworks",
+      "rationale": "EU AI Act Art. 5(1)(f) strictly prohibits AI inferring emotions (anxiety, stress, deception affect) in educational institutions, whereas commercial proctoring suites certified under ISO/IEC 42001 or NIST AI RMF outside the EU frequently bundle affective scoring unless feature-fenced.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-ep-human-eu",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 14(4) & Art. 26(2)",
+      "rationale": "Prohibits automatic exam invalidation solely on proctoring anomaly scores; trained academic staff must review raw evidence before any disciplinary action.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ep-contest-brkr",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "equivalent",
+      "clauseCitation": "Brazil PL 2338 Art. 14(I) & Art. 18–19",
+      "rationale": "Classifies educational admission and evaluation AI as high-risk and guarantees students access to specific flagging factors and human appeal.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-08"
+    },
+    {
+      "id": "map-ep-contest-eu",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-contestability",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 86(1) & Art. 26(11)",
+      "rationale": "Requires proactive upfront notification to students and statutory explanation of how adaptive routing or proctoring flags influenced their exam outcome.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ep-fria-eu",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 27(1) (Educational Deployer FRIA)",
+      "rationale": "Public and private educational institutions providing public-service education must execute a Fundamental Rights Impact Assessment specifically addressing minors and student privacy.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-11"
+    },
+    {
+      "id": "map-ep-fria-iso",
+      "useCaseId": "uc-exam-proctoring",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Control A.5.2–A.5.4",
+      "rationale": "Documents individual and societal impact assessments on learner well-being, privacy intrusion, and false accusation harms.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+
+    {
+      "id": "map-bl-friction-prohibition",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "friction",
+      "clauseCitation": "EU AI Act Art. 5(1)(h) & Art. 5(2)–(3) vs. ISO/NIST Risk Controls",
+      "rationale": "Real-time remote biometric identification in public spaces for law enforcement is categorically prohibited under Art. 5(1)(h) save exhaustive narrow exceptions (kidnapping, terrorism, Annex II serious crimes) with prior judicial warrant—meaning technical AIMS/RMF controls alone cannot legalize deployment.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-bl-friction-unesco",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-unesco-eia",
+      "alignmentType": "friction",
+      "clauseCitation": "UNESCO Recommendation §26 (Mass Surveillance Prohibition)",
+      "rationale": "Normatively prohibits use of AI systems for mass surveillance and social scoring, clashing with jurisdictions that permit broad public-space biometric watchlist scanning under administrative police powers.",
+      "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
+      "lastVerified": "2026-11-05"
+    },
+    {
+      "id": "map-bl-friction-brkr",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-ex-ante-fria",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "friction",
+      "clauseCitation": "Brazil PL 2338 Art. 13/15 Restrictions vs. Korea AI Basic Act Art. 31",
+      "rationale": "Brazil imposes tight statutory statutory hurdles and judicial authorization limits on public-space biometric identification, whereas South Korea's AI Basic Act regulates biometric analysis as a permissible High-Impact AI category subject to safety/oversight duties rather than a ban.",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-bl-human-eu",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 14(5) ('Two-Person Verification Rule')",
+      "rationale": "Mandates a strict operational delta: no law enforcement action or arrest may be taken based on remote biometric identification unless separately verified and confirmed by at least two natural persons with specialized competence.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-bl-human-nist",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-human-override",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF 1.0 GOVERN 1.2 & MANAGE 2.4",
+      "rationale": "Requires trained human forensic examiner review rather than automated probable-cause action on candidate match lists.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-bl-bias-eu",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "equivalent",
+      "clauseCitation": "EU AI Act Art. 10 & Annex III(1)(a)",
+      "rationale": "Requires empirical false-match and false-non-match rate testing across demographic cohorts, lighting conditions, and age brackets.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-bl-bias-nist",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-nist-ai-rmf",
+      "alignmentType": "equivalent",
+      "clauseCitation": "NIST AI RMF MEASURE 2.11 & NIST FRVT / FRTE Benchmarks",
+      "rationale": "Directly aligns with NIST Face Recognition Technology Evaluation demographic differential protocols.",
+      "sourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "lastVerified": "2026-11-02"
+    },
+    {
+      "id": "map-bl-bias-au",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-bias-audit",
+      "instrumentId": "inst-au-strategy",
+      "alignmentType": "delta",
+      "clauseCitation": "AU Continental AI Strategy §3.4 (Human Rights & Biometric Accuracy)",
+      "rationale": "Highlights heightened wrongful-detention risks from imported facial recognition models exhibiting elevated false-positive rates on darker skin tones unless locally benchmarked.",
+      "sourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "lastVerified": "2026-10-28"
+    },
+    {
+      "id": "map-bl-bound-iso",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-iso-42001",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ISO/IEC 42001 Control A.6.2.7 (Audit Logging)",
+      "rationale": "Requires tamper-evident query logs recording officer identity, warrant/case reference, similarity threshold, and retention purge timestamps.",
+      "sourceUrl": "https://www.iso.org/standard/81230.html",
+      "lastVerified": "2026-10-30"
+    },
+    {
+      "id": "map-bl-post-eu",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 5(4) & Art. 5(6) (Per-Use Authority Notification & Annual Report)",
+      "rationale": "Every authorized real-time biometric use must be notified to the national market surveillance and data protection authorities (without personal data) and aggregated in annual European Commission transparency reports.",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    },
+    {
+      "id": "map-bl-aibom-eu",
+      "useCaseId": "uc-biometric-law-enforcement",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-eu-ai-act",
+      "alignmentType": "delta",
+      "clauseCitation": "EU AI Act Art. 5(1)(e) (Ban on Untargeted Facial Scraping)",
+      "rationale": "Training data provenance manifest must prove zero untargeted scraping of facial images from the internet or CCTV footage—a strict per-se prohibition under Art. 5(1)(e).",
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "lastVerified": "2026-11-12"
+    }
+  ]
+}

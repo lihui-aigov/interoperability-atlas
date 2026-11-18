@@ -1,0 +1,6 @@
+{
+  "name": "Open Atlas of AI Governance Interoperability",
+  "description": "Use-case-anchored policy and engineering atlas mapping shared operational controls, jurisdictional deltas, and regulatory friction across global AI governance instruments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

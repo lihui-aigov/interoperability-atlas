@@ -1,0 +1,369 @@
+import type {
+  AlignmentType,
+  AtlasDataset,
+  GovernanceInstrument,
+  InteropMapping,
+  OperationalControl,
+  UseCase,
+} from '../types/atlas';
+
+export type NodeFocusType = 'useCase' | 'control' | 'instrument';
+
+export interface FocusSelection {
+  type: NodeFocusType;
+  id: string;
+}
+
+export interface AlignmentCounts {
+  equivalent: number;
+  delta: number;
+  friction: number;
+  total: number;
+}
+
+export interface CoreControlSummary {
+  control: OperationalControl;
+  coveredInstruments: GovernanceInstrument[];
+  equivalentMappings: InteropMapping[];
+  deltaMappings: InteropMapping[];
+  frictionMappings: InteropMapping[];
+  coverageRatio: number;
+}
+
+export interface InteroperabilityBrief {
+  focusType: NodeFocusType;
+  focusId: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  counts: AlignmentCounts;
+  coreControls: CoreControlSummary[];
+  deltaMappings: InteropMapping[];
+  frictionMappings: InteropMapping[];
+  equivalentMappings: InteropMapping[];
+  activeUseCaseIds: Set<string>;
+  activeControlIds: Set<string>;
+  activeInstrumentIds: Set<string>;
+  activeMappings: InteropMapping[];
+}
+
+export function countAlignments(mappings: InteropMapping[]): AlignmentCounts {
+  let equivalent = 0;
+  let delta = 0;
+  let friction = 0;
+  for (const m of mappings) {
+    if (m.alignmentType === 'equivalent') equivalent += 1;
+    else if (m.alignmentType === 'delta') delta += 1;
+    else if (m.alignmentType === 'friction') friction += 1;
+  }
+  return {
+    equivalent,
+    delta,
+    friction,
+    total: mappings.length,
+  };
+}
+
+/**
+ * Computes the active subgraph and the "80/20 Interoperability Brief"
+ * for any selected Use Case, Operational Control, or Governance Instrument.
+ */
+export function buildInteroperabilityBrief(
+  dataset: AtlasDataset,
+  selection: FocusSelection,
+  alignmentFilter: AlignmentType | 'all' = 'all'
+): InteroperabilityBrief {
+  const filteredPool =
+    alignmentFilter === 'all'
+      ? dataset.mappings
+      : dataset.mappings.filter((m) => m.alignmentType === alignmentFilter);
+
+  const activeMappings = filteredPool.filter((m) => {
+    if (selection.type === 'useCase') return m.useCaseId === selection.id;
+    if (selection.type === 'control') return m.controlId === selection.id;
+    return m.instrumentId === selection.id;
+  });
+
+  const activeUseCaseIds = new Set<string>();
+  const activeControlIds = new Set<string>();
+  const activeInstrumentIds = new Set<string>();
+
+  if (selection.type === 'useCase') activeUseCaseIds.add(selection.id);
+  if (selection.type === 'control') activeControlIds.add(selection.id);
+  if (selection.type === 'instrument') activeInstrumentIds.add(selection.id);
+
+  for (const m of activeMappings) {
+    activeUseCaseIds.add(m.useCaseId);
+    activeControlIds.add(m.controlId);
+    activeInstrumentIds.add(m.instrumentId);
+  }
+
+  const instrumentMap = new Map<string, GovernanceInstrument>(
+    dataset.instruments.map((inst) => [inst.id, inst])
+  );
+
+  // Build core control summaries sorted by multi-instrument coverage
+  const totalInstruments = Math.max(dataset.instruments.length, 1);
+  const coreControls: CoreControlSummary[] = [];
+
+  for (const ctrl of dataset.controls) {
+    const ctrlMappings = activeMappings.filter((m) => m.controlId === ctrl.id);
+    if (ctrlMappings.length === 0) continue;
+
+    const eq = ctrlMappings.filter((m) => m.alignmentType === 'equivalent');
+    const dl = ctrlMappings.filter((m) => m.alignmentType === 'delta');
+    const fr = ctrlMappings.filter((m) => m.alignmentType === 'friction');
+
+    // Instruments satisfied via equivalent or delta implementation of this control
+    const satisfiedInstIds = new Set<string>(
+      [...eq, ...dl].map((m) => m.instrumentId)
+    );
+    const coveredInstruments = Array.from(satisfiedInstIds)
+      .map((id) => instrumentMap.get(id))
+      .filter((inst): inst is GovernanceInstrument => Boolean(inst));
+
+    coreControls.push({
+      control: ctrl,
+      coveredInstruments,
+      equivalentMappings: eq,
+      deltaMappings: dl,
+      frictionMappings: fr,
+      coverageRatio: coveredInstruments.length / totalInstruments,
+    });
+  }
+
+  coreControls.sort((a, b) => {
+    if (b.coveredInstruments.length !== a.coveredInstruments.length) {
+      return b.coveredInstruments.length - a.coveredInstruments.length;
+    }
+    return b.equivalentMappings.length - a.equivalentMappings.length;
+  });
+
+  let title = '';
+  let subtitle = '';
+  let summary = '';
+
+  if (selection.type === 'useCase') {
+    const uc = dataset.useCases.find((u) => u.id === selection.id);
+    title = uc?.title ?? selection.id;
+    subtitle = uc ? `${uc.sector} · ${uc.riskProfile}` : 'Use Case';
+    summary = uc?.summary ?? '';
+  } else if (selection.type === 'control') {
+    const ctrl = dataset.controls.find((c) => c.id === selection.id);
+    title = ctrl?.title ?? selection.id;
+    subtitle = ctrl ? `${ctrl.category} · Artifact: ${ctrl.artifactName}` : 'Operational Control';
+    summary = ctrl?.description ?? '';
+  } else {
+    const inst = dataset.instruments.find((i) => i.id === selection.id);
+    title = inst?.title ?? selection.id;
+    subtitle = inst
+      ? `${inst.issuingBody} · ${inst.legalNature} (${inst.adoptionYear})`
+      : 'Governance Instrument';
+    summary = inst?.summary ?? '';
+  }
+
+  return {
+    focusType: selection.type,
+    focusId: selection.id,
+    title,
+    subtitle,
+    summary,
+    counts: countAlignments(activeMappings),
+    coreControls,
+    equivalentMappings: activeMappings.filter((m) => m.alignmentType === 'equivalent'),
+    deltaMappings: activeMappings.filter((m) => m.alignmentType === 'delta'),
+    frictionMappings: activeMappings.filter((m) => m.alignmentType === 'friction'),
+    activeUseCaseIds,
+    activeControlIds,
+    activeInstrumentIds,
+    activeMappings,
+  };
+}
+
+/**
+ * Builds the Control x Instrument matrix for a given Use Case,
+ * optionally filtered by alignment type and text search.
+ */
+export interface MatrixRow {
+  control: OperationalControl;
+  cellsByInstrumentId: Record<string, InteropMapping[]>;
+  rowTotal: number;
+}
+
+export function buildUseCaseMatrix(
+  dataset: AtlasDataset,
+  useCaseId: string,
+  alignmentFilter: AlignmentType | 'all' = 'all',
+  searchQuery = ''
+): MatrixRow[] {
+  const q = searchQuery.trim().toLowerCase();
+
+  const useCaseMappings = dataset.mappings.filter((m) => {
+    if (m.useCaseId !== useCaseId) return false;
+    if (alignmentFilter !== 'all' && m.alignmentType !== alignmentFilter) return false;
+    if (!q) return true;
+    return (
+      m.clauseCitation.toLowerCase().includes(q) ||
+      m.rationale.toLowerCase().includes(q)
+    );
+  });
+
+  const rows: MatrixRow[] = [];
+
+  for (const control of dataset.controls) {
+    const controlMatchesQuery =
+      q.length > 0 &&
+      (control.title.toLowerCase().includes(q) ||
+        control.artifactName.toLowerCase().includes(q) ||
+        control.category.toLowerCase().includes(q));
+
+    const cellsByInstrumentId: Record<string, InteropMapping[]> = {};
+    let rowTotal = 0;
+
+    for (const inst of dataset.instruments) {
+      let cellMappings: InteropMapping[];
+      if (controlMatchesQuery) {
+        // Include all mappings for this control (respecting alignmentFilter) when control title matches search
+        cellMappings = dataset.mappings.filter(
+          (m) =>
+            m.useCaseId === useCaseId &&
+            m.controlId === control.id &&
+            m.instrumentId === inst.id &&
+            (alignmentFilter === 'all' || m.alignmentType === alignmentFilter)
+        );
+      } else {
+        cellMappings = useCaseMappings.filter(
+          (m) => m.controlId === control.id && m.instrumentId === inst.id
+        );
+      }
+      cellsByInstrumentId[inst.id] = cellMappings;
+      rowTotal += cellMappings.length;
+    }
+
+    if (rowTotal > 0 || (!q && alignmentFilter === 'all')) {
+      rows.push({
+        control,
+        cellsByInstrumentId,
+        rowTotal,
+      });
+    }
+  }
+
+  return rows;
+}
+
+/**
+ * Generates a policy-grade Procurement & Readiness Checklist in Markdown
+ * for a concrete AI use case.
+ */
+export function generateProcurementMarkdown(
+  dataset: AtlasDataset,
+  useCase: UseCase
+): string {
+  const brief = buildInteroperabilityBrief(dataset, {
+    type: 'useCase',
+    id: useCase.id,
+  });
+
+  const instMap = new Map(dataset.instruments.map((i) => [i.id, i]));
+  const ctrlMap = new Map(dataset.controls.map((c) => [c.id, c]));
+
+  const lines: string[] = [
+    `# AI Governance Procurement & Interoperability Readiness Checklist`,
+    ``,
+    `**Use Case:** ${useCase.title}`,
+    `**Sector:** ${useCase.sector} · **Risk Profile:** ${useCase.riskProfile}`,
+    `**Atlas Dataset Version:** ${dataset.metadata.datasetVersion} (Generated ${new Date().toISOString().slice(0, 10)})`,
+    ``,
+    `> **Deployment Context:** ${useCase.deploymentContext}`,
+    ``,
+    `---`,
+    ``,
+    `## 1. Executive 80/20 Interoperability Summary`,
+    ``,
+    `- **Mapped Clause Citations:** ${brief.counts.total}`,
+    `- **Interoperable Core (\`equivalent\`):** ${brief.counts.equivalent} mappings — *Comply Once, Verify Across*`,
+    `- **Jurisdictional / Normative Deltas (\`delta\`):** ${brief.counts.delta} mappings — *Targeted Supplemental Obligations*`,
+    `- **Interoperability Friction (\`friction\`):** ${brief.counts.friction} mappings — *Divergent Thresholds, Prohibitions, or Clashes*`,
+    ``,
+    `---`,
+    ``,
+    `## 2. Shared Core Verification Artifacts ("Comply Once, Verify Across")`,
+    ``,
+  ];
+
+  for (const item of brief.coreControls) {
+    if (item.coveredInstruments.length === 0) continue;
+    const instNames = item.coveredInstruments.map((i) => i.shortName).join(', ');
+    lines.push(`### [ ] ${item.control.title}`);
+    lines.push(`- **Required Vendor/Deployer Artifact:** *${item.control.artifactName}*`);
+    lines.push(`- **Verification Method:** ${item.control.verificationMethod}`);
+    lines.push(`- **Satisfies Frameworks (${item.coveredInstruments.length}/${dataset.instruments.length}):** ${instNames}`);
+    for (const eq of item.equivalentMappings) {
+      const inst = instMap.get(eq.instrumentId);
+      lines.push(`  - **${inst?.shortName ?? eq.instrumentId}** (\`${eq.clauseCitation}\`): ${eq.rationale}`);
+    }
+    lines.push(``);
+  }
+
+  lines.push(`---`, ``, `## 3. Jurisdictional & Normative Deltas (Supplemental Requirements)`, ``);
+  if (brief.deltaMappings.length === 0) {
+    lines.push(`_No supplemental jurisdictional deltas recorded for this use case._`, ``);
+  } else {
+    for (const dm of brief.deltaMappings) {
+      const inst = instMap.get(dm.instrumentId);
+      const ctrl = ctrlMap.get(dm.controlId);
+      lines.push(
+        `- [ ] **${inst?.shortName ?? dm.instrumentId}** — *${ctrl?.title ?? dm.controlId}* (\`${dm.clauseCitation}\`): ${dm.rationale} ([Official Source](${dm.sourceUrl}))`
+      );
+    }
+    lines.push(``);
+  }
+
+  lines.push(`---`, ``, `## 4. Interoperability Friction & Legal Escalation Flags`, ``);
+  if (brief.frictionMappings.length === 0) {
+    lines.push(`_No regulatory friction flags recorded for this use case._`, ``);
+  } else {
+    for (const fm of brief.frictionMappings) {
+      const inst = instMap.get(fm.instrumentId);
+      const ctrl = ctrlMap.get(fm.controlId);
+      lines.push(
+        `- **FRICTION ALERT — ${inst?.shortName ?? fm.instrumentId}** / *${ctrl?.title ?? fm.controlId}* (\`${fm.clauseCitation}\`): ${fm.rationale} ([Official Source](${fm.sourceUrl}))`
+      );
+    }
+    lines.push(``);
+  }
+
+  return lines.join('\n');
+}
+
+/**
+ * Exports a clean JSON snippet matching `src/data/atlas.json` structure
+ * for a single Use Case and its verified InteropMapping edges.
+ */
+export function generateUseCaseJsonExport(
+  dataset: AtlasDataset,
+  useCase: UseCase
+): string {
+  const mappings = dataset.mappings.filter((m) => m.useCaseId === useCase.id);
+  const cleanUseCase: UseCase = {
+    id: useCase.id,
+    title: useCase.title,
+    sector: useCase.sector,
+    summary: useCase.summary,
+    deploymentContext: useCase.deploymentContext,
+    riskProfile: useCase.riskProfile,
+    primaryActors: useCase.primaryActors,
+  };
+
+  return JSON.stringify(
+    {
+      schemaVersion: dataset.metadata.schemaVersion,
+      exportedAt: new Date().toISOString(),
+      useCase: cleanUseCase,
+      mappings,
+    },
+    null,
+    2
+  );
+}
