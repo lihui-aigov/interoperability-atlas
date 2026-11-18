@@ -30,7 +30,7 @@ export function AtlasHeader({
             href="#top"
             className="font-editorial text-[15px] sm:text-xl font-semibold tracking-tight text-slate-950 whitespace-nowrap truncate min-w-0 sm:shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-slate-900"
           >
-            <span className="sm:hidden">AI Governance Atlas</span>
+            <span className="sm:hidden">AI Gov Atlas</span>
             <span className="hidden sm:inline">Open Atlas of AI Governance</span>
           </a>
 

@@ -46,7 +46,7 @@ export function GlobalClauseFinder({ dataset, onOpenClause }: GlobalClauseFinder
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search clauses, articles, or regimes (e.g., Art. 10, biometric, ASEAN)..."
+              placeholder="Search clauses, articles, or regimes (Art. 10, ASEAN)..."
               className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-md text-slate-900 placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-slate-900"
             />
             {query.length > 0 && (
