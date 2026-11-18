@@ -123,12 +123,14 @@ export function deriveSectorFilterOptions(useCases: UseCase[]): SectorFilterOpti
     else climateInfra += 1;
   }
 
-  return [
+  const allOptions: SectorFilterOption[] = [
     { id: 'all', label: 'All Sectors', count: useCases.length },
     { id: 'public-civic', label: 'Public Sector & Civic', count: publicCivic },
     { id: 'social-markets', label: 'Health, Finance & Labor', count: socialMarkets },
     { id: 'climate-infrastructure', label: 'Climate, Energy & Agri', count: climateInfra },
-  ].filter((opt) => opt.id === 'all' || opt.count > 0);
+  ];
+
+  return allOptions.filter((opt) => opt.id === 'all' || opt.count > 0);
 }
 
 function alignmentOrder(type: AlignmentType): number {
