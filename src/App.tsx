@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import rawAtlasData from './data/atlas.json';
 import { AtlasHeader } from './components/AtlasHeader';
+import { CitationModal } from './components/CitationModal';
 import { ClauseReaderDrawer } from './components/ClauseReaderDrawer';
 import { ExportPreviewModal } from './components/ExportPreviewModal';
 import { GlobalClauseFinder } from './components/GlobalClauseFinder';
@@ -14,6 +15,7 @@ import { InteroperabilityFlow } from './components/InteroperabilityFlow';
 import { MatrixExportView } from './components/MatrixExportView';
 import { MethodologySchemaSection } from './components/MethodologySchemaSection';
 import { RecentUpdatesDrawer } from './components/RecentUpdatesDrawer';
+import { RegimeConvergenceOverview } from './components/RegimeConvergenceOverview';
 import { UseCaseSandbox } from './components/UseCaseSandbox';
 import type {
   AlignmentType,
@@ -71,6 +73,7 @@ export default function App() {
   const [alignmentFilter, setAlignmentFilter] = useState<AlignmentType | 'all'>('all');
   const [isUpdatesDrawerOpen, setIsUpdatesDrawerOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isCitationModalOpen, setIsCitationModalOpen] = useState(false);
   const [activeClauseMapping, setActiveClauseMapping] = useState<InteropMapping | null>(null);
 
   const handleSelectEntity = (next: FocusSelection) => {
@@ -121,11 +124,12 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900">
+    <div className="min-h-screen flex flex-col bg-[#F7F8FA] text-[#0B1220]">
       <AtlasHeader
         dataset={activeDataset}
         onOpenUpdates={() => setIsUpdatesDrawerOpen(true)}
         onOpenExportModal={() => setIsExportModalOpen(true)}
+        onOpenCiteModal={() => setIsCitationModalOpen(true)}
       />
 
       <GlobalClauseFinder
@@ -134,12 +138,20 @@ export default function App() {
       />
 
       <main className="flex-1">
+        <RegimeConvergenceOverview
+          dataset={activeDataset}
+          selection={selection}
+          onSelectEntity={handleSelectEntity}
+          onInspectClause={setActiveClauseMapping}
+        />
+
         <InteroperabilityFlow
           dataset={activeDataset}
           selection={selection}
           onSelect={handleSelectEntity}
           alignmentFilter={alignmentFilter}
           onChangeAlignmentFilter={setAlignmentFilter}
+          onInspectClause={setActiveClauseMapping}
         />
 
         <InteroperabilityBriefCard
@@ -209,6 +221,12 @@ export default function App() {
         dataset={activeDataset}
         selectedUseCase={selectedUseCase}
         onChangeUseCase={handleChangeMatrixUseCase}
+      />
+
+      <CitationModal
+        isOpen={isCitationModalOpen}
+        onClose={() => setIsCitationModalOpen(false)}
+        dataset={activeDataset}
       />
     </div>
   );

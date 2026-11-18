@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you cite this dataset, taxonomy, or software in policy research, procurement guides, or academic publications, please use the metadata below."
+title: "Open Atlas of AI Governance Interoperability"
+type: software
+authors:
+  - family-names: Xu
+    given-names: Lihui
+    alias: lihui-aigov
+abstract: "Use-case-anchored computational atlas mapping shared operational controls, jurisdictional deltas, and regulatory friction across multilateral AI ethics frameworks, binding statutes, and technical management standards."
+repository-code: "https://github.com/lihui-aigov/interoperability-atlas"
+url: "https://lihui-aigov.github.io/interoperability-atlas/"
+keywords:
+  - ai-governance
+  - interoperability
+  - regulatory-mapping
+  - public-procurement
+  - ai-ethics
+  - unesco
+  - eu-ai-act
+  - iso-42001
+license:
+  - MIT
+  - CC-BY-4.0
+version: "2026.11.6"
+date-released: "2026-11-18"

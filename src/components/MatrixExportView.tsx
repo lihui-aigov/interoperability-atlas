@@ -43,6 +43,25 @@ export function MatrixExportView({
     [dataset.controls]
   );
 
+  const instSummaryById = useMemo(() => {
+    const map = new Map<string, { eq: number; dl: number; fr: number }>();
+    for (const inst of dataset.instruments) {
+      map.set(inst.id, { eq: 0, dl: 0, fr: 0 });
+    }
+    for (const row of rows) {
+      for (const inst of dataset.instruments) {
+        for (const m of row.cellsByInstrumentId[inst.id] ?? []) {
+          const entry = map.get(inst.id);
+          if (!entry) continue;
+          if (m.alignmentType === 'equivalent') entry.eq += 1;
+          else if (m.alignmentType === 'delta') entry.dl += 1;
+          else if (m.alignmentType === 'friction') entry.fr += 1;
+        }
+      }
+    }
+    return map;
+  }, [dataset.instruments, rows]);
+
   const handleDirectMarkdownDownload = () => {
     const md = generateProcurementMarkdown(dataset, selectedUseCase);
     const slug = selectedUseCase.id.replace(/[^a-z0-9-]/gi, '-').toLowerCase();
@@ -270,27 +289,35 @@ export function MatrixExportView({
           </div>
         ) : (
           <div className="mt-6 border border-slate-200 rounded-lg overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[1260px]">
+            <table className="w-full text-left border-collapse min-w-[1320px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th
                     scope="col"
-                    className="py-3.5 px-4 text-xs font-semibold text-slate-900 w-60 border-r border-slate-200"
+                    className="sticky left-0 z-20 bg-slate-50 py-3.5 px-4 text-xs font-semibold text-slate-900 w-64 border-r border-slate-200 shadow-[2px_0_6px_-2px_rgba(15,23,42,0.06)]"
                   >
                     Operational Control &amp; Artifact
                   </th>
-                  {dataset.instruments.map((inst) => (
-                    <th
-                      key={inst.id}
-                      scope="col"
-                      className="py-3.5 px-2.5 text-xs font-semibold text-slate-900 align-top border-r last:border-r-0 border-slate-200 w-36"
-                    >
-                      <div className="leading-snug">{inst.shortName}</div>
-                      <div className="text-[11px] font-normal text-slate-500 font-mono tabular-nums mt-0.5">
-                        {inst.adoptionYear} · {inst.legalNature.split(' ')[0]}
-                      </div>
-                    </th>
-                  ))}
+                  {dataset.instruments.map((inst) => {
+                    const summary = instSummaryById.get(inst.id) ?? { eq: 0, dl: 0, fr: 0 };
+                    return (
+                      <th
+                        key={inst.id}
+                        scope="col"
+                        className="py-3.5 px-2.5 text-xs font-semibold text-slate-900 align-top border-r last:border-r-0 border-slate-200 w-36"
+                      >
+                        <div className="leading-snug">{inst.shortName}</div>
+                        <div className="text-[11px] font-normal text-slate-500 font-mono tabular-nums mt-0.5">
+                          {inst.adoptionYear} · {inst.legalNature.split(' ')[0]}
+                        </div>
+                        <div className="text-[10px] font-mono tabular-nums mt-1 text-slate-600">
+                          <span className="text-emerald-700">{summary.eq}E</span> ·{' '}
+                          <span className="text-amber-700">{summary.dl}D</span> ·{' '}
+                          <span className="text-rose-700">{summary.fr}F</span>
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -298,7 +325,7 @@ export function MatrixExportView({
                   <tr key={row.control.id} className="hover:bg-slate-50/50 transition-colors">
                     <th
                       scope="row"
-                      className="py-3.5 px-4 align-top border-r border-slate-200 bg-white"
+                      className="sticky left-0 z-10 py-3.5 px-4 align-top border-r border-slate-200 bg-white shadow-[2px_0_6px_-2px_rgba(15,23,42,0.06)]"
                     >
                       <div className="text-xs font-semibold text-slate-900 leading-snug">
                         {row.control.title}

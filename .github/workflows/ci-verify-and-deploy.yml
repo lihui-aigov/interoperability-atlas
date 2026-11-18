@@ -1,0 +1,86 @@
+name: CI, Standalone Bundle & Visual Audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "atlas-ci-pages"
+  cancel-in-progress: false
+
+jobs:
+  verify-and-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: TypeScript typecheck
+        run: npm run lint
+
+      - name: Run unit & dataset invariant tests
+        run: npm test
+
+      - name: Build production web app & single-file standalone HTML
+        run: npm run build:standalone
+
+      - name: Install headless Chromium for visual & zero-error audit
+        run: |
+          npm install --no-save playwright
+          npx playwright install chromium
+
+      - name: Capture desktop/mobile screenshots & audit interactive flows
+        run: node scripts/verify-ui-screenshots.mjs
+
+      - name: Upload standalone interactive HTML and visual verification screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-standalone-and-screenshots
+          path: dist-standalone/
+          retention-days: 30
+
+      - name: Upload static distribution for GitHub Pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-dist-site
+          path: dist/
+          retention-days: 7
+
+  deploy-github-pages:
+    needs: verify-and-bundle
+    if: github.ref == 'refs/heads/main'
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download built site distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: atlas-dist-site
+          path: dist/
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

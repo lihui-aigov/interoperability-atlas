@@ -379,3 +379,206 @@ export function generateUseCaseJsonExport(
     2
   );
 }
+
+export interface InstrumentBreakdownItem {
+  instrument: GovernanceInstrument;
+  counts: AlignmentCounts;
+  useCasesCovered: number;
+  controlsCovered: number;
+}
+
+export interface PairwiseSharedContext {
+  useCaseId: string;
+  useCaseTitle: string;
+  controlId: string;
+  controlTitle: string;
+  status: AlignmentType;
+  mappingsA: InteropMapping[];
+  mappingsB: InteropMapping[];
+}
+
+export interface PairwiseRegimeCell {
+  instrumentAId: string;
+  instrumentBId: string;
+  isDiagonal: boolean;
+  totalA: number;
+  totalB: number;
+  sharedContextsCount: number;
+  equivalentSharedCount: number;
+  deltaSharedCount: number;
+  frictionSharedCount: number;
+  sharedControlIds: string[];
+  /** Percentage (0-100) of co-mapped `(useCaseId, controlId)` contexts where both regimes are jointly satisfied via equivalent controls without friction; `null` if no exact co-mapped context exists yet. */
+  convergenceRate: number | null;
+  contexts: PairwiseSharedContext[];
+}
+
+export interface PairwiseRegimeMatrix {
+  instruments: GovernanceInstrument[];
+  cellsByPair: Record<string, Record<string, PairwiseRegimeCell>>;
+}
+
+/**
+ * Summarizes alignment proportions and institutional footprint per tracked instrument.
+ */
+export function computeInstrumentBreakdown(
+  dataset: AtlasDataset
+): InstrumentBreakdownItem[] {
+  return dataset.instruments.map((instrument) => {
+    const instMappings = dataset.mappings.filter(
+      (m) => m.instrumentId === instrument.id
+    );
+    const useCasesCovered = new Set(instMappings.map((m) => m.useCaseId)).size;
+    const controlsCovered = new Set(instMappings.map((m) => m.controlId)).size;
+    return {
+      instrument,
+      counts: countAlignments(instMappings),
+      useCasesCovered,
+      controlsCovered,
+    };
+  });
+}
+
+/**
+ * Computes an N x N pairwise convergence and friction matrix across all tracked
+ * global AI governance instruments anchored on co-mapped `(useCaseId, controlId)` contexts.
+ */
+export function computePairwiseRegimeMatrix(
+  dataset: AtlasDataset
+): PairwiseRegimeMatrix {
+  const ucTitleMap = new Map(dataset.useCases.map((u) => [u.id, u.title]));
+  const ctrlTitleMap = new Map(dataset.controls.map((c) => [c.id, c.title]));
+
+  // Index mappings per instrument -> (useCaseId::controlId -> InteropMapping[])
+  const byInstContext = new Map<string, Map<string, InteropMapping[]>>();
+  const controlsByInst = new Map<string, Set<string>>();
+  const totalByInst = new Map<string, number>();
+
+  for (const inst of dataset.instruments) {
+    byInstContext.set(inst.id, new Map());
+    controlsByInst.set(inst.id, new Set());
+    totalByInst.set(inst.id, 0);
+  }
+
+  for (const m of dataset.mappings) {
+    const ctxMap = byInstContext.get(m.instrumentId);
+    const ctrlSet = controlsByInst.get(m.instrumentId);
+    if (!ctxMap || !ctrlSet) continue;
+
+    const ctxKey = `${m.useCaseId}::${m.controlId}`;
+    const existing = ctxMap.get(ctxKey);
+    if (existing) {
+      existing.push(m);
+    } else {
+      ctxMap.set(ctxKey, [m]);
+    }
+    ctrlSet.add(m.controlId);
+    totalByInst.set(m.instrumentId, (totalByInst.get(m.instrumentId) ?? 0) + 1);
+  }
+
+  const cellsByPair: Record<string, Record<string, PairwiseRegimeCell>> = {};
+
+  for (const instA of dataset.instruments) {
+    cellsByPair[instA.id] = {};
+    const mapA = byInstContext.get(instA.id)!;
+    const ctrlsA = controlsByInst.get(instA.id)!;
+    const totalA = totalByInst.get(instA.id) ?? 0;
+
+    for (const instB of dataset.instruments) {
+      const mapB = byInstContext.get(instB.id)!;
+      const ctrlsB = controlsByInst.get(instB.id)!;
+      const totalB = totalByInst.get(instB.id) ?? 0;
+
+      const sharedControlIds = Array.from(ctrlsA).filter((cid) => ctrlsB.has(cid));
+
+      if (instA.id === instB.id) {
+        const selfMappings = Array.from(mapA.values()).flat();
+        const selfCounts = countAlignments(selfMappings);
+        cellsByPair[instA.id][instB.id] = {
+          instrumentAId: instA.id,
+          instrumentBId: instB.id,
+          isDiagonal: true,
+          totalA,
+          totalB,
+          sharedContextsCount: mapA.size,
+          equivalentSharedCount: selfCounts.equivalent,
+          deltaSharedCount: selfCounts.delta,
+          frictionSharedCount: selfCounts.friction,
+          sharedControlIds,
+          convergenceRate: 100,
+          contexts: [],
+        };
+        continue;
+      }
+
+      let equivalentSharedCount = 0;
+      let deltaSharedCount = 0;
+      let frictionSharedCount = 0;
+      const contexts: PairwiseSharedContext[] = [];
+
+      for (const [ctxKey, mappingsA] of mapA.entries()) {
+        const mappingsB = mapB.get(ctxKey);
+        if (!mappingsB || mappingsB.length === 0) continue;
+
+        const [useCaseId, controlId] = ctxKey.split('::');
+        const combined = [...mappingsA, ...mappingsB];
+        const hasFriction = combined.some((m) => m.alignmentType === 'friction');
+        const hasEqA = mappingsA.some((m) => m.alignmentType === 'equivalent');
+        const hasEqB = mappingsB.some((m) => m.alignmentType === 'equivalent');
+
+        let status: AlignmentType;
+        if (hasFriction) {
+          status = 'friction';
+          frictionSharedCount += 1;
+        } else if (hasEqA && hasEqB) {
+          status = 'equivalent';
+          equivalentSharedCount += 1;
+        } else {
+          status = 'delta';
+          deltaSharedCount += 1;
+        }
+
+        contexts.push({
+          useCaseId,
+          useCaseTitle: ucTitleMap.get(useCaseId) ?? useCaseId,
+          controlId,
+          controlTitle: ctrlTitleMap.get(controlId) ?? controlId,
+          status,
+          mappingsA,
+          mappingsB,
+        });
+      }
+
+      contexts.sort((a, b) => {
+        const rank = (t: AlignmentType) => (t === 'friction' ? 0 : t === 'delta' ? 1 : 2);
+        return rank(a.status) - rank(b.status);
+      });
+
+      const sharedContextsCount = contexts.length;
+      const convergenceRate =
+        sharedContextsCount > 0
+          ? Math.round((equivalentSharedCount / sharedContextsCount) * 100)
+          : null;
+
+      cellsByPair[instA.id][instB.id] = {
+        instrumentAId: instA.id,
+        instrumentBId: instB.id,
+        isDiagonal: false,
+        totalA,
+        totalB,
+        sharedContextsCount,
+        equivalentSharedCount,
+        deltaSharedCount,
+        frictionSharedCount,
+        sharedControlIds,
+        convergenceRate,
+        contexts,
+      };
+    }
+  }
+
+  return {
+    instruments: dataset.instruments,
+    cellsByPair,
+  };
+}

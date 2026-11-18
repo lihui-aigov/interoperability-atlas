@@ -22,7 +22,7 @@ on:
       gemini_model:
         description: 'Gemini model ID for two-step grounded discovery & extraction'
         required: false
-        default: 'gemini-2.5-flash'
+        default: 'gemini-4-hydrogen'
         type: string
 
 permissions:
@@ -47,16 +47,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run autonomous curation pipeline (Dry Run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ github.event.inputs.gemini_model || 'gemini-2.5-flash' }}
+          GEMINI_MODEL: ${{ github.event.inputs.gemini_model || 'gemini-4-hydrogen' }}
           GITHUB_RUN_ID: ${{ github.run_id }}
         run: npm run curate:dry
 
@@ -64,15 +63,15 @@ jobs:
         if: ${{ github.event.inputs.dry_run != 'true' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ github.event.inputs.gemini_model || 'gemini-2.5-flash' }}
+          GEMINI_MODEL: ${{ github.event.inputs.gemini_model || 'gemini-4-hydrogen' }}
           GITHUB_RUN_ID: ${{ github.run_id }}
         run: npm run curate
 
-      - name: Verify dataset invariants, unit tests, TypeScript types & production build
+      - name: Verify dataset invariants, unit tests, TypeScript types & standalone bundle
         run: |
-          npx tsx --test src/utils/atlasAnalytics.test.ts scripts/curate-atlas.test.mjs
+          npm test
           npm run lint
-          npm run build
+          npm run build:standalone
 
       - name: Commit and push verified dataset updates
         if: ${{ github.event.inputs.dry_run != 'true' }}

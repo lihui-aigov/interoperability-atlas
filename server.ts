@@ -10,8 +10,15 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 const ATLAS_JSON_PATH = path.resolve(__dirname, 'src/data/atlas.json');
+const PRIMARY_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-4-hydrogen';
+const FALLBACK_GEMINI_MODEL = 'gemini-3.8-flash';
+
+function isModelNotFoundError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return /404|not found|not supported|unknown model|deprecated/i.test(msg);
+}
 
 function loadAtlasDataset() {
   const raw = fs.readFileSync(ATLAS_JSON_PATH, 'utf-8');
@@ -222,17 +229,31 @@ ${instrumentsCatalog}`;
         sectorHint ? `\nSector Context: "${sectorHint}"` : ''
       }`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: userPrompt,
-        config: {
-          systemInstruction,
-          tools: [{ googleSearch: {} }],
-          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-          responseMimeType: 'application/json',
-          responseSchema,
-        },
-      });
+      const requestConfig = {
+        systemInstruction,
+        tools: [{ googleSearch: {} }],
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+        responseMimeType: 'application/json',
+        responseSchema,
+      };
+
+      let response;
+      try {
+        response = await ai.models.generateContent({
+          model: PRIMARY_GEMINI_MODEL,
+          contents: userPrompt,
+          config: requestConfig,
+        });
+      } catch (primaryErr) {
+        if (!isModelNotFoundError(primaryErr) || PRIMARY_GEMINI_MODEL === FALLBACK_GEMINI_MODEL) {
+          throw primaryErr;
+        }
+        response = await ai.models.generateContent({
+          model: FALLBACK_GEMINI_MODEL,
+          contents: userPrompt,
+          config: requestConfig,
+        });
+      }
 
       const rawText = (response.text ?? '').trim();
       if (!rawText) {
@@ -348,27 +369,23 @@ ${instrumentsCatalog}`;
     }
   });
 
-  if (process.env.NODE_ENV !== 'production' && !fs.existsSync(path.resolve(__dirname, 'dist/index.html'))) {
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else if (process.env.NODE_ENV !== 'production') {
-    // Still use Vite middleware in dev even if dist/ exists from build checks!
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.resolve(__dirname, 'dist');
+  const distPath = path.resolve(__dirname, 'dist');
+  const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
+  const isProdRuntime =
+    process.env.NODE_ENV === 'production' || Boolean(process.env.K_SERVICE);
+
+  if (isProdRuntime && hasDist) {
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
+  } else {
+    const { createServer: createViteServer } = await import('vite');
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    });
+    app.use(vite.middlewares);
   }
 
   app.listen(PORT, '0.0.0.0', () => {

@@ -24,7 +24,7 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 export const DEFAULT_ATLAS_PATH = path.resolve(REPO_ROOT, 'src/data/atlas.json');
 export const DEFAULT_CHANGELOG_PATH = path.resolve(REPO_ROOT, 'CHANGELOG.md');
 export const CURATOR_HTTP_USER_AGENT =
-  'OpenAtlasGovernanceCurator/1.2 (+https://github.com/open-atlas-ai-governance; policy-verification-bot)';
+  'OpenAtlasGovernanceCurator/1.2 (+https://github.com/lihui-aigov/interoperability-atlas; policy-verification-bot)';
 
 const VAGUE_CITATION_PATTERNS = /^(n\/a|none|tbd|unknown|general|various|multiple|overview|see link|website|official site)$/i;
 
@@ -448,6 +448,14 @@ export async function runDeterministicQualityGate(
         ? sourceUrl
         : urlStatus.finalUrl || sourceUrl;
 
+    if (resolvedUrl.includes('vertexaisearch.cloud.google.com')) {
+      droppedMappings.push({
+        candidate: raw,
+        reason: `Ephemeral grounding redirect URL did not resolve to canonical domain: "${resolvedUrl}"`,
+      });
+      continue;
+    }
+
     const clauseExcerpt =
       typeof raw.clauseExcerpt === 'string' && raw.clauseExcerpt.trim().length > 15
         ? raw.clauseExcerpt.trim()
@@ -667,6 +675,33 @@ export function prependChangelogSection(existingMarkdown, changelogBlock) {
   return `${existingMarkdown.trimEnd()}\n\n${changelogBlock}\n`;
 }
 
+const FALLBACK_GEMINI_MODEL = 'gemini-3.8-flash';
+
+function isModelUnavailableError(err) {
+  const msg = err instanceof Error ? err.message : String(err);
+  return /404|not found|not supported|unknown model|deprecated/i.test(msg);
+}
+
+async function generateContentWithFallback(ai, primaryModel, requestParams) {
+  try {
+    return await ai.models.generateContent({
+      ...requestParams,
+      model: primaryModel,
+    });
+  } catch (err) {
+    if (!isModelUnavailableError(err) || primaryModel === FALLBACK_GEMINI_MODEL) {
+      throw err;
+    }
+    console.warn(
+      `[atlas-curator] Primary model "${primaryModel}" unavailable; retrying with "${FALLBACK_GEMINI_MODEL}"...`
+    );
+    return await ai.models.generateContent({
+      ...requestParams,
+      model: FALLBACK_GEMINI_MODEL,
+    });
+  }
+}
+
 /**
  * STEP 1: Search-Grounded Discovery via @google/genai + `googleSearch` tool.
  */
@@ -701,8 +736,7 @@ Identify either:
 
 Provide exact article/section/control citations, 1-2 sentence operational rationales, and official URLs.`;
 
-  const response = await ai.models.generateContent({
-    model,
+  const response = await generateContentWithFallback(ai, model, {
     contents: discoveryPrompt,
     config: {
       systemInstruction: discoverySystemInstruction,
@@ -889,8 +923,7 @@ ${verifiedUrlsText}
 Step 1 Grounded Research Findings:
 ${researchNotes}`;
 
-  const response = await ai.models.generateContent({
-    model,
+  const response = await generateContentWithFallback(ai, model, {
     contents: extractionPrompt,
     config: {
       responseMimeType: 'application/json',
@@ -922,7 +955,7 @@ export async function runCurationPipeline({
     );
   }
 
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const model = process.env.GEMINI_MODEL || 'gemini-4-hydrogen';
   const dataset = JSON.parse(fs.readFileSync(atlasPath, 'utf-8'));
 
   console.log(

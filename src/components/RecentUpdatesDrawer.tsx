@@ -56,7 +56,7 @@ export function RecentUpdatesDrawer({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-xl bg-white h-full border-l border-slate-200 flex flex-col overflow-hidden">
+      <div className="w-full max-w-xl bg-white h-full border-l border-slate-200 flex flex-col overflow-hidden animate-drawer-in">
         <div className="px-6 py-5 border-b border-slate-200 flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-mono text-slate-500 tabular-nums">

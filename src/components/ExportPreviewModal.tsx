@@ -86,7 +86,7 @@ export function ExportPreviewModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-4xl max-h-[88vh] bg-white border border-slate-200 rounded-lg flex flex-col overflow-hidden">
+      <div className="w-full max-w-4xl max-h-[88vh] bg-white border border-slate-200 rounded-lg flex flex-col overflow-hidden animate-fade-in">
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-4">
           <div>
             <h2

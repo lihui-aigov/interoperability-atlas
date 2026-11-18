@@ -10,6 +10,8 @@
   html {
     font-family: var(--font-sans);
     scroll-behavior: smooth;
+    background-color: #F7F8FA;
+    color: #0B1220;
   }
 
   h1, h2, .font-editorial {
@@ -22,11 +24,86 @@
   }
 }
 
+.atlas-grid-backdrop {
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0.4;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-drawer-in {
+  animation: slideInRight 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Subtle custom scrollbars for crosswalk tables and drawers */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  header,
+  nav,
+  #use-case-sandbox,
+  .no-print {
+    display: none !important;
+  }
+
+  body,
+  section {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .border {
+    border-color: #cbd5e1 !important;
   }
 }

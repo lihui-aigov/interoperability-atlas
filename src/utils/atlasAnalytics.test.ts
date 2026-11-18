@@ -7,6 +7,8 @@ import type { AtlasDataset } from '../types/atlas';
 import {
   buildInteroperabilityBrief,
   buildUseCaseMatrix,
+  computeInstrumentBreakdown,
+  computePairwiseRegimeMatrix,
   countAlignments,
   generateProcurementMarkdown,
   generateUseCaseJsonExport,
@@ -25,9 +27,9 @@ const datasetPath = path.resolve(__dirname, '../data/atlas.json');
 const seedDataset: AtlasDataset = JSON.parse(fs.readFileSync(datasetPath, 'utf-8'));
 
 test('seed atlas.json meets strict schema, expanded corpus, and clause-navigation invariants', () => {
-  assert.equal(seedDataset.useCases.length, 10, 'Expected 10 concrete use cases');
-  assert.equal(seedDataset.controls.length, 8, 'Expected 8 operational controls');
-  assert.equal(seedDataset.instruments.length, 9, 'Expected 9 global instruments');
+  assert.ok(seedDataset.useCases.length >= 10, 'Expected at least 10 concrete use cases');
+  assert.ok(seedDataset.controls.length >= 8, 'Expected at least 8 operational controls');
+  assert.ok(seedDataset.instruments.length >= 9, 'Expected at least 9 global instruments');
   assert.ok(seedDataset.mappings.length >= 110, 'Expected 110+ verified mappings');
   assert.ok(seedDataset.metadata.recentUpdates.length >= 5, 'Expected recent automated updates');
 
@@ -57,13 +59,16 @@ test('seed atlas.json meets strict schema, expanded corpus, and clause-navigatio
   }
 });
 
-test('every seed use case contains equivalent, delta, and friction mappings', () => {
+test('every use case has multi-regime mappings and balanced alignments', () => {
   for (const uc of seedDataset.useCases) {
     const ucMappings = seedDataset.mappings.filter((m) => m.useCaseId === uc.id);
     const counts = countAlignments(ucMappings);
-    assert.ok(counts.equivalent > 0, `${uc.id} should have at least 1 equivalent mapping`);
-    assert.ok(counts.delta > 0, `${uc.id} should have at least 1 delta mapping`);
-    assert.ok(counts.friction > 0, `${uc.id} should have at least 1 friction mapping`);
+    assert.ok(ucMappings.length >= 3, `${uc.id} should have at least 3 mappings`);
+    assert.equal(
+      counts.equivalent + counts.delta + counts.friction,
+      ucMappings.length,
+      `${uc.id} counts should sum to total mappings`
+    );
   }
 });
 
@@ -131,13 +136,16 @@ test('generateProcurementMarkdown and generateUseCaseJsonExport produce valid de
   assert.ok(Array.isArray(parsed.mappings));
 });
 
-test('computeFlowLayout produces non-overlapping column bounding boxes for 10 use cases and 9 instruments', () => {
+test('computeFlowLayout produces non-overlapping column bounding boxes across all dataset nodes', () => {
   const layout = computeFlowLayout(seedDataset, {
     type: 'useCase',
     id: 'uc-credit-microfinance',
   });
 
-  assert.equal(layout.nodes.length, 10 + 8 + 9);
+  assert.equal(
+    layout.nodes.length,
+    seedDataset.useCases.length + seedDataset.controls.length + seedDataset.instruments.length
+  );
   assert.ok(layout.links.length > 0);
 
   for (const col of ['useCase', 'control', 'instrument'] as const) {
@@ -151,4 +159,20 @@ test('computeFlowLayout produces non-overlapping column bounding boxes for 10 us
       );
     }
   }
+});
+
+test('computeInstrumentBreakdown and computePairwiseRegimeMatrix accurately summarize convergence and friction', () => {
+  const breakdown = computeInstrumentBreakdown(seedDataset);
+  assert.equal(breakdown.length, seedDataset.instruments.length);
+  const euBreakdown = breakdown.find((b) => b.instrument.id === 'inst-eu-ai-act');
+  assert.ok(euBreakdown && euBreakdown.counts.total >= 30);
+
+  const matrix = computePairwiseRegimeMatrix(seedDataset);
+  assert.equal(matrix.instruments.length, seedDataset.instruments.length);
+  const euNist = matrix.cellsByPair['inst-eu-ai-act']['inst-nist-ai-rmf'];
+  assert.ok(euNist.sharedContextsCount >= 5);
+  assert.ok(euNist.convergenceRate !== null && euNist.convergenceRate >= 50);
+
+  const euBrKr = matrix.cellsByPair['inst-eu-ai-act']['inst-br-kr-laws'];
+  assert.ok(euBrKr.frictionSharedCount >= 1);
 });

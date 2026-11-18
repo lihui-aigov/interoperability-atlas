@@ -18,7 +18,7 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Discover, map, and verify new governance interoperability edges
         env:
@@ -26,8 +26,11 @@ jobs:
           GEMINI_MODEL: gemini-4-hydrogen
         run: npm run curate
 
-      - name: Verify TypeScript & production build pass before committing
-        run: npm run build
+      - name: Verify TypeScript, unit tests & standalone bundle pass before committing
+        run: |
+          npm run lint
+          npm test
+          npm run build:standalone
 
       - name: Commit verified growth to repository
         run: |

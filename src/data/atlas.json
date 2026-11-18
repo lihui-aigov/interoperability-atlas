@@ -4,8 +4,8 @@
     "datasetVersion": "2026.11.6",
     "schemaVersion": "1.2.0",
     "lastUpdated": "2026-11-18T12:36:57.503Z",
-    "maintainer": "Open AI Governance Interoperability Working Group",
-    "repositoryWorkflow": "docs/autonomous-curator.workflow.yml",
+    "maintainer": "Lihui Xu (@lihui-aigov) · Independent Research (Personal Capacity)",
+    "repositoryWorkflow": ".github/workflows/autonomous-curator.yml",
     "totalCounts": {
       "useCases": 11,
       "controls": 8,
