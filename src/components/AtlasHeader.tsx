@@ -30,7 +30,8 @@ export function AtlasHeader({
             href="#top"
             className="font-editorial text-[15px] sm:text-xl font-semibold tracking-tight text-slate-950 whitespace-nowrap truncate min-w-0 sm:shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-slate-900"
           >
-            Open Atlas of AI Governance
+            <span className="sm:hidden">AI Governance Atlas</span>
+            <span className="hidden sm:inline">Open Atlas of AI Governance</span>
           </a>
 
           <nav
@@ -139,9 +140,9 @@ export function AtlasHeader({
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-9 sm:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded border border-slate-200 bg-white text-[11px] font-mono text-slate-600 mb-3">
-                <span>OPEN POLICY &amp; VERIFICATION OBSERVATORY</span>
-                <span className="text-slate-300">|</span>
+              <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5 px-2.5 py-1 rounded border border-slate-200 bg-white text-[11px] font-mono text-slate-600 mb-3">
+                <span>OPEN GOVERNANCE OBSERVATORY</span>
+                <span className="text-slate-300" aria-hidden="true">·</span>
                 <span>CC-BY-4.0 CORPUS</span>
               </div>
 

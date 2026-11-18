@@ -78,7 +78,7 @@ export function MatrixExportView({
     <section
       id="comparison-matrix"
       aria-labelledby="matrix-section-heading"
-      className="border-t border-slate-200 bg-white py-12"
+      className="scroll-mt-16 border-t border-slate-200 bg-white py-12"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         {/* Section Header & 1-Click Export Actions */}

@@ -93,7 +93,7 @@ export function InteroperabilityFlow({
     <section
       id="interoperability-flow"
       aria-labelledby="flow-section-heading"
-      className="max-w-[1400px] mx-auto px-4 sm:px-8 pt-10 pb-8"
+      className="scroll-mt-16 max-w-[1400px] mx-auto px-4 sm:px-8 pt-10 pb-8"
     >
       {/* Section Header & Filter Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 pb-5 border-b border-slate-200">

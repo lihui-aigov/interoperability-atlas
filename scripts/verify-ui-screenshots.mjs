@@ -82,20 +82,29 @@ async function main() {
     await page.waitForSelector('#regime-overview table');
     await page.waitForTimeout(350);
 
-    // 1. Capture Masthead + Regime Convergence Overview & 9x9 Heatmap
+    // 1. Capture Masthead + Regime Convergence Overview & 9x9 Heatmap + Pairwise Comparison Strip
     await page.screenshot({
       path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-heatmap.png'),
       fullPage: true,
-      clip: { x: 0, y: 0, width: 1440, height: 1360 },
+      clip: { x: 0, y: 0, width: 1440, height: 1620 },
     });
 
-    // 2. Scroll to 3-Column Multi-Port Alluvial Flow and verify node/ribbon rendering
-    const flowLocator = page.locator('#interoperability-flow');
-    await flowLocator.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(250);
-    await flowLocator.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '02-desktop-alluvial-flow.png'),
-    });
+    // 2. Capture full #interoperability-flow cleanly at scrollY=0 via fullPage clip so sticky header stays at page top
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(150);
+    const flowBox = await page.locator('#interoperability-flow').boundingBox();
+    if (flowBox) {
+      await page.screenshot({
+        path: path.join(SCREENSHOTS_DIR, '02-desktop-alluvial-flow.png'),
+        fullPage: true,
+        clip: {
+          x: 0,
+          y: Math.max(0, Math.floor(flowBox.y)),
+          width: 1440,
+          height: Math.ceil(flowBox.height),
+        },
+      });
+    }
 
     // 3. Verify Sticky Crosswalk Matrix + open ClauseReaderDrawer
     const matrixSection = page.locator('#comparison-matrix');

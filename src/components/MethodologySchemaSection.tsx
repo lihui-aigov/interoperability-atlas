@@ -38,7 +38,7 @@ export function MethodologySchemaSection({
     <section
       id="methodology-schema"
       aria-labelledby="methodology-heading"
-      className="border-t border-slate-200 bg-white py-12"
+      className="scroll-mt-16 border-t border-slate-200 bg-white py-12"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">

@@ -80,7 +80,7 @@ export function RegimeConvergenceOverview({
     <section
       id="regime-overview"
       aria-labelledby="regime-overview-heading"
-      className="border-b border-slate-200 bg-[#F7F8FA] py-10"
+      className="scroll-mt-16 border-b border-slate-200 bg-[#F7F8FA] py-10"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6">
