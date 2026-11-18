@@ -211,6 +211,7 @@ export async function synthesizeScenarioClientSide({
           text: `You are an international AI governance analyst building structured interoperability mappings.
 Use ONLY exact controlId and instrumentId values listed below.
 Generate 8 to 14 precise mappings covering equivalent, delta, and friction alignments.
+For UNESCO, cite exact paragraphs of the 2021 UNESCO Recommendation on the Ethics of AI (e.g., 'UNESCO Recommendation §§50–53'); do not merge the 2021 Recommendation with UNESCO's separate 2023 Ethical Impact Assessment (EIA) implementation tool.
 
 Controls:
 ${controlsCatalog}

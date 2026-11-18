@@ -39,7 +39,7 @@ As of dataset version 2026.11.6, `src/data/atlas.json` tracks 3 real-world news 
 
 | Instrument | Scope / Jurisdiction | Legal Nature | Adoption | Primary Authoritative Reference |
 | :--- | :--- | :--- | :---: | :--- |
-| UNESCO Recommendation on the Ethics of AI & Ethical Impact Assessment (EIA) | Global Multilateral | Multilateral Norm | 2021 | [UNESCO Portal](https://www.unesco.org/en/artificial-intelligence/recommendation-ethics) |
+| UNESCO Recommendation on the Ethics of AI | Global Multilateral | Multilateral Norm | 2021 | [UNESCO Portal](https://www.unesco.org/en/artificial-intelligence/recommendation-ethics) |
 | EU Artificial Intelligence Act (Reg. 2024/1689) | European Union | Binding Regulation | 2024 | [EUR-Lex](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) |
 | Council of Europe Framework Convention on AI (CETS No. 225) | International Treaty | Binding Regulation | 2024 | [Council of Europe](https://www.coe.int/en/web/artificial-intelligence/the-framework-convention-on-artificial-intelligence) |
 | ISO/IEC 42001 AI Management System Standard | International Standard | Certifiable Standard | 2023 | [ISO 81230](https://www.iso.org/standard/81230.html) |
@@ -48,6 +48,8 @@ As of dataset version 2026.11.6, `src/data/atlas.json` tracks 3 real-world news 
 | ASEAN Guide on AI Governance and Ethics (& Expanded GenAI Guide) | Southeast Asia (10 Member States) | Voluntary Risk Framework | 2024 | [ASEAN Portal](https://asean.org/) |
 | African Union Continental AI Strategy | Pan-African Continental | Continental Strategy | 2024 | [African Union](https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy) |
 | Brazil AI Bill (PL 2338/2023) & South Korea AI Basic Act | Major G20 Statutory Regimes | Binding Regulation | 2025 | [Senado Federal](https://www25.senado.leg.br/web/atividade/materias/-/materia/157233) |
+
+> **Normative Texts vs. Implementation Tools:** The instruments table tracks formal normative texts, binding statutes, and consensus standards. Operational assessment tools built *on top* of those texts—such as UNESCO's 2023 Ethical Impact Assessment (EIA) methodology implementing Policy Action Area 1 (`§§50–53`) of the 2021 Recommendation—belong to the Operational Controls and Verification Artifacts layer rather than being merged into the 2021 normative instrument.
 
 ---
 

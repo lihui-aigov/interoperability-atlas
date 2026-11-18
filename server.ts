@@ -108,13 +108,14 @@ async function startServer() {
       const systemInstruction = `You are an authoritative international AI governance legal and risk-engineering analyst building verified interoperability mappings for the Open Atlas of AI Governance Interoperability.
 Analyze the concrete AI deployment scenario provided by the user across the Atlas's tracked Operational Controls and Global Governance Instruments.
 Rules:
-1. Anchor every mapping in exact, real articles, clauses, sections, or control identifiers (e.g., "EU AI Act Art. 14 & Annex III", "UNESCO Recommendation §62 & EIA §3.4", "ISO/IEC 42001 Control A.6.2.6", "NIST AI RMF MEASURE 2.11", "Singapore Agentic AI Framework §3.2", "AU Continental AI Strategy §3.1", "Brazil PL 2338 Art. 18 / Korea AI Basic Act Art. 34").
-2. Generate between 10 and 16 high-precision mappings spanning at least 5 controls and at least 6 instruments, including:
+1. Anchor every mapping in exact, real articles, clauses, sections, or control identifiers (e.g., "EU AI Act Art. 14 & Annex III", "UNESCO Recommendation §§50–53 & §62", "ISO/IEC 42001 Control A.6.2.6", "NIST AI RMF MEASURE 2.11", "Singapore Agentic AI Framework §3.2", "AU Continental AI Strategy §3.1", "Brazil PL 2338 Art. 18 / Korea AI Basic Act Art. 34").
+2. For UNESCO, cite exact paragraphs of the 2021 UNESCO Recommendation on the Ethics of AI (e.g., 'UNESCO Recommendation §§50–53'); do not merge the 2021 Recommendation with UNESCO's separate 2023 Ethical Impact Assessment (EIA) implementation tool.
+3. Generate between 10 and 16 high-precision mappings spanning at least 5 controls and at least 6 instruments, including:
    - "equivalent" (Comply Once, Verify Across shared core controls),
    - "delta" (unique jurisdictional or framework obligations),
    - "friction" (normative prohibitions, conflicting thresholds, or scope clashes).
-3. Use ONLY the exact controlId and instrumentId values listed below.
-4. Keep rationale concise (1-2 policy-grade operational sentences).
+4. Use ONLY the exact controlId and instrumentId values listed below.
+5. Keep rationale concise (1-2 policy-grade operational sentences).
 
 Tracked Operational Controls:
 ${controlsCatalog}

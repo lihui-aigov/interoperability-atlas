@@ -186,6 +186,7 @@ test('computeInstrumentBreakdown and computePairwiseRegimeMatrix accurately summ
 
 test('seoSlugs resolves bidirectional pair slugs, canonical ordering, and plain pairwise verdicts', () => {
   assert.equal(instrumentToSlug('inst-eu-ai-act'), 'eu-ai-act');
+  assert.equal(instrumentToSlug('inst-unesco-rec'), 'unesco-ai-ethics');
   assert.equal(instrumentToSlug('inst-unesco-eia'), 'unesco-ai-ethics');
   assert.equal(
     buildPairSlug('inst-eu-ai-act', 'inst-nist-ai-rmf'),
@@ -222,4 +223,28 @@ test('seoSlugs resolves bidirectional pair slugs, canonical ordering, and plain 
   );
   assert.ok(verdictNoOverlap.headline.includes('separate AI deployments'));
   assert.ok(verdictNoOverlap.actionAdvice.includes('Tab 3'));
+});
+
+test('UNESCO 2021 AI Ethics Recommendation is cleanly separated from the 2023 EIA operational tool', () => {
+  const recInst = seedDataset.instruments.find((i) => i.id === 'inst-unesco-rec');
+  assert.ok(recInst, 'Expected inst-unesco-rec in atlas.json');
+  assert.equal(recInst.title, 'UNESCO Recommendation on the Ethics of AI');
+  assert.equal(recInst.shortName, 'UNESCO AI Ethics Recommendation');
+  assert.equal(
+    seedDataset.instruments.some((i) => i.id === 'inst-unesco-eia'),
+    false,
+    'Legacy merged inst-unesco-eia ID should no longer exist in seed instruments'
+  );
+
+  const recMappings = seedDataset.mappings.filter(
+    (m) => m.instrumentId === 'inst-unesco-rec'
+  );
+  assert.ok(recMappings.length >= 15);
+  for (const m of recMappings) {
+    assert.equal(
+      m.clauseCitation.includes('EIA Tool'),
+      false,
+      `Mapping ${m.id} must cite 2021 Recommendation paragraphs rather than EIA Tool sections`
+    );
+  }
 });

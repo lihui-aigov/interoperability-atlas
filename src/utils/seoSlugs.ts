@@ -8,6 +8,7 @@ export const INSTRUMENT_SLUG_MAP: Record<string, string> = {
   'inst-eu-ai-act': 'eu-ai-act',
   'inst-nist-ai-rmf': 'nist-ai-rmf',
   'inst-iso-42001': 'iso-42001',
+  'inst-unesco-rec': 'unesco-ai-ethics',
   'inst-unesco-eia': 'unesco-ai-ethics',
   'inst-sg-agentic': 'singapore-agentic-ai',
   'inst-coe-treaty': 'coe-ai-convention',
@@ -31,10 +32,12 @@ export function slugToInstrumentId(
 ): string | undefined {
   const normalized = slug.trim().toLowerCase();
   if (!normalized) return undefined;
+  const resolvedSlug =
+    normalized === 'inst-unesco-eia' ? 'unesco-ai-ethics' : normalized;
   return instruments.find(
     (inst) =>
-      instrumentToSlug(inst.id) === normalized ||
-      inst.id.toLowerCase() === normalized
+      instrumentToSlug(inst.id) === resolvedSlug ||
+      inst.id.toLowerCase() === resolvedSlug
   )?.id;
 }
 
@@ -96,7 +99,7 @@ export function buildPlainPairwiseVerdict(
           ? `These two frameworks address ${themeCount} related governance themes (such as human oversight or impact assessment), yet do not share directly co-mapped deployment contexts here.`
           : `No directly co-mapped use-case controls currently link ${instA.shortName} and ${instB.shortName} in this snapshot.`,
       actionAdvice:
-        'Try pairing either framework with EU AI Act, UNESCO Ethics & EIA, NIST AI RMF 1.0, or ISO/IEC 42001, or inspect an individual AI use case in Tab 3.',
+        'Try pairing either framework with EU AI Act, UNESCO AI Ethics Recommendation, NIST AI RMF 1.0, or ISO/IEC 42001, or inspect an individual AI use case in Tab 3.',
     };
   }
 

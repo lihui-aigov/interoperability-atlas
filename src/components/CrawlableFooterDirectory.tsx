@@ -15,14 +15,14 @@ interface CrawlableFooterDirectoryProps {
 const FEATURED_COMPARE_IDS: [string, string][] = [
   ['inst-eu-ai-act', 'inst-nist-ai-rmf'],
   ['inst-eu-ai-act', 'inst-iso-42001'],
-  ['inst-unesco-eia', 'inst-eu-ai-act'],
+  ['inst-unesco-rec', 'inst-eu-ai-act'],
   ['inst-eu-ai-act', 'inst-br-kr-laws'],
-  ['inst-unesco-eia', 'inst-nist-ai-rmf'],
+  ['inst-unesco-rec', 'inst-nist-ai-rmf'],
   ['inst-iso-42001', 'inst-nist-ai-rmf'],
   ['inst-eu-ai-act', 'inst-coe-treaty'],
   ['inst-eu-ai-act', 'inst-sg-agentic'],
   ['inst-nist-ai-rmf', 'inst-sg-agentic'],
-  ['inst-unesco-eia', 'inst-br-kr-laws'],
+  ['inst-unesco-rec', 'inst-br-kr-laws'],
 ];
 
 export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryProps) {

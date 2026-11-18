@@ -145,7 +145,7 @@ test('runDeterministicQualityGate drops broken URLs, invalid foreign keys, dupli
       {
         useCaseId: 'uc-grid-dispatch-agent',
         controlId: 'ctrl-env-footprint',
-        instrumentId: 'inst-unesco-eia',
+        instrumentId: 'inst-unesco-rec',
         alignmentType: 'delta',
         clauseCitation: 'General',
         rationale: 'Environmental impact considerations for grid optimization.',

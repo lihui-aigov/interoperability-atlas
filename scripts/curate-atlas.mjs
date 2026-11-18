@@ -1148,6 +1148,7 @@ ${coverage.existingCitationsSample}
 ${verifiedUrlsText}
 6. If proposing \`newSpotlight\`, do not duplicate existing spotlights:
 ${existingSpotlightsList || '(none yet)'}
+7. For UNESCO, cite exact paragraphs of the 2021 UNESCO Recommendation on the Ethics of AI (e.g., 'UNESCO Recommendation §§50–53'); do not merge the 2021 Recommendation with UNESCO's separate 2023 Ethical Impact Assessment (EIA) implementation tool.
 
 Step 1 Grounded Research Findings:
 ${researchNotes}`;

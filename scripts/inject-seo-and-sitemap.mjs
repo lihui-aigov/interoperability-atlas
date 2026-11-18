@@ -31,6 +31,7 @@ const INSTRUMENT_SLUG_MAP = {
   'inst-eu-ai-act': 'eu-ai-act',
   'inst-nist-ai-rmf': 'nist-ai-rmf',
   'inst-iso-42001': 'iso-42001',
+  'inst-unesco-rec': 'unesco-ai-ethics',
   'inst-unesco-eia': 'unesco-ai-ethics',
   'inst-sg-agentic': 'singapore-agentic-ai',
   'inst-coe-treaty': 'coe-ai-convention',
@@ -1021,7 +1022,7 @@ function main() {
           keywords: [
             'EU AI Act vs NIST AI RMF',
             'ISO 42001 vs EU AI Act',
-            'UNESCO AI Ethics EIA',
+            'UNESCO AI Ethics Recommendation',
             'AI governance interoperability',
             'CoE CETS 225',
             'Singapore Agentic AI Framework',

@@ -84,7 +84,7 @@
           "uc-welfare-triage",
           "ctrl-ex-ante-fria",
           "inst-eu-ai-act",
-          "inst-unesco-eia"
+          "inst-unesco-rec"
         ],
         "sourceReference": "European AI Office Art. 27 Guidance & UNESCO EIA Methodology"
       },
@@ -110,7 +110,7 @@
         "affectedIds": [
           "uc-procurement-screening",
           "ctrl-env-footprint",
-          "inst-unesco-eia"
+          "inst-unesco-rec"
         ],
         "sourceReference": "UNESCO Recommendation on the Ethics of AI, Policy Area 9"
       }
@@ -332,15 +332,15 @@
   ],
   "instruments": [
     {
-      "id": "inst-unesco-eia",
-      "shortName": "UNESCO Ethics & EIA",
-      "title": "UNESCO Recommendation on the Ethics of AI & Ethical Impact Assessment (EIA)",
-      "issuingBody": "UNESCO (194 Member States)",
+      "id": "inst-unesco-rec",
+      "shortName": "UNESCO AI Ethics Recommendation",
+      "title": "UNESCO Recommendation on the Ethics of AI",
+      "issuingBody": "UNESCO General Conference (194 Member States)",
       "jurisdictionOrScope": "Global Multilateral",
       "legalNature": "Multilateral Norm",
       "adoptionYear": 2021,
       "officialUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
-      "summary": "First global normative standard on AI ethics adopted by 194 Member States, operationalized via the UNESCO Ethical Impact Assessment (EIA) procurement and lifecycle tool."
+      "summary": "Global normative framework adopted by UNESCO's General Conference in November 2021, establishing principles and eleven policy action areas across human oversight, fairness, transparency, gender equality, environmental sustainability, and public governance. Operational implementation tools—such as UNESCO's 2023 Ethical Impact Assessment (EIA) methodology and Readiness Assessment Methodology (RAM)—build on specific policy action areas of the Recommendation rather than forming part of the 2021 normative text itself."
     },
     {
       "id": "inst-eu-ai-act",
@@ -454,18 +454,18 @@
       "id": "map-wt-bias-unesco",
       "useCaseId": "uc-welfare-triage",
       "controlId": "ctrl-bias-audit",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO Recommendation §62 & EIA Tool §3.4",
+      "clauseCitation": "UNESCO Recommendation §§28–30 & §62 (Fairness & Non-Discrimination)",
       "rationale": "Requires empirical fairness testing across gender, socioeconomic, and marginalized subgroups before deploying automated public-benefit allocation tools.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "62.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §62 & EIA Tool §3.4): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§28–30 & §62: AI actors should promote social justice, safeguard fairness, and prevent discrimination in compliance with international law, ensuring datasets and algorithmic models in public services do not reproduce socioeconomic, gender, or minority biases.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §62 & EIA Tool §3.4) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Run disaggregated error-rate and false-exclusion audits across gender, age, disability, rural/urban, and low-income subgroups prior to public-benefit deployment.",
+        "Document training data representativeness gaps and bias-mitigation adjustments in a public-sector fairness dossier.",
+        "Schedule periodic post-deployment disparity reviews whenever eligibility rules or demographics shift."
       ]
     },
     {
@@ -611,18 +611,18 @@
       "id": "map-wt-fria-unesco",
       "useCaseId": "uc-welfare-triage",
       "controlId": "ctrl-ex-ante-fria",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "delta",
-      "clauseCitation": "UNESCO Recommendation §50–53 & EIA Tool §2.3",
-      "rationale": "Mandates structured ex-ante participatory consultation with affected vulnerable communities and civil society representatives—an explicit procedural delta absent from ISO/IEC 42001.",
+      "clauseCitation": "UNESCO Recommendation §§50–53 (Policy Area 1: Ethical Impact Assessment)",
+      "rationale": "Policy Action Area 1 (§§50–53) calls on Member States and public authorities to establish ex-ante and continuous impact assessment mechanisms including participatory consultation with marginalized groups—a normative mandate that UNESCO's separate 2023 Ethical Impact Assessment (EIA) operational tool helps teams implement in practice.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "50.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §50–53 & EIA Tool §2.3): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§50–53 (Policy Area 1): Member States should introduce frameworks for impact assessments to identify and assess benefits, concerns, and risks of AI systems, together with risk prevention, mitigation, and monitoring measures incorporating participatory mechanisms for marginalized and vulnerable communities.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §50–53 & EIA Tool §2.3) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Conduct an ex-ante ethical and human-rights impact scoping before procurement or deployment (for example operationalizing Policy Area 1 through UNESCO's separate 2023 Ethical Impact Assessment methodology alongside statutory templates).",
+        "Record structured consultation inputs from affected citizens, caseworkers, and civil-society representatives.",
+        "Publish a public summary of identified risks, safeguards, and re-assessment triggers."
       ]
     },
     {
@@ -680,18 +680,18 @@
       "id": "map-wt-contest-unesco",
       "useCaseId": "uc-welfare-triage",
       "controlId": "ctrl-contestability",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO Recommendation §37–41 & §45",
+      "clauseCitation": "UNESCO Recommendation §§37–41 & §45 (Transparency, Explainability & Redress)",
       "rationale": "Establishes intelligibility, notice of AI use, and effective administrative redress workflows as core prerequisites for public-sector social protection decisions.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "37.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §37–41 & §45): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§37–41 & §45: People should be informed when a decision is based on or assisted by AI algorithms, particularly where it affects safety or human rights, and must be able to request explanations and access effective redress mechanisms.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §37–41 & §45) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Provide plain-language adverse-decision notices disclosing how automated scoring contributed to a benefit outcome.",
+        "Maintain a staffed human administrative review channel empowered to examine evidence and overturn erroneous automated determinations.",
+        "Publish response-time service levels and non-digital filing routes for applicants."
       ]
     },
     {
@@ -767,18 +767,18 @@
       "id": "map-ct-human-unesco",
       "useCaseId": "uc-clinical-triage",
       "controlId": "ctrl-human-override",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO Recommendation §35 & §121 (Health & Well-Being)",
+      "clauseCitation": "UNESCO Recommendation §35 & §121 (Human Determination & Health)",
       "rationale": "Affirms as a non-derogable norm that life-and-death clinical decisions must never be ceded to autonomous AI systems and must preserve patient-physician oversight.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "35.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §35 & §121 (Health & Well-Being)): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §35 & §121: Life-and-death decisions should not be ceded to AI systems; final human determination, clinical oversight, and protection of the patient-physician relationship must be preserved in healthcare deployments.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §35 & §121 (Health & Well-Being)) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Configure clinical interfaces so triage scores remain advisory and require explicit clinician confirmation for acuity downgrades or discharge.",
+        "Validate override workflows empirically against clinician automation bias under emergency-department time pressure.",
+        "Log all overrides and discordant clinical outcomes for hospital safety review."
       ]
     },
     {
@@ -974,36 +974,34 @@
       "id": "map-ct-contest-unesco",
       "useCaseId": "uc-clinical-triage",
       "controlId": "ctrl-contestability",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO Recommendation §122–123",
+      "clauseCitation": "UNESCO Recommendation §§122–123 (Patient Consent & Health Governance)",
       "rationale": "Requires transparent patient informed consent and accessible second-opinion contestability when AI triage scores affect care allocation.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "122.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §122–123): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§122–123: Member States should ensure patients and families receive clear information when AI systems assist diagnosis or care prioritization, safeguard informed consent, and preserve access to human clinical review.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §122–123) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Disclose AI-assisted triage scoring in patient intake notices and clinical summaries.",
+        "Provide a clear pathway for patients or caregivers to request independent human clinician reassessment."
       ]
     },
     {
       "id": "map-ps-contest-unesco",
       "useCaseId": "uc-procurement-screening",
       "controlId": "ctrl-contestability",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO EIA Tool §4.1 (Public Procurement Accountability)",
+      "clauseCitation": "UNESCO Recommendation §§37–40 & §§72–73 (Public-Sector Transparency & Procurement)",
       "rationale": "Requires transparent scoring disclosures and administrative bid-protest contestability for vendors screened or disqualified by automated tender evaluation.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-10-19",
-      "sectionAnchor": "4.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO EIA Tool §4.1 (Public Procurement Accountability)): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "sectionAnchor": "72.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§37–40 & §§72–73: Governments acquiring or deploying AI in public administration should uphold transparency, auditability, explainability of evaluation criteria, and accessible administrative review for affected parties.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO EIA Tool §4.1 (Public Procurement Accountability)) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Publish tender evaluation criteria and disclose automated anomaly-screening or bid-scoring thresholds in procurement notices.",
+        "Provide disqualified or flagged bidders with itemized reasons and a human procurement review procedure."
       ]
     },
     {
@@ -1112,18 +1110,17 @@
       "id": "map-ps-env-unesco",
       "useCaseId": "uc-procurement-screening",
       "controlId": "ctrl-env-footprint",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "delta",
-      "clauseCitation": "UNESCO Recommendation §84–86 (Environment & Ecosystems)",
+      "clauseCitation": "UNESCO Recommendation §§84–86 (Policy Area 9: Environment & Ecosystems)",
       "rationale": "Explicitly instructs states to evaluate direct and indirect carbon, energy, and water impacts when procuring or operating public-sector AI systems.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-10-19",
       "sectionAnchor": "84.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §84–86 (Environment & Ecosystems)): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§84–86 (Policy Area 9): Member States and enterprises should assess direct and indirect environmental impacts across the AI system life cycle, including carbon footprint, energy consumption, and raw-material or water intensity.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §84–86 (Environment & Ecosystems)) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Require cloud and model vendors bidding on public contracts to disclose training and inference energy (kWh), carbon intensity, and cooling-water metrics.",
+        "Favor lower-compute architectures where task performance matches larger foundation models."
       ]
     },
     {
@@ -1339,36 +1336,33 @@
       "id": "map-ag-contest-unesco",
       "useCaseId": "uc-agentic-public-service",
       "controlId": "ctrl-contestability",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO Recommendation §35 & §40",
+      "clauseCitation": "UNESCO Recommendation §§35–36 & §§42–43 (Human Accountability & Attribution)",
       "rationale": "Requires explicit disclosure that a citizen is interacting with an autonomous agent and clear attribution of a human administrative officer accountable for reversing erroneous writes.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
-      "sectionAnchor": "35.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §35 & §40): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "sectionAnchor": "42.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§35–36 & §§42–43: Ethical responsibility and legal liability for AI-supported decisions must remain attributable to identifiable natural or legal persons; AI systems cannot be granted legal personality or replace human accountability.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §35 & §40) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Notify citizens clearly whenever they interact with an autonomous public-service agent rather than a human civil servant.",
+        "Assign a named administrative unit responsible for auditing, halting, and reversing erroneous state-changing agent actions."
       ]
     },
     {
       "id": "map-ag-env-unesco",
       "useCaseId": "uc-agentic-public-service",
       "controlId": "ctrl-env-footprint",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "delta",
-      "clauseCitation": "UNESCO Recommendation §84–85",
+      "clauseCitation": "UNESCO Recommendation §§84–85 (Proportional Compute & Environmental Impact)",
       "rationale": "Recursive multi-agent reasoning loops multiply token and compute intensity 5–20x per citizen transaction; UNESCO calls for proportional environmental footprint tracking.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-10-19",
       "sectionAnchor": "84.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §84–85): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§84–85: Actors should favor data-, energy-, and resource-efficient AI methods and ensure the environmental burden of AI deployment remains proportionate to its public benefit.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §84–85) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Cap recursive multi-agent tool-calling loops and log per-transaction token and energy consumption against deterministic alternatives."
       ]
     },
     {
@@ -1410,18 +1404,17 @@
       "id": "map-ep-bias-unesco",
       "useCaseId": "uc-exam-proctoring",
       "controlId": "ctrl-bias-audit",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
-      "clauseCitation": "UNESCO Recommendation §102–105 (Education & Research)",
+      "clauseCitation": "UNESCO Recommendation §§102–105 (Policy Area 11: Education & Research)",
       "rationale": "Requires empirical validation that automated assessment and proctoring do not penalize neurodivergent learners, students with disabilities, or non-standard home environments.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "102.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §102–105 (Education & Research)): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §§102–105 (Policy Area 11): AI in education must uphold inclusion, equity, learner privacy, and educator agency, preventing automated monitoring or assessment tools from disadvantaging students with disabilities, neurodivergent learners, or marginalized households.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §102–105 (Education & Research)) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Benchmark remote proctoring gaze, audio, and motion detectors across assistive technologies, neurodivergent learners, diverse skin tones, and shared-room environments.",
+        "Prohibit automatic exam disqualification without human academic review and a non-AI testing option."
       ]
     },
     {
@@ -1586,18 +1579,17 @@
       "id": "map-bl-friction-unesco",
       "useCaseId": "uc-biometric-law-enforcement",
       "controlId": "ctrl-ex-ante-fria",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "friction",
-      "clauseCitation": "UNESCO Recommendation §26 (Mass Surveillance Prohibition)",
+      "clauseCitation": "UNESCO Recommendation §26 (Prohibition of Social Scoring & Mass Surveillance)",
       "rationale": "Normatively prohibits use of AI systems for mass surveillance and social scoring, clashing with jurisdictions that permit broad public-space biometric watchlist scanning under administrative police powers.",
       "sourceUrl": "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics",
       "lastVerified": "2026-11-05",
       "sectionAnchor": "26.",
-      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI (UNESCO Recommendation §26 (Mass Surveillance Prohibition)): Adopts global multilateral principles requiring proportional ex-ante Ethical Impact Assessment (EIA), transparent notice and explainability to affected citizens, non-derogable human accountability for consequential decisions, participatory consultation with marginalized groups, and lifecycle carbon/water environmental stewardship.",
+      "clauseExcerpt": "UNESCO Recommendation on the Ethics of AI, §26 (Proportionality and Do No Harm): AI systems should not be used for social scoring or mass surveillance purposes; human rights, fundamental freedoms, and strict necessity and proportionality tests govern any law-enforcement capability.",
       "verificationSteps": [
-        "Complete the corresponding section of the UNESCO Ethical Impact Assessment (EIA) questionnaire (UNESCO Recommendation §26 (Mass Surveillance Prohibition)) and archive evidence for public audit.",
-        "Record multi-stakeholder and affected-community consultation feedback prior to full-scale rollout.",
-        "Verify human attribution and administrative redress contacts are published in citizen-facing interfaces."
+        "Block real-time or indiscriminate public-space biometric watchlist scanning at procurement and architecture review stages.",
+        "Restrict any lawful post-event forensic identification strictly to prior judicial warrant and audited necessity thresholds."
       ]
     },
     {
@@ -1764,7 +1756,7 @@
       "clauseCitation": "CoE AI Convention (CETS 225) Art. 16 (Risk & Human Rights Impact Assessment)",
       "sectionAnchor": "Article 16",
       "clauseExcerpt": "Article 16 (Risk and impact management framework): Each Party shall adopt measures for the iterative identification, assessment, prevention and mitigation of risks and adverse impacts to human rights, democracy and the rule of law throughout the AI lifecycle, taking into account context-specific public-sector impacts.",
-      "rationale": "Satisfied by the same structured Fundamental Rights / Ethical Impact Assessment dossier executed for EU AI Act Art. 27 and UNESCO EIA.",
+      "rationale": "Satisfied by the same structured Fundamental Rights / Ethical Impact Assessment dossier executed for EU AI Act Art. 27 and UNESCO Recommendation §§50–53 (operationalized via the 2023 EIA tool).",
       "verificationSteps": [
         "Include explicit human-rights, rule-of-law, and democratic due-process impact sections in the pre-deployment FRIA.",
         "Establish iterative re-assessment triggers when benefit eligibility rules change."
@@ -1963,7 +1955,7 @@
       "id": "map-cm-contest-unesco",
       "useCaseId": "uc-credit-microfinance",
       "controlId": "ctrl-contestability",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
       "clauseCitation": "UNESCO Recommendation §39–41",
       "sectionAnchor": "39.",
@@ -2046,7 +2038,7 @@
       "id": "map-hw-bias-unesco",
       "useCaseId": "uc-hiring-workforce",
       "controlId": "ctrl-bias-audit",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
       "clauseCitation": "UNESCO Recommendation §109–113 (Economy and Labour)",
       "sectionAnchor": "109.",
@@ -2227,7 +2219,7 @@
       "id": "map-gi-env-unesco",
       "useCaseId": "uc-grid-infrastructure",
       "controlId": "ctrl-env-footprint",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
       "clauseCitation": "UNESCO Recommendation §84–86 (Climate & Energy Optimization)",
       "sectionAnchor": "84.",
@@ -2277,7 +2269,7 @@
       "id": "map-ew-bias-unesco",
       "useCaseId": "uc-emergency-wildfire-dispatch",
       "controlId": "ctrl-bias-audit",
-      "instrumentId": "inst-unesco-eia",
+      "instrumentId": "inst-unesco-rec",
       "alignmentType": "equivalent",
       "clauseCitation": "UNESCO Recommendation §62 & §87 (Disaster Vulnerability & Equity)",
       "sectionAnchor": "87.",
@@ -2525,7 +2517,7 @@
           "stanceSummary": "UNESCO Recommendation §42–44 and Council of Europe Convention CETS 225 Art. 14 insist that automated chains never dilute legal accountability: a human official must remain attributable and able to suspend autonomous execution at any point.",
           "citedClauses": [
             "UNESCO Recommendation §42–44",
-            "UNESCO EIA Tool §3.4",
+            "UNESCO Recommendation §§35–36",
             "CoE CETS 225 Art. 14 & Art. 16"
           ],
           "leverageOrBlindSpot": "Strong on institutional accountability and citizen redress rights; relies on national implementing guidance to define API-level sandboxing."

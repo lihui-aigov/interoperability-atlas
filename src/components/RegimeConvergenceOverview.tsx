@@ -40,7 +40,7 @@ interface RegimeConvergenceOverviewProps {
 }
 
 const COMPACT_CODE: Record<string, string> = {
-  'inst-unesco-eia': 'UNESCO',
+  'inst-unesco-rec': 'UNESCO Rec.',
   'inst-eu-ai-act': 'EU AI Act',
   'inst-iso-42001': 'ISO 42001',
   'inst-nist-ai-rmf': 'NIST RMF',
@@ -54,7 +54,7 @@ const COMPACT_CODE: Record<string, string> = {
 const QUICK_PAIRS: { label: string; aId: string; bId: string }[] = [
   { label: 'EU AI Act × NIST RMF', aId: 'inst-eu-ai-act', bId: 'inst-nist-ai-rmf' },
   { label: 'EU AI Act × ISO 42001', aId: 'inst-eu-ai-act', bId: 'inst-iso-42001' },
-  { label: 'UNESCO × EU AI Act', aId: 'inst-unesco-eia', bId: 'inst-eu-ai-act' },
+  { label: 'UNESCO Rec. × EU AI Act', aId: 'inst-unesco-rec', bId: 'inst-eu-ai-act' },
   { label: 'EU AI Act × Brazil / Korea Laws', aId: 'inst-eu-ai-act', bId: 'inst-br-kr-laws' },
   { label: 'EU AI Act × Singapore Agentic AI', aId: 'inst-eu-ai-act', bId: 'inst-sg-agentic' },
 ];

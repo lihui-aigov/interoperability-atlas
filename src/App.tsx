@@ -115,7 +115,9 @@ function readInitialQueryParams(): {
     const pairParam = params.get('pair');
     const spotlightParam = params.get('spotlight') ?? undefined;
     const useCaseParam = params.get('useCase');
-    const instParam = params.get('instrument');
+    const instParamRaw = params.get('instrument');
+    const instParam =
+      instParamRaw === 'inst-unesco-eia' ? 'inst-unesco-rec' : instParamRaw;
 
     const parsedPair = pairParam
       ? parsePairSlug(pairParam, baseDataset.instruments)
@@ -193,7 +195,16 @@ export default function App() {
   const [sandboxResults, setSandboxResults] = useState<SandboxMappingResult[]>(() => {
     try {
       const saved = sessionStorage.getItem(SANDBOX_STORAGE_KEY);
-      return saved ? (JSON.parse(saved) as SandboxMappingResult[]) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved) as SandboxMappingResult[];
+      return parsed.map((res) => ({
+        ...res,
+        mappings: res.mappings.map((m) =>
+          m.instrumentId === 'inst-unesco-eia'
+            ? { ...m, instrumentId: 'inst-unesco-rec' }
+            : m
+        ),
+      }));
     } catch {
       return [];
     }
