@@ -18,11 +18,12 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Discover, map, and verify new governance interoperability edges
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-4-hydrogen
         run: npm run curate
 
       - name: Verify TypeScript & production build pass before committing
@@ -34,4 +35,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           touch CHANGELOG.md
           git add src/data/atlas.json CHANGELOG.md
-          git diff --staged --quiet || (git commit -m "data(atlas): autonomous verified governance mapping update" && git push)
+          if ! git diff --staged --quiet; then
+            git commit -m "data(atlas): autonomous verified governance mapping update"
+            git pull --rebase origin main
+            git push
+          fi
