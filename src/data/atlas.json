@@ -1,18 +1,36 @@
 {
   "metadata": {
     "atlasName": "Open Atlas of AI Governance Interoperability",
-    "datasetVersion": "2026.11.5",
+    "datasetVersion": "2026.11.6",
     "schemaVersion": "1.2.0",
-    "lastUpdated": "2026-11-18T03:00:00Z",
+    "lastUpdated": "2026-11-18T12:36:57.503Z",
     "maintainer": "Open AI Governance Interoperability Working Group",
     "repositoryWorkflow": "docs/autonomous-curator.workflow.yml",
     "totalCounts": {
-      "useCases": 10,
+      "useCases": 11,
       "controls": 8,
       "instruments": 9,
-      "mappings": 114
+      "mappings": 119
     },
     "recentUpdates": [
+      {
+        "id": "upd-2026-11-18-4i8i",
+        "timestamp": "2026-11-18T12:36:57.503Z",
+        "runId": "gh-run-44305078916",
+        "changeType": "new_mapping",
+        "summary": "Added agricultural subsidy satellite verification use case (uc-agri-subsidy-verification) with 5 clause-level mappings covering Singapore Agentic AI, ASEAN GenAI Guide, CoE AI Convention, AU Strategy, and Brazil PL 2338/Korea AI Basic Act.",
+        "affectedIds": [
+          "uc-agri-subsidy-verification",
+          "ctrl-agent-boundaries",
+          "inst-sg-agentic",
+          "ctrl-data-aibom",
+          "inst-asean-guide",
+          "ctrl-post-market",
+          "inst-coe-treaty",
+          "ctrl-env-footprint"
+        ],
+        "sourceReference": "IMDA Agentic AI Framework (2026); Expanded ASEAN GenAI Guide (2025); CoE CETS 225; AU Continental AI Strategy (2024); Brazil PL 2338/2023 & EU AI Act"
+      },
       {
         "id": "upd-2026-11-18-01",
         "timestamp": "2026-11-18T03:00:00Z",
@@ -229,6 +247,20 @@
         "Civil Protection Agencies",
         "First Responders",
         "Municipalities & Vulnerable Residents"
+      ]
+    },
+    {
+      "id": "uc-agri-subsidy-verification",
+      "title": "Agricultural Subsidy Satellite Verification & Climate-Relief Eligibility AI",
+      "sector": "Agriculture, Climate Resilience & Public Subsidies",
+      "summary": "Multimodal Earth-observation and foundation-vision models paired with agentic disbursement workflows that verify smallholder parcel boundaries, crop-stress claims, and parametric climate-insurance or subsidy eligibility, writing hold or payout records directly into ministry and insurer ledgers.",
+      "deploymentContext": "Deployed by national agriculture ministries, rural development agencies, and parametric climate-insurance programs across Africa, Southeast Asia, Latin America, and Europe to automate parcel verification and emergency climate-relief payouts.",
+      "riskProfile": "High-stakes public benefit and financial-inclusion deployment carrying risks of erroneous smallholder exclusion, irreversible automated payout holds, seasonal satellite-sensor drift, heavy compute energy footprints, and cross-border geospatial IP licensing conflicts.",
+      "primaryActors": [
+        "National Agriculture & Rural Development Ministries",
+        "Parametric Climate Insurers",
+        "Earth-Observation & Foundation Model Providers",
+        "Smallholder Farmers & Agricultural Cooperatives"
       ]
     }
   ],
@@ -2356,6 +2388,96 @@
       ],
       "sourceUrl": "https://aiverifyfoundation.sg/",
       "lastVerified": "2026-11-18"
+    },
+    {
+      "id": "map-agri-subsi-agent-bo-sg-agent",
+      "useCaseId": "uc-agri-subsidy-verification",
+      "controlId": "ctrl-agent-boundaries",
+      "instrumentId": "inst-sg-agentic",
+      "alignmentType": "delta",
+      "clauseCitation": "Singapore Agentic AI Framework §2.1.2 & §2.2.2",
+      "rationale": "An agentic subsidy-disbursement system calling external land-registry and treasury APIs must receive a cryptographically verifiable agent identity, least-privilege tool permissions, bounded workflows, and emergency stop controls under §2.1.2. Section 2.2.2 adds a delta requiring system-enforced human approval checkpoints for irreversible payout holds that deny by default if the approval service fails.",
+      "sourceUrl": "https://www.imda.gov.sg/-/media/imda/files/about/emerging-tech-and-research/artificial-intelligence/mgf-for-agentic-ai.pdf",
+      "lastVerified": "2026-11-18",
+      "sectionAnchor": "Section 2.1.2",
+      "clauseExcerpt": "Section 2.1.2 requires bounding agentic risks through design by defining strict tool permissions, workflow boundaries, unique agent identities, and kill-switch mechanisms. Section 2.2.2 mandates meaningful human oversight via enforced runtime approval checkpoints for high-stakes or irreversible actions with fail-closed behavior.",
+      "verificationSteps": [
+        "Verify cryptographic agent service identity and scoped OAuth/API permissions preventing unauthorized writes to ministry treasury ledgers.",
+        "Test approval-gate fail-closed behavior by simulating approval-service downtime during a payout-hold action and confirming denial by default.",
+        "Validate emergency stop controls to confirm immediate revocation of active agent tool-call sessions."
+      ]
+    },
+    {
+      "id": "map-agri-subsi-data-aib-asean-gu",
+      "useCaseId": "uc-agri-subsidy-verification",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-asean-guide",
+      "alignmentType": "equivalent",
+      "clauseCitation": "ASEAN AI Guide (2024) Principle 7 & Part C; Expanded GenAI Guide (2025) §3.2",
+      "rationale": "To prevent agro-climatic bias in Earth-observation and crop-classification models, the 2024 ASEAN Guide requires documented data sources, processing-step tracking, dataset lineage, and periodic revalidation of representativeness. For multimodal foundation models, §3.2 of the 2025 Expanded Guide establishes data-provenance and lawful-collection controls functionally equivalent to EU AI Act Art. 53(1)(d).",
+      "sourceUrl": "https://asean.org/wp-content/uploads/2025/01/Expanded-ASEAN-Guide-on-AI-Governance-and-Ethics-Generative-AI.pdf",
+      "lastVerified": "2026-11-18",
+      "sectionAnchor": "Section 3.2",
+      "clauseExcerpt": "Principle 7 and Part C of the 2024 ASEAN Guide direct deployers to maintain dataset lineage, document data preprocessing steps, and periodically revalidate training data representativeness. Section 3.2 of the 2025 Expanded GenAI Guide extends these obligations to lawful data collection and transparent provenance documentation for foundation models.",
+      "verificationSteps": [
+        "Inspect the AIBOM and dataset lineage manifest for regional satellite imagery, soil labels, and agro-climatic representativeness across smallholder zones.",
+        "Audit preprocessing and annotation logs to confirm traceability from raw Earth-observation feeds to training splits.",
+        "Verify scheduled seasonal revalidation checks comparing validation cohorts against current crop-phenology conditions."
+      ]
+    },
+    {
+      "id": "map-agri-subsi-post-mar-coe-trea",
+      "useCaseId": "uc-agri-subsidy-verification",
+      "controlId": "ctrl-post-market",
+      "instrumentId": "inst-coe-treaty",
+      "alignmentType": "delta",
+      "clauseCitation": "CoE AI Convention (CETS 225) Art. 16(2)(d)-(g), Art. 16(3)-(4), Art. 12 & Art. 26",
+      "rationale": "Because seasonal climate shifts and sensor drift can silently invalidate subsidy classifiers post-launch, Art. 16(2)(d)-(g) requires iterative lifecycle monitoring for human-rights impacts, updated public-facing documentation, and re-testing after significant modifications. Going beyond voluntary APAC drift guidance, Art. 16(3)-(4) obliges Parties to mandate remediation and assess moratoria or bans on rights-incompatible deployments.",
+      "sourceUrl": "https://rm.coe.int/1680afae3c",
+      "lastVerified": "2026-11-18",
+      "sectionAnchor": "Article 16",
+      "clauseExcerpt": "Article 16(2)(d)-(g) requires iterative monitoring of AI impacts on human rights, updated risk documentation, and re-assessment following significant system changes, supported by reliability duties under Article 12 and oversight under Article 26. Articles 16(3)-(4) require measures to mitigate identified risks and empower authorities to assess moratoria or bans where risks remain incompatible with treaty obligations.",
+      "verificationSteps": [
+        "Establish automated post-market drift telemetry tracking false-negative subsidy exclusions across climate zones and sensor cohorts.",
+        "Define a significant-modification trigger requiring full impact re-assessment and updated documentation before redeploying updated satellite weights.",
+        "Document escalation pathways enabling oversight authorities to suspend or impose a moratorium on automated holds when rights-impact thresholds breach."
+      ]
+    },
+    {
+      "id": "map-agri-subsi-env-foot-au-strat",
+      "useCaseId": "uc-agri-subsidy-verification",
+      "controlId": "ctrl-env-footprint",
+      "instrumentId": "inst-au-strategy",
+      "alignmentType": "delta",
+      "clauseCitation": "AU Continental AI Strategy Focus Areas 2-3 & Action 3 vs. EU AI Act Art. 53(1)(a) & Annex XI",
+      "rationale": "Continuous continent-scale satellite inference and foundation-model retraining create heavy compute-energy and cooling-water burdens flagged across AU Strategy agriculture and climate priorities and UNESCO §84. While the AU Strategy and UNESCO treat compute and water stewardship as normative procurement goals, EU AI Act Art. 53(1)(a) and Annex XI Section 1 impose a binding delta requiring GPAI providers to log training FLOPs and energy consumption.",
+      "sourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "lastVerified": "2026-11-18",
+      "sectionAnchor": "Focus Area 3",
+      "clauseExcerpt": "AU Continental AI Strategy Focus Areas 2 and 3 and Action 3 prioritize sustainable AI infrastructure for Agenda 2063 agriculture and climate resilience while minimizing environmental risk. In contrast, EU AI Act Article 53(1)(a) and Annex XI Section 1 mandate technical documentation recording computational resources used for training and known or estimated energy consumption.",
+      "verificationSteps": [
+        "Collect provider technical documentation recording training FLOPs, hardware efficiency, and estimated energy and cooling-water consumption per Annex XI.",
+        "Evaluate regional inference scheduling and model quantization options in procurement scorecards to minimize energy draw in constrained grid regions.",
+        "Verify periodic sustainability reporting aligning vendor telemetry with ministry climate-resilience procurement criteria."
+      ]
+    },
+    {
+      "id": "map-agri-subsi-data-aib-br-kr-la",
+      "useCaseId": "uc-agri-subsidy-verification",
+      "controlId": "ctrl-data-aibom",
+      "instrumentId": "inst-br-kr-laws",
+      "alignmentType": "friction",
+      "clauseCitation": "Brazil PL 2338/2023 Art. 63 & Art. 65 vs. EU AI Act Art. 53(1)(c) & SG Copyright Act §244",
+      "rationale": "Models trained on proprietary agronomic literature, commercial satellite imagery, and geospatial maps face cross-border AIBOM licensing friction: PL 2338 Art. 63 and 65 require broad prior authorization and remuneration for protected training works, whereas EU AI Act Art. 53(1)(c) uses a TDM opt-out policy and Singapore §244 permits computational data analysis without upfront fees. Deployers in South Korea must additionally log smallholder vulnerability factors under amended AI Basic Act Art. 35(1).",
+      "sourceUrl": "https://www25.senado.leg.br/web/atividade/materias/-/materia/157233",
+      "lastVerified": "2026-11-18",
+      "sectionAnchor": "Artigo 63",
+      "clauseExcerpt": "Brazil PL 2338/2023 Articles 63 and 65 establish author-rights protections requiring prior authorization and remuneration for protected works mined for AI training and restricting dissemination of related outputs. Conversely, EU AI Act Article 53(1)(c) mandates compliance with copyright text-and-data-mining reservations, and Singapore Copyright Act Section 244 provides a statutory computational data analysis exception.",
+      "verificationSteps": [
+        "Partition training-data AIBOM manifests by jurisdiction to separate licensed commercial agronomic and geospatial datasets from TDM-exception corpora.",
+        "Verify machine-readable TDM opt-out compliance logs for EU deployments alongside direct licensing and remuneration records for Brazil deployments.",
+        "Document smallholder and rural-accessibility impact factors in impact assessments to satisfy South Korea AI Basic Act Article 35(1)."
+      ]
     }
   ]
 }

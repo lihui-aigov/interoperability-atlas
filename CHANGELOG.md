@@ -5,6 +5,20 @@ Automated runs via `scripts/curate-atlas.mjs` enforce HTTP `200–399` source re
 
 ---
 
+## [2026.11.6] — 2026-11-18 (`gh-run-44305078916`)
+
+- **Change Type:** `new_mapping`
+- **Summary:** Added agricultural subsidy satellite verification use case (uc-agri-subsidy-verification) with 5 clause-level mappings covering Singapore Agentic AI, ASEAN GenAI Guide, CoE AI Convention, AU Strategy, and Brazil PL 2338/Korea AI Basic Act.
+- **New Use Case Added:** `uc-agri-subsidy-verification` — *Agricultural Subsidy Satellite Verification & Climate-Relief Eligibility AI* (Agriculture, Climate Resilience & Public Subsidies)
+- **Verified Mappings Added (5):**
+  - `delta` · **Singapore Agentic AI Framework §2.1.2 & §2.2.2** (`uc-agri-subsidy-verification` → `ctrl-agent-boundaries` → `inst-sg-agentic`) — [Verified Source](https://www.imda.gov.sg/-/media/imda/files/about/emerging-tech-and-research/artificial-intelligence/mgf-for-agentic-ai.pdf)
+  - `equivalent` · **ASEAN AI Guide (2024) Principle 7 & Part C; Expanded GenAI Guide (2025) §3.2** (`uc-agri-subsidy-verification` → `ctrl-data-aibom` → `inst-asean-guide`) — [Verified Source](https://asean.org/wp-content/uploads/2025/01/Expanded-ASEAN-Guide-on-AI-Governance-and-Ethics-Generative-AI.pdf)
+  - `delta` · **CoE AI Convention (CETS 225) Art. 16(2)(d)-(g), Art. 16(3)-(4), Art. 12 & Art. 26** (`uc-agri-subsidy-verification` → `ctrl-post-market` → `inst-coe-treaty`) — [Verified Source](https://rm.coe.int/1680afae3c)
+  - `delta` · **AU Continental AI Strategy Focus Areas 2-3 & Action 3 vs. EU AI Act Art. 53(1)(a) & Annex XI** (`uc-agri-subsidy-verification` → `ctrl-env-footprint` → `inst-au-strategy`) — [Verified Source](https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy)
+  - `friction` · **Brazil PL 2338/2023 Art. 63 & Art. 65 vs. EU AI Act Art. 53(1)(c) & SG Copyright Act §244** (`uc-agri-subsidy-verification` → `ctrl-data-aibom` → `inst-br-kr-laws`) — [Verified Source](https://www25.senado.leg.br/web/atividade/materias/-/materia/157233)
+- **Source Reference:** IMDA Agentic AI Framework (2026); Expanded ASEAN GenAI Guide (2025); CoE CETS 225; AU Continental AI Strategy (2024); Brazil PL 2338/2023 & EU AI Act
+- **Dataset Totals:** 11 Use Cases · 8 Operational Controls · 9 Global Instruments · 119 Verified Citations
+
 ## [2026.11.5] — 2026-11-18 (`curate-2026-11-18`)
 
 - **Change Type:** `instrument_update`
