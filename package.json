@@ -11,8 +11,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build",
-    "build:standalone": "vite build && node scripts/bundle-standalone.mjs",
+    "build": "vite build && node scripts/inject-seo-and-sitemap.mjs",
+    "build:standalone": "vite build && node scripts/bundle-standalone.mjs && node scripts/inject-seo-and-sitemap.mjs",
     "start": "tsx server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist dist-standalone server.js",

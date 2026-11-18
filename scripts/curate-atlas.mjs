@@ -70,6 +70,19 @@ export function sanitizeUseCaseId(rawId, fallbackTitle) {
 }
 
 /**
+ * Ensures a clean `spot-...` kebab-case identifier for newly curated news spotlights.
+ */
+export function sanitizeSpotlightId(rawId, fallbackHeadline) {
+  const base = String(rawId || fallbackHeadline || '')
+    .toLowerCase()
+    .replace(/^spot-/, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .slice(0, 44);
+  return base ? `spot-${base}` : `spot-curated-${Date.now().toString(36)}`;
+}
+
+/**
  * Validates that a clause citation references a concrete statutory article, section,
  * paragraph, annex, or technical control identifier rather than a vague placeholder.
  */
@@ -497,11 +510,140 @@ export async function runDeterministicQualityGate(
     }
   }
 
+  // Validate optional candidate NewsSpotlight without blocking valid mappings
+  let validatedNewSpotlight = null;
+  let newSpotlightDropReason = null;
+
+  if (candidatePayload?.newSpotlight && typeof candidatePayload.newSpotlight === 'object') {
+    const rawSpot = candidatePayload.newSpotlight;
+    const existingSpotlights = Array.isArray(dataset.spotlights) ? dataset.spotlights : [];
+    const existingSpotIds = new Set(existingSpotlights.map((s) => s.id));
+    const existingSpotHeadlines = new Set(existingSpotlights.map((s) => normalizeKey(s.headline)));
+    const existingSpotUrls = new Set(existingSpotlights.map((s) => String(s.newsSourceUrl || '').trim()));
+
+    const candidateSpotId = sanitizeSpotlightId(rawSpot.id, rawSpot.headline);
+    const headline = String(rawSpot.headline || '').trim();
+    const newsSourceTitle = String(rawSpot.newsSourceTitle || '').trim();
+    const newsSourceUrlRaw = String(rawSpot.newsSourceUrl || '').trim();
+    const regionTag = String(rawSpot.regionTag || 'Global').trim();
+    const eventSummary = String(rawSpot.eventSummary || '').trim();
+    const coreGovernanceQuestion = String(rawSpot.coreGovernanceQuestion || '').trim();
+    const interoperabilityBottleneck = String(rawSpot.interoperabilityBottleneck || '').trim();
+    const engineeringTranslation = String(rawSpot.engineeringTranslation || '').trim();
+
+    let linkedUseCaseId = String(rawSpot.linkedUseCaseId || '').trim();
+    if (
+      validatedNewUseCase &&
+      candidatePayload?.newUseCase?.id &&
+      linkedUseCaseId === String(candidatePayload.newUseCase.id).trim()
+    ) {
+      linkedUseCaseId = validatedNewUseCase.id;
+    }
+
+    const postGateUseCaseIds = new Set(existingUseCaseIds);
+    if (validatedNewUseCase) postGateUseCaseIds.add(validatedNewUseCase.id);
+
+    const validLensIds = new Set([
+      'global-multilateral',
+      'eu',
+      'apac-asean',
+      'africa-latam',
+      'standards-us',
+    ]);
+
+    const evidenceArguments = Array.isArray(rawSpot.evidenceArguments)
+      ? rawSpot.evidenceArguments
+          .filter(
+            (a) =>
+              a &&
+              typeof a.claim === 'string' &&
+              a.claim.trim().length > 15 &&
+              Array.isArray(a.supportingCitations) &&
+              a.supportingCitations.filter(Boolean).length > 0
+          )
+          .map((a) => ({
+            claim: String(a.claim).trim(),
+            supportingCitations: a.supportingCitations.map((c) => String(c).trim()).filter(Boolean).slice(0, 4),
+          }))
+          .slice(0, 5)
+      : [];
+
+    const jurisdictionViews = Array.isArray(rawSpot.jurisdictionViews)
+      ? rawSpot.jurisdictionViews
+          .filter(
+            (v) =>
+              v &&
+              validLensIds.has(String(v.lensId)) &&
+              typeof v.stanceSummary === 'string' &&
+              v.stanceSummary.trim().length > 15 &&
+              Array.isArray(v.citedClauses) &&
+              v.citedClauses.filter(Boolean).length > 0 &&
+              typeof v.leverageOrBlindSpot === 'string' &&
+              v.leverageOrBlindSpot.trim().length > 10
+          )
+          .map((v) => ({
+            lensId: String(v.lensId),
+            lensLabel: String(v.lensLabel || v.lensId).trim(),
+            stanceSummary: String(v.stanceSummary).trim(),
+            citedClauses: v.citedClauses.map((c) => String(c).trim()).filter(Boolean).slice(0, 4),
+            leverageOrBlindSpot: String(v.leverageOrBlindSpot).trim(),
+          }))
+      : [];
+
+    if (headline.length < 15 || eventSummary.length < 30 || coreGovernanceQuestion.length < 15) {
+      newSpotlightDropReason = 'Candidate newSpotlight missing headline, summary, or coreGovernanceQuestion';
+    } else if (
+      existingSpotIds.has(candidateSpotId) ||
+      existingSpotHeadlines.has(normalizeKey(headline)) ||
+      existingSpotUrls.has(newsSourceUrlRaw)
+    ) {
+      newSpotlightDropReason = `Duplicate of existing spotlight (${candidateSpotId})`;
+    } else if (!postGateUseCaseIds.has(linkedUseCaseId)) {
+      newSpotlightDropReason = `Invalid linkedUseCaseId="${linkedUseCaseId}" on candidate newSpotlight`;
+    } else if (evidenceArguments.length < 2 || jurisdictionViews.length < 3) {
+      newSpotlightDropReason = 'Candidate newSpotlight requires >=2 evidenceArguments and >=3 jurisdictionViews';
+    } else if (interoperabilityBottleneck.length < 15 || engineeringTranslation.length < 15 || !newsSourceTitle) {
+      newSpotlightDropReason = 'Candidate newSpotlight missing bottleneck, translation, or source title';
+    } else {
+      const spotUrlStatus = await verifyCached(newsSourceUrlRaw);
+      const resolvedSpotUrl =
+        spotUrlStatus.finalUrl &&
+        /^https?:\/\//i.test(spotUrlStatus.finalUrl) &&
+        !newsSourceUrlRaw.includes('vertexaisearch.cloud.google.com')
+          ? newsSourceUrlRaw
+          : spotUrlStatus.finalUrl || newsSourceUrlRaw;
+
+      if (!spotUrlStatus.ok) {
+        newSpotlightDropReason = `Unreachable newsSourceUrl "${newsSourceUrlRaw}" (${spotUrlStatus.reason})`;
+      } else if (resolvedSpotUrl.includes('vertexaisearch.cloud.google.com')) {
+        newSpotlightDropReason = `Ephemeral redirect newsSourceUrl did not resolve cleanly: "${resolvedSpotUrl}"`;
+      } else {
+        validatedNewSpotlight = {
+          id: candidateSpotId,
+          publishedDate: verifiedDate,
+          headline,
+          newsSourceTitle,
+          newsSourceUrl: resolvedSpotUrl,
+          regionTag,
+          linkedUseCaseId,
+          eventSummary,
+          coreGovernanceQuestion,
+          evidenceArguments,
+          interoperabilityBottleneck,
+          engineeringTranslation,
+          jurisdictionViews,
+        };
+      }
+    }
+  }
+
   return {
     validatedNewUseCase,
     newUseCaseDropReason,
     acceptedMappings,
     droppedMappings,
+    validatedNewSpotlight,
+    newSpotlightDropReason,
   };
 }
 
@@ -538,7 +680,7 @@ export function bumpDatasetVersion(currentVersion, now = new Date()) {
  */
 export function applyVerifiedAdditions(
   dataset,
-  { validatedNewUseCase, acceptedMappings },
+  { validatedNewUseCase, acceptedMappings, validatedNewSpotlight = null },
   changelogMeta = {},
   {
     now = new Date(),
@@ -551,6 +693,10 @@ export function applyVerifiedAdditions(
     ? [...dataset.useCases, validatedNewUseCase]
     : [...dataset.useCases];
   const nextMappings = [...dataset.mappings, ...acceptedMappings];
+  const existingSpotlights = Array.isArray(dataset.spotlights) ? dataset.spotlights : [];
+  const nextSpotlights = validatedNewSpotlight
+    ? [validatedNewSpotlight, ...existingSpotlights].slice(0, 12)
+    : existingSpotlights;
 
   const nextVersion = bumpDatasetVersion(dataset.metadata.datasetVersion, now);
   const isoTimestamp = now.toISOString();
@@ -570,6 +716,7 @@ export function applyVerifiedAdditions(
 
   const affectedSet = new Set();
   if (validatedNewUseCase) affectedSet.add(validatedNewUseCase.id);
+  if (validatedNewSpotlight) affectedSet.add(validatedNewSpotlight.linkedUseCaseId);
   for (const m of acceptedMappings) {
     affectedSet.add(m.useCaseId);
     affectedSet.add(m.controlId);
@@ -621,6 +768,7 @@ export function applyVerifiedAdditions(
     controls: [...dataset.controls],
     instruments: [...dataset.instruments],
     mappings: nextMappings,
+    ...(nextSpotlights.length > 0 ? { spotlights: nextSpotlights } : {}),
   };
 
   const mappingBullets = acceptedMappings
@@ -637,6 +785,9 @@ export function applyVerifiedAdditions(
     `- **Summary:** ${summary}`,
     validatedNewUseCase
       ? `- **New Use Case Added:** \`${validatedNewUseCase.id}\` — *${validatedNewUseCase.title}* (${validatedNewUseCase.sector})`
+      : null,
+    validatedNewSpotlight
+      ? `- **News Spotlight Published:** \`${validatedNewSpotlight.id}\` — *${validatedNewSpotlight.headline}* ([Source](${validatedNewSpotlight.newsSourceUrl}))`
       : null,
     `- **Verified Mappings Added (${acceptedMappings.length}):**`,
     mappingBullets,
@@ -733,6 +884,8 @@ ${coverage.existingInstrumentsSummary}
 Identify either:
 (A) 3 to 5 high-value missing clause mappings (equivalent, delta, and/or friction) for our existing Use Cases that are NOT yet mapped, OR
 (B) 1 concrete, high-stakes new AI deployment Use Case (e.g., Sovereign Cloud Tax Audit AI, Grid Load-Balancing Autonomous Agent, Agricultural Subsidy Satellite Verification, Municipal Flood/Wildfire Emergency Dispatch, or Public Defender Case Triage) together with 4 to 5 exact clause mappings across our tracked controls and instruments.
+
+ALSO identify 1 recent, concrete real-world AI governance news development, regulatory enforcement action, or major public-sector deployment linked to one of our Use Cases (or the new Use Case proposed above) so we can publish a fresh Policymaker "In-the-News Governance Spotlight" brief with evidence-backed arguments across our 5 jurisdictional lenses (global-multilateral, eu, apac-asean, africa-latam, standards-us), the interoperability bottleneck, and the engineering translation.
 
 Provide exact article/section/control citations, 1-2 sentence operational rationales, and official URLs.`;
 
@@ -885,6 +1038,78 @@ export async function extractStructuredAdditions(
           ],
         },
       },
+      newSpotlight: {
+        type: Type.OBJECT,
+        nullable: true,
+        description:
+          'Optional fresh Policymaker In-the-News Governance Spotlight grounded in a verified public news/regulatory URL.',
+        properties: {
+          id: { type: Type.STRING, description: 'Kebab-case identifier prefixed with spot-' },
+          headline: { type: Type.STRING },
+          newsSourceTitle: { type: Type.STRING },
+          newsSourceUrl: { type: Type.STRING },
+          regionTag: { type: Type.STRING },
+          linkedUseCaseId: { type: Type.STRING },
+          eventSummary: { type: Type.STRING },
+          coreGovernanceQuestion: { type: Type.STRING },
+          evidenceArguments: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                claim: { type: Type.STRING },
+                supportingCitations: { type: Type.ARRAY, items: { type: Type.STRING } },
+              },
+              required: ['claim', 'supportingCitations'],
+            },
+          },
+          interoperabilityBottleneck: { type: Type.STRING },
+          engineeringTranslation: { type: Type.STRING },
+          jurisdictionViews: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                lensId: {
+                  type: Type.STRING,
+                  enum: [
+                    'global-multilateral',
+                    'eu',
+                    'apac-asean',
+                    'africa-latam',
+                    'standards-us',
+                  ],
+                },
+                lensLabel: { type: Type.STRING },
+                stanceSummary: { type: Type.STRING },
+                citedClauses: { type: Type.ARRAY, items: { type: Type.STRING } },
+                leverageOrBlindSpot: { type: Type.STRING },
+              },
+              required: [
+                'lensId',
+                'lensLabel',
+                'stanceSummary',
+                'citedClauses',
+                'leverageOrBlindSpot',
+              ],
+            },
+          },
+        },
+        required: [
+          'id',
+          'headline',
+          'newsSourceTitle',
+          'newsSourceUrl',
+          'regionTag',
+          'linkedUseCaseId',
+          'eventSummary',
+          'coreGovernanceQuestion',
+          'evidenceArguments',
+          'interoperabilityBottleneck',
+          'engineeringTranslation',
+          'jurisdictionViews',
+        ],
+      },
       changelogEntry: {
         type: Type.OBJECT,
         properties: {
@@ -907,6 +1132,10 @@ export async function extractStructuredAdditions(
     required: ['includeNewUseCase', 'mappings', 'changelogEntry'],
   };
 
+  const existingSpotlightsList = (Array.isArray(dataset.spotlights) ? dataset.spotlights : [])
+    .map((s) => `- ${s.id}: ${s.headline}`)
+    .join('\n');
+
   const extractionPrompt = `Convert the Step 1 search-grounded governance findings below into strict schema-locked JSON for \`src/data/atlas.json\`.
 
 HARD INVARIANTS:
@@ -917,8 +1146,10 @@ HARD INVARIANTS:
     .join(', ')}) OR equal \`newUseCase.id\` when \`includeNewUseCase\` is true.
 4. NEVER duplicate any of these existing mappings:
 ${coverage.existingCitationsSample}
-5. Every \`sourceUrl\` MUST be selected from the pre-verified reachable URLs below:
+5. Every \`sourceUrl\` (and \`newSpotlight.newsSourceUrl\`) MUST be selected from the pre-verified reachable URLs below:
 ${verifiedUrlsText}
+6. If proposing \`newSpotlight\`, do not duplicate existing spotlights:
+${existingSpotlightsList || '(none yet)'}
 
 Step 1 Grounded Research Findings:
 ${researchNotes}`;
@@ -1024,6 +1255,9 @@ export async function runCurationPipeline({
   if (gateResult.newUseCaseDropReason) {
     console.warn(`[atlas-curator] Dropped candidate newUseCase: ${gateResult.newUseCaseDropReason}`);
   }
+  if (gateResult.newSpotlightDropReason) {
+    console.warn(`[atlas-curator] Dropped candidate newSpotlight: ${gateResult.newSpotlightDropReason}`);
+  }
   for (const dropped of gateResult.droppedMappings) {
     console.warn(`[atlas-curator] Dropped candidate mapping: ${dropped.reason}`);
   }
@@ -1031,12 +1265,16 @@ export async function runCurationPipeline({
   console.log(
     `[atlas-curator] Quality gate summary: ${
       gateResult.validatedNewUseCase ? '1 new UseCase, ' : '0 new UseCases, '
-    }${gateResult.acceptedMappings.length} verified mappings accepted, ${
-      gateResult.droppedMappings.length
-    } rejected.`
+    }${gateResult.validatedNewSpotlight ? '1 new Spotlight, ' : '0 new Spotlights, '}${
+      gateResult.acceptedMappings.length
+    } verified mappings accepted, ${gateResult.droppedMappings.length} rejected.`
   );
 
-  if (!gateResult.validatedNewUseCase && gateResult.acceptedMappings.length === 0) {
+  if (
+    !gateResult.validatedNewUseCase &&
+    !gateResult.validatedNewSpotlight &&
+    gateResult.acceptedMappings.length === 0
+  ) {
     console.log('[atlas-curator] Zero candidates passed strict verification. Leaving dataset untouched.');
     return { updated: false, gateResult };
   }

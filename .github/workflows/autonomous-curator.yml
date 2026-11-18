@@ -5,11 +5,16 @@ on:
     - cron: '0 7 * * 1,4' # Runs automatically every Monday & Thursday at 07:00 UTC
   workflow_dispatch:       # Lets you trigger an immediate run with 1 click
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   curate-and-verify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      pushed: ${{ steps.commit.outputs.pushed }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Discover, map, and verify new governance interoperability edges
+      - name: Discover, map, and verify new governance interoperability edges & spotlight
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: gemini-4-hydrogen
@@ -33,13 +38,44 @@ jobs:
           npm run build:standalone
 
       - name: Commit verified growth to repository
+        id: commit
         run: |
           git config user.name "atlas-curator[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           touch CHANGELOG.md
           git add src/data/atlas.json CHANGELOG.md
           if ! git diff --staged --quiet; then
-            git commit -m "data(atlas): autonomous verified governance mapping update"
+            git commit -m "data(atlas): autonomous verified governance mapping & spotlight update"
             git pull --rebase origin main
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           fi
+
+  republish-pages:
+    needs: curate-and-verify
+    if: needs.curate-and-verify.outputs.pushed == 'true'
+    continue-on-error: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm install
+      - run: npm run build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

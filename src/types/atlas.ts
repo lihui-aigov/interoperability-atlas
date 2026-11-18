@@ -98,12 +98,49 @@ export interface AtlasMetadata {
   recentUpdates: AtlasUpdateEntry[];
 }
 
+export type JurisdictionLensId =
+  | 'global-multilateral'
+  | 'eu'
+  | 'apac-asean'
+  | 'africa-latam'
+  | 'standards-us';
+
+export interface SpotlightJurisdictionView {
+  lensId: JurisdictionLensId;
+  lensLabel: string;
+  stanceSummary: string;
+  citedClauses: string[];
+  leverageOrBlindSpot: string;
+}
+
+export interface SpotlightArgument {
+  claim: string;
+  supportingCitations: string[];
+}
+
+export interface NewsSpotlight {
+  id: string;
+  publishedDate: string;
+  headline: string;
+  newsSourceTitle: string;
+  newsSourceUrl: string;
+  regionTag: string;
+  linkedUseCaseId: string;
+  eventSummary: string;
+  coreGovernanceQuestion: string;
+  evidenceArguments: SpotlightArgument[];
+  interoperabilityBottleneck: string;
+  engineeringTranslation: string;
+  jurisdictionViews: SpotlightJurisdictionView[];
+}
+
 export interface AtlasDataset {
   metadata: AtlasMetadata;
   useCases: UseCase[];
   controls: OperationalControl[];
   instruments: GovernanceInstrument[];
   mappings: InteropMapping[];
+  spotlights?: NewsSpotlight[];
 }
 
 export interface GroundingSource {

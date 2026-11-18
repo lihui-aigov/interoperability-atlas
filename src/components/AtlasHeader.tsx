@@ -36,31 +36,37 @@ export function AtlasHeader({
 
           <nav
             aria-label="Primary sections"
-            className="hidden xl:flex items-center gap-6 text-sm font-medium text-slate-600"
+            className="hidden xl:flex items-center gap-5 text-sm font-medium text-slate-600"
           >
+            <a
+              href="#news-spotlight"
+              className="text-slate-950 font-semibold hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
+            >
+              News Spotlight
+            </a>
             <a
               href="#regime-overview"
               className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
             >
-              Regime Convergence
+              Convergence
             </a>
             <a
               href="#interoperability-flow"
               className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
             >
-              Interoperability Flow
+              Topology Flow
             </a>
             <a
               href="#comparison-matrix"
               className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
             >
-              Crosswalk Matrix
+              Matrix
             </a>
             <a
               href="#use-case-sandbox"
               className="hover:text-slate-950 hover:underline underline-offset-8 transition-colors whitespace-nowrap shrink-0 py-1"
             >
-              Scenario Sandbox
+              Sandbox
             </a>
             <a
               href="#methodology-schema"
@@ -177,6 +183,15 @@ export function AtlasHeader({
                   </dd>
                 </div>
               </dl>
+
+              <p className="mt-4 text-xs text-slate-600 leading-relaxed max-w-2xl border-l-2 border-slate-300 pl-3">
+                <span className="font-semibold text-slate-800">Personal note:</span> I started
+                this side project because reading AI governance news and policy debates kept
+                raising practical questions about what multiple regimes actually require on the
+                ground, and no existing tracker linked breaking cases directly to cross-framework
+                evidence and operational controls. Maintained in a personal capacity from public
+                texts.
+              </p>
             </div>
 
             <div className="lg:col-span-5">

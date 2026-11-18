@@ -50,6 +50,18 @@ function startStaticServer(rootDir) {
 }
 
 async function main() {
+  for (const seoRel of [
+    'sitemap.xml',
+    'robots.txt',
+    'llms.txt',
+    'spotlights/spot-agentic-public-oversight.html',
+  ]) {
+    const seoFile = path.join(DIST_DIR, seoRel);
+    if (!fs.existsSync(seoFile)) {
+      throw new Error(`Expected SEO artifact missing from dist/: ${seoFile}`);
+    }
+  }
+
   fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
 
   const { server, port } = await startStaticServer(DIST_DIR);
@@ -79,15 +91,36 @@ async function main() {
 
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
     await page.waitForSelector('h1');
+    await page.waitForSelector('#news-spotlight');
     await page.waitForSelector('#regime-overview table');
     await page.waitForTimeout(350);
 
-    // 1. Capture Masthead + Regime Convergence Overview & 9x9 Heatmap + Pairwise Comparison Strip
+    // 0. Click European Union lens in #news-spotlight, verify stance updates, and capture Masthead + Spotlight
+    await page.locator('#news-spotlight button[role="tab"]:has-text("European Union")').click();
+    await page.waitForSelector('#news-spotlight:has-text("EU AI Act Art. 12")');
+    await page.waitForTimeout(200);
+    const spotBox = await page.locator('#news-spotlight').boundingBox();
+    const spotBottom = spotBox ? Math.ceil(spotBox.y + spotBox.height) : 1460;
     await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-heatmap.png'),
+      path: path.join(SCREENSHOTS_DIR, '00-desktop-news-spotlight.png'),
       fullPage: true,
-      clip: { x: 0, y: 0, width: 1440, height: 1620 },
+      clip: { x: 0, y: 0, width: 1440, height: Math.min(spotBottom + 12, 1650) },
     });
+
+    // 1. Capture #regime-overview (Instrument Footprint + 9x9 Heatmap + Pairwise Comparison Strip)
+    const overviewBox = await page.locator('#regime-overview').boundingBox();
+    if (overviewBox) {
+      await page.screenshot({
+        path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-heatmap.png'),
+        fullPage: true,
+        clip: {
+          x: 0,
+          y: Math.max(0, Math.floor(overviewBox.y)),
+          width: 1440,
+          height: Math.ceil(overviewBox.height),
+        },
+      });
+    }
 
     // 2. Capture full #interoperability-flow cleanly at scrollY=0 via fullPage clip so sticky header stays at page top
     await page.evaluate(() => window.scrollTo(0, 0));

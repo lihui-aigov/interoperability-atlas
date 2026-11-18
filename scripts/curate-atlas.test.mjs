@@ -262,3 +262,89 @@ test('applyVerifiedAdditions bumps datasetVersion, updates totalCounts & recentU
     'New release section should appear above older entries'
   );
 });
+
+test('runDeterministicQualityGate and applyVerifiedAdditions validate and prepend newSpotlight cleanly', async () => {
+  const validPayload = {
+    includeNewUseCase: false,
+    mappings: [],
+    newSpotlight: {
+      id: 'spot-procurement-transparency-ruling',
+      headline: 'Municipal Public Procurement Tender AI Faces Mandatory Disclosure Challenge',
+      newsSourceTitle: 'EUR-Lex Official AI Act Guidance',
+      newsSourceUrl: 'https://eur-lex.europa.eu/eli/reg/2024/1689/oj',
+      regionTag: 'EU / Global',
+      linkedUseCaseId: 'uc-procurement-screening',
+      eventSummary:
+        'A municipal tender review board challenged opaque bidder exclusion scores, prompting calls to reconcile procurement transparency with trade-secret protection.',
+      coreGovernanceQuestion:
+        'What technical disclosures make automated tender triage contestable without leaking proprietary scoring models?',
+      evidenceArguments: [
+        {
+          claim: 'Excluded vendors require intelligible factor-level reasons rather than opaque risk scores.',
+          supportingCitations: ['UNESCO Recommendation §37–39', 'EU AI Act Art. 86'],
+        },
+        {
+          claim: 'Audit trails of human review prevent rubber-stamping vendor exclusions.',
+          supportingCitations: ['ISO/IEC 42001 Control A.6.2.8'],
+        },
+      ],
+      interoperabilityBottleneck:
+        'Public procurement transparency statutes clash with vendor claims over proprietary weighting logic.',
+      engineeringTranslation:
+        'Log deterministic factor-level bidder threshold explanations and human committee sign-offs.',
+      jurisdictionViews: [
+        {
+          lensId: 'global-multilateral',
+          lensLabel: 'Global / Multilateral',
+          stanceSummary: 'UNESCO Recommendation requires explainable public-sector adverse notices.',
+          citedClauses: ['UNESCO Recommendation §37'],
+          leverageOrBlindSpot: 'Strong due-process baseline.',
+        },
+        {
+          lensId: 'eu',
+          lensLabel: 'European Union',
+          stanceSummary: 'EU public bodies must log oversight decisions and conduct Art. 27 FRIAs.',
+          citedClauses: ['EU AI Act Art. 27'],
+          leverageOrBlindSpot: 'Binding fundamental-rights filing.',
+        },
+        {
+          lensId: 'standards-us',
+          lensLabel: 'Standards & US',
+          stanceSummary: 'NIST AI RMF GOVERN and ISO/IEC 42001 require supplier evaluation records.',
+          citedClauses: ['ISO/IEC 42001 Control A.6.2.8'],
+          leverageOrBlindSpot: 'Standardizes vendor audit evidence.',
+        },
+      ],
+    },
+  };
+
+  const okGate = await runDeterministicQualityGate(seedDataset, validPayload, {
+    fetchImpl: async (url) => ({ status: 200, url }),
+    verifiedDate: '2026-11-18',
+  });
+  assert.ok(okGate.validatedNewSpotlight, 'Valid newSpotlight should pass quality gate');
+  assert.equal(okGate.validatedNewSpotlight.id, 'spot-procurement-transparency-ruling');
+
+  const { updatedDataset } = applyVerifiedAdditions(seedDataset, okGate, {
+    changeType: 'new_mapping',
+    summary: 'Published procurement tender disclosure spotlight.',
+    sourceReference: 'EUR-Lex',
+  });
+  assert.equal(updatedDataset.spotlights[0].id, 'spot-procurement-transparency-ruling');
+
+  const deadLinkGate = await runDeterministicQualityGate(
+    seedDataset,
+    {
+      ...validPayload,
+      newSpotlight: {
+        ...validPayload.newSpotlight,
+        newsSourceUrl: 'https://dead-news.example/missing',
+      },
+    },
+    {
+      fetchImpl: async () => ({ status: 404, url: 'https://dead-news.example/missing' }),
+    }
+  );
+  assert.equal(deadLinkGate.validatedNewSpotlight, null);
+  assert.ok(deadLinkGate.newSpotlightDropReason?.includes('Unreachable newsSourceUrl'));
+});

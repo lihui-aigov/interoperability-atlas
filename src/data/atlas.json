@@ -2479,5 +2479,267 @@
         "Document smallholder and rural-accessibility impact factors in impact assessments to satisfy South Korea AI Basic Act Article 35(1)."
       ]
     }
+  ],
+  "spotlights": [
+    {
+      "id": "spot-agentic-public-oversight",
+      "publishedDate": "2026-11-18",
+      "headline": "Autonomous Tool-Using Agents Move into Public Administration as Regulators Confront Multi-Step Oversight",
+      "newsSourceTitle": "IMDA Singapore — Model AI Governance Framework for Agentic AI (2026)",
+      "newsSourceUrl": "https://www.imda.gov.sg/-/media/imda/files/about/emerging-tech-and-research/artificial-intelligence/mgf-for-agentic-ai.pdf",
+      "regionTag": "Global / ASEAN / EU",
+      "linkedUseCaseId": "uc-agentic-public-service",
+      "eventSummary": "Public agencies and municipal service portals are shifting from read-only chatbots to tool-calling AI agents capable of querying registries, updating tax or benefit records, and drafting administrative determinations. Singapore's Model AI Governance Framework for Agentic AI introduces explicit action-bounding and checkpoint rules where static 2021-2024 risk regimes only assumed passive model outputs.",
+      "coreGovernanceQuestion": "When an autonomous public-service agent chains multiple database lookups and state-changing tool calls, what makes human oversight legally meaningful rather than a rubber stamp?",
+      "evidenceArguments": [
+        {
+          "claim": "Traditional static model cards no longer satisfy statutory traceability; agencies must bind permission ceilings directly to external API tools and require immutable action logs.",
+          "supportingCitations": [
+            "Singapore Agentic AI Framework §2.1 & §3.2",
+            "EU AI Act Art. 12 & Art. 14",
+            "ISO/IEC 42001 Control A.6.2.8"
+          ]
+        },
+        {
+          "claim": "International frameworks converge on pre-execution human confirmation gates for irreversible state changes, even where they disagree on mandatory licensing thresholds.",
+          "supportingCitations": [
+            "UNESCO Recommendation §42–44",
+            "CoE AI Convention (CETS 225) Art. 14 & Art. 16",
+            "NIST AI RMF GOVERN 1.3 & MANAGE 2.4"
+          ]
+        },
+        {
+          "claim": "Cross-border cloud vendors face conflicting transparency versus security rules: administrative contestability laws mandate full decision reasoning disclosure while runtime security guidelines restrict exposing system prompts and tool schemas.",
+          "supportingCitations": [
+            "EU AI Act Art. 86 vs. Agentic Security Prompt Confidentiality",
+            "Brazil PL 2338 Art. 18"
+          ]
+        }
+      ],
+      "interoperabilityBottleneck": "Most statutory high-risk frameworks classify AI systems at the model or sector level and lack granular permission schemas for dynamic tool calls, while administrative-law transparency duties clash with cybersecurity rules restricting disclosure of tool-routing prompts.",
+      "engineeringTranslation": "Enforce a Runtime Agent Action Boundary Manifest separating read-only queries from write/commit endpoints, paired with cryptographic trace logs and human-in-the-loop approval tokens before any citizen record is altered.",
+      "jurisdictionViews": [
+        {
+          "lensId": "global-multilateral",
+          "lensLabel": "Global / Multilateral",
+          "stanceSummary": "UNESCO Recommendation §42–44 and Council of Europe Convention CETS 225 Art. 14 insist that automated chains never dilute legal accountability: a human official must remain attributable and able to suspend autonomous execution at any point.",
+          "citedClauses": [
+            "UNESCO Recommendation §42–44",
+            "UNESCO EIA Tool §3.4",
+            "CoE CETS 225 Art. 14 & Art. 16"
+          ],
+          "leverageOrBlindSpot": "Strong on institutional accountability and citizen redress rights; relies on national implementing guidance to define API-level sandboxing."
+        },
+        {
+          "lensId": "eu",
+          "lensLabel": "European Union",
+          "stanceSummary": "Public-sector benefit, migration, and justice agents fall under EU AI Act Annex III high-risk duties requiring automatic event logging (Art. 12), human oversight designed against automation bias (Art. 14), and public-body Fundamental Rights Impact Assessments (Art. 27).",
+          "citedClauses": [
+            "EU AI Act Art. 12 (Record-Keeping)",
+            "EU AI Act Art. 14 (Human Oversight)",
+            "EU AI Act Art. 27 & Annex III(5)(a)"
+          ],
+          "leverageOrBlindSpot": "Legally binding logs and ex-ante FRIA filings create hard compliance floors, though the statutory text does not yet standardize MCP or multi-agent tool-call schemas."
+        },
+        {
+          "lensId": "apac-asean",
+          "lensLabel": "Asia-Pacific & ASEAN",
+          "stanceSummary": "Singapore's Agentic AI Framework directly targets tool-using agents by bounding autonomous action scope, setting risk-tiered human checkpoints, and requiring clear end-user visibility into external tool invocations, complemented by South Korea's AI Basic Act high-impact safeguards.",
+          "citedClauses": [
+            "Singapore Agentic AI §2.1.2 & §3.2",
+            "ASEAN GenAI Guide §3.2",
+            "Korea AI Basic Act Art. 34"
+          ],
+          "leverageOrBlindSpot": "Provides the most operationally concrete engineering guidance for agent tool scoping; remains voluntary in Singapore unless tied to sectoral financial or public-sector tenders."
+        },
+        {
+          "lensId": "africa-latam",
+          "lensLabel": "Africa & LATAM",
+          "stanceSummary": "Brazil PL 2338/2023 emphasizes algorithmic impact assessments, strict civil liability tiers, and immediate human-review rights for high-risk public decisions, while the AU Continental AI Strategy prioritizes sovereign public digital infrastructure and institutional audit readiness.",
+          "citedClauses": [
+            "Brazil PL 2338 Art. 18 & Art. 24",
+            "AU Continental AI Strategy Focus Area 2–3"
+          ],
+          "leverageOrBlindSpot": "Strong public-interest liability and contestability protections; regional enforcement capacity depends heavily on shared open-source audit tooling."
+        },
+        {
+          "lensId": "standards-us",
+          "lensLabel": "Standards & US",
+          "stanceSummary": "ISO/IEC 42001 Control A.6.2.6–A.6.2.8 and NIST AI RMF MANAGE 2.4 translate multi-step autonomy into change-control boundaries, fail-safe termination hooks, and continuous runtime telemetry.",
+          "citedClauses": [
+            "ISO/IEC 42001 Control A.6.2.6 & A.6.2.8",
+            "NIST AI RMF GOVERN 1.3 & MANAGE 2.4"
+          ],
+          "leverageOrBlindSpot": "Supplies auditable technical controls already familiar to enterprise CISOs, but omits constitutional due-process rules that public ministries must layer on top."
+        }
+      ]
+    },
+    {
+      "id": "spot-biometric-bans-vs-carveouts",
+      "publishedDate": "2026-11-14",
+      "headline": "EU AI Act Prohibited Biometric Rules Collide with Warrant and High-Impact Carve-Outs Across G20 Regimes",
+      "newsSourceTitle": "Official Journal of the EU — Regulation (EU) 2024/1689 Art. 5 Enforcement",
+      "newsSourceUrl": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+      "regionTag": "EU / CoE / G20",
+      "linkedUseCaseId": "uc-biometric-law-enforcement",
+      "eventSummary": "Cross-border law enforcement technology vendors and municipal security bodies face diverging legal rules as prohibited-practice provisions under EU AI Act Article 5 take full effect alongside national high-impact regimes in South Korea, legislative proposals in Brazil, and Council of Europe treaty exceptions.",
+      "coreGovernanceQuestion": "Can a single biometric verification or camera analytics architecture operate legally across Europe, Asia-Pacific, and Latin America when some regimes impose categorical bans and others rely on procedural warrants?",
+      "evidenceArguments": [
+        {
+          "claim": "Technical accuracy audits and ISO/IEC 42001 controls remain interoperable for lawful verification workflows, but cannot cure categorical statutory prohibitions on untargeted scraping or real-time remote biometric mass surveillance.",
+          "supportingCitations": [
+            "EU AI Act Art. 5(1)(e) & Art. 5(1)(h)",
+            "UNESCO Recommendation §26",
+            "ISO/IEC 42001 Control A.8.4"
+          ]
+        },
+        {
+          "claim": "National security carve-outs in treaty law conflict with comprehensive fundamental-rights obligations in municipal policing procurement.",
+          "supportingCitations": [
+            "CoE CETS 225 Art. 3(2)",
+            "EU AI Act Art. 5(2)–(5)",
+            "Brazil PL 2338 Art. 13"
+          ]
+        }
+      ],
+      "interoperabilityBottleneck": "Categorical legal prohibitions on untargeted facial scraping and emotion inference in workplaces or schools leave zero room for risk-mitigation workarounds, splitting multinational public-safety software stacks at the architecture level.",
+      "engineeringTranslation": "Separate real-time crowd identification modules behind strict regional feature flags and cryptographic judicial-warrant tokens, while isolating biometric templates inside verifiable deletion and provenance pipelines.",
+      "jurisdictionViews": [
+        {
+          "lensId": "global-multilateral",
+          "lensLabel": "Global / Multilateral",
+          "stanceSummary": "UNESCO Recommendation §26 explicitly calls on Member States to prohibit AI systems for mass surveillance and social scoring, while CoE CETS 225 Art. 3(2) exempts pure national defense from treaty scope while binding ordinary domestic public policing.",
+          "citedClauses": [
+            "UNESCO Recommendation §26",
+            "CoE CETS 225 Art. 3(2) & Art. 16"
+          ],
+          "leverageOrBlindSpot": "Establishes clear normative red lines against mass surveillance, while treaty defense exclusions leave gray zones around dual-use border security."
+        },
+        {
+          "lensId": "eu",
+          "lensLabel": "European Union",
+          "stanceSummary": "EU AI Act Article 5 prohibits untargeted facial-image scraping, emotion recognition in schools and workplaces, and real-time public biometric identification outside narrowly enumerated judicial-authorization cases.",
+          "citedClauses": [
+            "EU AI Act Art. 5(1)(e), (f), (h)",
+            "EU AI Act Art. 5(2)–(5) & Annex III(1)"
+          ],
+          "leverageOrBlindSpot": "Backed by severe administrative penalties; creates sharp market-exclusion boundaries for vendors bundling emotion analytics or scraped watchlists."
+        },
+        {
+          "lensId": "apac-asean",
+          "lensLabel": "Asia-Pacific & ASEAN",
+          "stanceSummary": "South Korea's AI Basic Act regulates biometric public-safety applications under High-Impact AI transparency, human oversight, and risk-management duties rather than an outright real-time prohibition, while ASEAN relies on voluntary risk tiers.",
+          "citedClauses": [
+            "Korea AI Basic Act Art. 34",
+            "ASEAN AI Guide Part C"
+          ],
+          "leverageOrBlindSpot": "Permits controlled public deployment subject to impact and notice duties, diverging from European categorical bans."
+        },
+        {
+          "lensId": "africa-latam",
+          "lensLabel": "Africa & LATAM",
+          "stanceSummary": "Brazil PL 2338/2023 restricts excessive surveillance and requires documented proportionality and algorithmic impact assessments for public security; AU strategy emphasizes civil liberties safeguards alongside proportional digital policing standards.",
+          "citedClauses": [
+            "Brazil PL 2338 Art. 13 & Art. 24",
+            "AU Continental AI Strategy §3.1"
+          ],
+          "leverageOrBlindSpot": "Focuses heavily on racial-bias error disparities in facial matching cohorts."
+        },
+        {
+          "lensId": "standards-us",
+          "lensLabel": "Standards & US",
+          "stanceSummary": "NIST AI RMF MEASURE 2.6–2.11 and FRVT demographic error testing quantify false-match disparities across skin tones and age cohorts, while ISO/IEC 42001 mandates documented operational constraints.",
+          "citedClauses": [
+            "NIST AI RMF MEASURE 2.6 & 2.11",
+            "ISO/IEC 42001 Control A.8.4"
+          ],
+          "leverageOrBlindSpot": "Indispensable empirical benchmark methodology; technical accuracy alone never overrides statutory bans on prohibited use cases."
+        }
+      ]
+    },
+    {
+      "id": "spot-subsidy-satellite-data-sovereignty",
+      "publishedDate": "2026-11-10",
+      "headline": "Climate-Relief & Agricultural Subsidy AI Raises Friction Between GPAI Copyright Rules and Local Data Sovereignty",
+      "newsSourceTitle": "African Union Continental AI Strategy & Expanded ASEAN GenAI Guide",
+      "newsSourceUrl": "https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy",
+      "regionTag": "AU / ASEAN / Brazil",
+      "linkedUseCaseId": "uc-agri-subsidy-verification",
+      "eventSummary": "Agricultural ministries deploying Earth-observation and mobile telemetry AI to disburse drought relief and fertilizer subsidies encounter conflicting cross-border rules on satellite and agronomic training data licensing, compute energy reporting, and appeals for unbanked farmers.",
+      "coreGovernanceQuestion": "How can agricultural and climate-resilience agencies adopt foundation geospatial models without breaching copyright opt-out mandates, local data sovereignty rules, or rural due-process rights?",
+      "evidenceArguments": [
+        {
+          "claim": "Training-data copyright laws diverge across major jurisdictions: prior-authorization rules in Brazil PL 2338 clash with EU text-and-data-mining opt-outs and Singapore computational analysis exceptions.",
+          "supportingCitations": [
+            "Brazil PL 2338/2023 Art. 63 & Art. 65",
+            "EU AI Act Art. 53(1)(c)",
+            "Singapore Copyright Act §244"
+          ]
+        },
+        {
+          "claim": "Multilateral and regional strategies increasingly pair technical AIBOM lineage with climate energy-and-water disclosure and smallholder appeal mechanisms.",
+          "supportingCitations": [
+            "AU Continental AI Strategy Focus Areas 2–3",
+            "UNESCO Recommendation §84–86",
+            "Expanded ASEAN GenAI Guide §3.2"
+          ]
+        }
+      ],
+      "interoperabilityBottleneck": "Geospatial foundation models trained across global corpora face incompatible intellectual-property regimes and cloud-residency mandates when deployed in national subsidy programs.",
+      "engineeringTranslation": "Partition training-data AIBOM manifests by corpus license regime, log edge-inference energy footprints alongside cloud training draw, and build SMS or offline-first contestability channels for rural subsidy denials.",
+      "jurisdictionViews": [
+        {
+          "lensId": "global-multilateral",
+          "lensLabel": "Global / Multilateral",
+          "stanceSummary": "UNESCO Recommendation §84–86 requires weighing lifecycle energy, carbon, and water footprints in public procurement while safeguarding rural communities from uncontestable automated exclusions.",
+          "citedClauses": [
+            "UNESCO Recommendation §84–86",
+            "CoE CETS 225 Art. 16"
+          ],
+          "leverageOrBlindSpot": "Bridges environmental stewardship directly with administrative fairness in climate-sensitive deployments."
+        },
+        {
+          "lensId": "eu",
+          "lensLabel": "European Union",
+          "stanceSummary": "EU AI Act Art. 53(1)(a)-(c) requires upstream general-purpose AI providers to publish training content summaries, honor machine-readable TDM copyright reservations, and report model compute energy under Annex XI.",
+          "citedClauses": [
+            "EU AI Act Art. 53(1)(a)-(c) & Annex XI",
+            "EU AI Act Annex III(5)(a)"
+          ],
+          "leverageOrBlindSpot": "Strong upstream model transparency; public-benefit subsidy eligibility classifications trigger high-risk deployer obligations inside the EU."
+        },
+        {
+          "lensId": "apac-asean",
+          "lensLabel": "Asia-Pacific & ASEAN",
+          "stanceSummary": "The Expanded ASEAN GenAI Guide §3.2 aligns with ISO/IEC 42001 on dataset lineage and risk transparency, while Singapore Copyright Act §244 shields lawful computational analysis on validly accessed corpora.",
+          "citedClauses": [
+            "Expanded ASEAN GenAI Guide §3.2",
+            "Singapore Agentic AI §2.1.2",
+            "Singapore Copyright Act §244"
+          ],
+          "leverageOrBlindSpot": "Facilitates regional agronomic R&D collaboration; requires careful licensing isolation if exported into prior-authorization copyright jurisdictions."
+        },
+        {
+          "lensId": "africa-latam",
+          "lensLabel": "Africa & LATAM",
+          "stanceSummary": "The AU Continental AI Strategy emphasizes domestic agronomic data sovereignty and equitable infrastructure investment, while Brazil PL 2338 Articles 63 and 65 strengthen author-rights authorization for protected training material.",
+          "citedClauses": [
+            "AU Continental AI Strategy Focus Areas 2–3",
+            "Brazil PL 2338 Art. 63 & Art. 65"
+          ],
+          "leverageOrBlindSpot": "Directly protects local researchers and rural populations from extractive data flows, creating commercial-model licensing friction for multinational suppliers."
+        },
+        {
+          "lensId": "standards-us",
+          "lensLabel": "Standards & US",
+          "stanceSummary": "ISO/IEC 42001 Control A.7.2 and NIST AI RMF MAP 2.3 establish verifiable data-lineage manifests and subgroup performance audits across diverse ecological zones and farm sizes.",
+          "citedClauses": [
+            "ISO/IEC 42001 Control A.7.2",
+            "NIST AI RMF MAP 2.3 & MEASURE 2.11"
+          ],
+          "leverageOrBlindSpot": "Ensures sensor drift and regional cloud-cover bias in satellite inference are caught before subsidy payouts lock."
+        }
+      ]
+    }
   ]
 }

@@ -14,6 +14,7 @@ import { InteroperabilityBriefCard } from './components/InteroperabilityBriefCar
 import { InteroperabilityFlow } from './components/InteroperabilityFlow';
 import { MatrixExportView } from './components/MatrixExportView';
 import { MethodologySchemaSection } from './components/MethodologySchemaSection';
+import { NewsSpotlightSection } from './components/NewsSpotlightSection';
 import { RecentUpdatesDrawer } from './components/RecentUpdatesDrawer';
 import { RegimeConvergenceOverview } from './components/RegimeConvergenceOverview';
 import { UseCaseSandbox } from './components/UseCaseSandbox';
@@ -31,7 +32,70 @@ import {
 const baseDataset = rawAtlasData as AtlasDataset;
 const SANDBOX_STORAGE_KEY = 'open_atlas_sandbox_results_v1';
 
+function readInitialQueryParams(): {
+  spotlightId?: string;
+  initialSelection: FocusSelection;
+  initialMatrixUseCaseId: string;
+} {
+  const defaultUcId = baseDataset.useCases[0].id;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const spotlightParam = params.get('spotlight') ?? undefined;
+    const useCaseParam = params.get('useCase');
+    const instParam = params.get('instrument');
+
+    if (useCaseParam && baseDataset.useCases.some((u) => u.id === useCaseParam)) {
+      return {
+        spotlightId: spotlightParam,
+        initialSelection: { type: 'useCase', id: useCaseParam },
+        initialMatrixUseCaseId: useCaseParam,
+      };
+    }
+
+    if (instParam && baseDataset.instruments.some((i) => i.id === instParam)) {
+      return {
+        spotlightId: spotlightParam,
+        initialSelection: { type: 'instrument', id: instParam },
+        initialMatrixUseCaseId: defaultUcId,
+      };
+    }
+
+    if (spotlightParam) {
+      const matchedSpot = baseDataset.spotlights?.find((s) => s.id === spotlightParam);
+      if (
+        matchedSpot &&
+        baseDataset.useCases.some((u) => u.id === matchedSpot.linkedUseCaseId)
+      ) {
+        return {
+          spotlightId: spotlightParam,
+          initialSelection: { type: 'useCase', id: matchedSpot.linkedUseCaseId },
+          initialMatrixUseCaseId: matchedSpot.linkedUseCaseId,
+        };
+      }
+    }
+  } catch {
+    // Ignore malformed query strings cleanly
+  }
+
+  return {
+    initialSelection: { type: 'useCase', id: defaultUcId },
+    initialMatrixUseCaseId: defaultUcId,
+  };
+}
+
+function updateQueryParamSafe(key: string, value: string) {
+  try {
+    if (window.location.protocol === 'file:') return;
+    const url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    window.history.replaceState(null, '', url.toString());
+  } catch {
+    // Ignore history API restrictions in embedded frames
+  }
+}
+
 export default function App() {
+  const initialQuery = useMemo(() => readInitialQueryParams(), []);
   const [sandboxResults, setSandboxResults] = useState<SandboxMappingResult[]>(() => {
     try {
       const saved = sessionStorage.getItem(SANDBOX_STORAGE_KEY);
@@ -61,13 +125,12 @@ export default function App() {
     };
   }, [sandboxResults]);
 
-  const [selection, setSelection] = useState<FocusSelection>({
-    type: 'useCase',
-    id: baseDataset.useCases[0].id,
-  });
+  const [selection, setSelection] = useState<FocusSelection>(
+    initialQuery.initialSelection
+  );
 
   const [selectedMatrixUseCaseId, setSelectedMatrixUseCaseId] = useState<string>(
-    baseDataset.useCases[0].id
+    initialQuery.initialMatrixUseCaseId
   );
 
   const [alignmentFilter, setAlignmentFilter] = useState<AlignmentType | 'all'>('all');
@@ -80,12 +143,16 @@ export default function App() {
     setSelection(next);
     if (next.type === 'useCase') {
       setSelectedMatrixUseCaseId(next.id);
+      updateQueryParamSafe('useCase', next.id);
+    } else if (next.type === 'instrument') {
+      updateQueryParamSafe('instrument', next.id);
     }
   };
 
   const handleChangeMatrixUseCase = (useCaseId: string) => {
     setSelectedMatrixUseCaseId(useCaseId);
     setSelection({ type: 'useCase', id: useCaseId });
+    updateQueryParamSafe('useCase', useCaseId);
   };
 
   const handleOpenClauseFromFinder = (mapping: InteropMapping) => {
@@ -138,6 +205,16 @@ export default function App() {
       />
 
       <main className="flex-1">
+        <NewsSpotlightSection
+          dataset={activeDataset}
+          initialSpotlightId={initialQuery.spotlightId}
+          onSelectSpotlight={(spotId) => updateQueryParamSafe('spotlight', spotId)}
+          onTraceUseCase={(useCaseId) => {
+            handleSelectEntity({ type: 'useCase', id: useCaseId });
+            setAlignmentFilter('all');
+          }}
+        />
+
         <RegimeConvergenceOverview
           dataset={activeDataset}
           selection={selection}
