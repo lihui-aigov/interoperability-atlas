@@ -143,14 +143,14 @@ export function NewsSpotlightSection({
     <section
       id="news-spotlight"
       aria-labelledby="news-spotlight-heading"
-      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-4 sm:pt-5 pb-12"
+      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-3 sm:pt-5 pb-12"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         {/* Ultra-compact inline header row: title left, single-row horizontal case tabs right */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-[var(--atlas-rule)]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2.5 sm:pb-3 border-b border-[var(--atlas-rule)]">
           <h1
             id="news-spotlight-heading"
-            className="font-editorial text-[20px] sm:text-[22px] font-semibold tracking-[-0.01em] leading-tight text-[var(--atlas-ink)] shrink-0"
+            className="font-editorial text-[19px] sm:text-[22px] font-semibold tracking-[-0.01em] leading-tight text-[var(--atlas-ink)] shrink-0"
           >
             In-the-News Policy Briefings
           </h1>
@@ -187,22 +187,24 @@ export function NewsSpotlightSection({
         </div>
 
         {/* Main 2-Column Editorial Briefing Layout */}
-        <div className="mt-4 sm:mt-5 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="mt-3 sm:mt-5 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column (7 cols): Case Narrative, Question, Evidence Arguments */}
           <div className="lg:col-span-7">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-xs text-[var(--atlas-ink-muted)]">
-              <div className="font-mono tabular-nums">
+            <div className="flex items-center justify-between gap-3 text-[11px] sm:text-xs text-[var(--atlas-ink-muted)]">
+              <div className="font-mono tabular-nums whitespace-nowrap shrink-0">
                 <span>{activeSpotlight.publishedDate}</span>
-                <span>, {activeSpotlight.regionTag}</span>
+                <span className="hidden sm:inline">, {activeSpotlight.regionTag}</span>
               </div>
 
               <a
                 href={activeSpotlight.newsSourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 font-medium text-[var(--atlas-accent)] hover:underline underline-offset-4"
+                className="inline-flex items-center gap-1 font-medium text-[var(--atlas-accent)] hover:underline underline-offset-4 min-w-0"
               >
-                <span className="truncate max-w-[320px]">{activeSpotlight.newsSourceTitle}</span>
+                <span className="truncate max-w-[190px] sm:max-w-[320px]">
+                  {activeSpotlight.newsSourceTitle}
+                </span>
                 <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
               </a>
             </div>
