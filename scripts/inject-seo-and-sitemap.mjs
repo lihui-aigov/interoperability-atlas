@@ -26,6 +26,8 @@ const ATLAS_PATH = path.resolve(REPO_ROOT, 'src/data/atlas.json');
 const BASE_URL = 'https://lihui-aigov.github.io/interoperability-atlas/';
 const INDEXNOW_KEY = 'a8f4c2e9b1d7463095e2c1a4b8d3f6e1';
 const OG_IMAGE_URL = `${BASE_URL}og-card.svg`;
+const GOATCOUNTER_ENDPOINT = 'https://lihui-aigov.goatcounter.com/count';
+const GOATCOUNTER_SCRIPT_TAG = `<script data-goatcounter="${GOATCOUNTER_ENDPOINT}" async src="https://gc.zgo.at/count.js"></script>`;
 
 const INSTRUMENT_SLUG_MAP = {
   'inst-eu-ai-act': 'eu-ai-act',
@@ -212,6 +214,7 @@ function renderStaticShell({
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&display=swap" rel="stylesheet" />
+    ${GOATCOUNTER_SCRIPT_TAG}
     <script type="application/ld+json">${safeJsonLd(jsonLd)}</script>
     <style>
       body { font-family: "Inter", system-ui, -apple-system, sans-serif; background: #FFFFFF; color: #1A1D23; margin: 0; line-height: 1.6; }
@@ -1562,6 +1565,7 @@ function main() {
     <meta property="og:url" content="${BASE_URL}" />
     <meta property="og:image" content="${OG_IMAGE_URL}" />
     <meta name="twitter:image" content="${OG_IMAGE_URL}" />
+    ${GOATCOUNTER_SCRIPT_TAG}
     <script id="atlas-seo-jsonld" type="application/ld+json">${safeJsonLd(graphJsonLd)}</script>`;
 
     indexHtml = indexHtml.replace('</head>', () => `${headInjection}\n  </head>`);

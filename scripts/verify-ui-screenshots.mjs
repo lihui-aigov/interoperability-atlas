@@ -99,6 +99,24 @@ function verifySeoArtifacts() {
     throw new Error('Missing SpeakableSpecification or llms.txt discovery link on compare page.');
   }
 
+  const rootHtml = fs.readFileSync(path.join(DIST_DIR, 'index.html'), 'utf-8');
+  const guideHtml = fs.readFileSync(
+    path.join(DIST_DIR, 'guides/comply-once-global-ai-baseline.html'),
+    'utf-8'
+  );
+  if (
+    !rootHtml.includes('lihui-aigov.goatcounter.com/count') ||
+    !guideHtml.includes('lihui-aigov.goatcounter.com/count')
+  ) {
+    throw new Error('Expected private GoatCounter analytics tag in production static HTML.');
+  }
+  if (fs.existsSync(STANDALONE_HTML)) {
+    const standaloneHtml = fs.readFileSync(STANDALONE_HTML, 'utf-8');
+    if (standaloneHtml.includes('goatcounter')) {
+      throw new Error('Offline standalone HTML must not include external GoatCounter tracker.');
+    }
+  }
+
   const sitemapText = fs.readFileSync(path.join(DIST_DIR, 'sitemap.xml'), 'utf-8');
   const locCount = (sitemapText.match(/<loc>/g) || []).length;
   if (locCount < 60) {
@@ -123,6 +141,9 @@ async function main() {
       viewport: { width: 1440, height: 900 },
       deviceScaleFactor: 1,
     });
+    await context.route(/gc\.zgo\.at|goatcounter\.com/i, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/javascript', body: '' })
+    );
     const page = await context.newPage();
 
     page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));

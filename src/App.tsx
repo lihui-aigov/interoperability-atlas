@@ -124,6 +124,19 @@ function readInitialQueryParams(): {
   };
 }
 
+function trackVirtualPageview(path: string, title?: string) {
+  try {
+    if (typeof window === 'undefined') return;
+    const { protocol, hostname } = window.location;
+    if (protocol === 'file:' || hostname === '127.0.0.1' || hostname === 'localhost') return;
+    const gc = (window as { goatcounter?: { count?: (opts: { path: string; title?: string }) => void } })
+      .goatcounter;
+    gc?.count?.({ path, title });
+  } catch {
+    // Ignore blocked tracker requests cleanly
+  }
+}
+
 function updateQueryParamSafe(key: string, value: string) {
   try {
     if (window.location.protocol === 'file:') return;
@@ -198,6 +211,7 @@ export default function App() {
   const handleSelectTab = (tab: WorkspaceTabId) => {
     setActiveTab(tab);
     updateQueryParamSafe('tab', tab);
+    trackVirtualPageview(`/interoperability-atlas/?tab=${encodeURIComponent(tab)}`, `${baseDataset.metadata.atlasName} — ${tab}`);
   };
 
   const handleSelectEntity = (next: FocusSelection) => {
@@ -247,9 +261,14 @@ export default function App() {
   };
 
   const handlePairChange = (aId: string, bId: string) => {
+    const pairSlug = buildPairSlug(aId, bId);
     setSelectedPair({ aId, bId });
-    updateQueryParamSafe('pair', buildPairSlug(aId, bId));
+    updateQueryParamSafe('pair', pairSlug);
     updateQueryParamSafe('tab', 'compare');
+    trackVirtualPageview(
+      `/interoperability-atlas/?tab=compare&pair=${encodeURIComponent(pairSlug)}`,
+      `${baseDataset.metadata.atlasName} — ${pairSlug}`
+    );
   };
 
   const selectedUseCase = useMemo(() => {
