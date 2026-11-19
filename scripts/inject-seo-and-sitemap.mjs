@@ -71,6 +71,32 @@ function safeJsonLd(obj) {
   return JSON.stringify(obj, null, 2).replace(/<\//g, '<\\/');
 }
 
+function smartMetaDescription(text, maxLen = 155) {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (clean.length <= maxLen) return clean;
+  const slice = clean.slice(0, maxLen - 1);
+  const lastSentence = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
+  if (lastSentence >= Math.floor(maxLen * 0.55)) {
+    return slice.slice(0, lastSentence + 1).trim();
+  }
+  const lastSpace = slice.lastIndexOf(' ');
+  const trimmed = lastSpace >= Math.floor(maxLen * 0.45) ? slice.slice(0, lastSpace) : slice;
+  return `${trimmed.replace(/[.,;:–—-]+$/g, '')}...`;
+}
+
+function buildInstrumentEntity(inst) {
+  const isStatute = /binding|treaty|statut|regulation|bill|act/i.test(inst.legalNature || '');
+  return {
+    '@type': isStatute ? 'Legislation' : 'CreativeWork',
+    name: inst.title,
+    alternateName: inst.shortName,
+    url: inst.officialUrl,
+    sameAs: inst.officialUrl,
+    datePublished: String(inst.adoptionYear),
+    ...(isStatute ? { legislationJurisdiction: inst.jurisdictionOrScope } : { spatialCoverage: inst.jurisdictionOrScope }),
+  };
+}
+
 function alignmentPlainLabel(alignmentType) {
   if (alignmentType === 'equivalent') return 'Comply Once (Shared Core)';
   if (alignmentType === 'delta') return 'Extra Local Step';
@@ -131,6 +157,9 @@ function renderStaticShell({
   canonicalUrl,
   keywords,
   ogType = 'article',
+  markdownAltHref,
+  citeDate,
+  datasetVersion,
   jsonLdGraph,
   breadcrumbs,
   bodyHtml,
@@ -148,6 +177,15 @@ function renderStaticShell({
     )
     .join('');
 
+  const markdownLinkTag = markdownAltHref
+    ? `\n    <link rel="alternate" type="text/markdown" title="Markdown Plain Text Version" href="${escapeHtml(markdownAltHref)}" />`
+    : '';
+
+  const citeSectionHtml = `<section class="card cite-box" aria-labelledby="cite-reference-heading">
+        <h2 id="cite-reference-heading">How to Cite This Reference</h2>
+        <p class="muted" style="margin:0 0 8px;">Xu, Lihui (${escapeHtml((citeDate || '2026').slice(0, 4))}). <em>${escapeHtml(title)}</em>. Open Atlas of AI Governance Interoperability${datasetVersion ? ` (Dataset v${escapeHtml(datasetVersion)})` : ''}. Canonical URL: <a href="${escapeHtml(canonicalUrl)}">${escapeHtml(canonicalUrl)}</a></p>${markdownAltHref ? `\n        <p class="muted" style="margin:0;">Machine-readable Markdown version: <a href="${escapeHtml(markdownAltHref)}">${escapeHtml(markdownAltHref)}</a></p>` : ''}
+      </section>`;
+
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -159,6 +197,9 @@ function renderStaticShell({
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
     <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
     <link rel="alternate" type="application/atom+xml" title="Open Atlas Briefings & Updates Feed" href="${escapeHtml(BASE_URL)}feed.xml" />
+    <link rel="alternate" type="text/plain" title="LLMs Index (llms.txt)" href="${escapeHtml(BASE_URL)}llms.txt" />
+    <link rel="alternate" type="text/plain" title="LLMs Full Corpus (llms-full.txt)" href="${escapeHtml(BASE_URL)}llms-full.txt" />
+    <link rel="alternate" type="application/json" title="Open Atlas Structured Dataset (CC-BY-4.0)" href="${escapeHtml(BASE_URL)}atlas-dataset.json" />${markdownLinkTag}
     <meta property="og:title" content="${escapeHtml(title)}" />
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta property="og:type" content="${escapeHtml(ogType)}" />
@@ -181,6 +222,11 @@ function renderStaticShell({
       .cta-btn { background: #2554A3; color: #FFFFFF; font-weight: 600; text-decoration: none; padding: 9px 15px; border-radius: 2px; font-size: 13px; display: inline-block; }
       .cta-btn:hover { background: #1D4382; }
       .capsule { background: #F5F6F8; border: 1px solid #D6D9E0; border-left: 3px solid #2554A3; border-radius: 2px; padding: 15px 18px; margin-bottom: 20px; max-width: 72ch; }
+      .geo-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 18px; }
+      .geo-fact { background: #F5F6F8; border: 1px solid #D6D9E0; border-radius: 2px; padding: 12px 14px; }
+      .geo-fact-label { font-size: 11.5px; color: #5E6676; font-family: "IBM Plex Mono", ui-monospace, monospace; margin-bottom: 4px; }
+      .geo-fact-val { font-size: 15px; font-weight: 600; color: #1A1D23; }
+      .cite-box { background: #F5F6F8; border-left: 3px solid #5E6676; }
       .card { background: #FFFFFF; border: 1px solid #D6D9E0; border-radius: 2px; padding: 20px; margin-bottom: 18px; }
       .pill { display: inline-block; font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12px; background: #F5F6F8; border: 1px solid #D6D9E0; padding: 2px 7px; border-radius: 2px; margin: 2px 4px 2px 0; color: #1A1D23; }
       .badge-eq { display: inline-block; padding: 2px 8px; border-radius: 9999px; background: #EDF5F1; color: #1B6B4E; border: 1px solid #B8D4C7; font-size: 12px; font-weight: 600; }
@@ -201,11 +247,13 @@ function renderStaticShell({
     <div class="wrap">
       <nav aria-label="Breadcrumb" class="crumbs">${breadcrumbHtml}</nav>
       ${bodyHtml}
+      ${citeSectionHtml}
       <footer class="footer-nav">
         <a href="${escapeHtml(BASE_URL)}">Interactive Observatory</a>
         <a href="${escapeHtml(BASE_URL)}directory.html">Full Reference Directory</a>
         <a href="${escapeHtml(BASE_URL)}atlas-dataset.json">Download Raw JSON (CC-BY-4.0)</a>
         <a href="${escapeHtml(BASE_URL)}llms.txt">llms.txt</a>
+        <a href="${escapeHtml(BASE_URL)}llms-full.txt">llms-full.txt</a>
         <span>Maintained independently by Lihui Xu (@lihui-aigov) from public primary texts.</span>
       </footer>
     </div>
@@ -329,6 +377,400 @@ function toAtomDate(rawDate) {
   return `${s.slice(0, 10)}T07:00:00Z`;
 }
 
+function generateSynthesisGuides(dataset, pairwiseList, lastModDate, guidesDir, sitemapEntries) {
+  const instMap = new Map(dataset.instruments.map((i) => [i.id, i]));
+  const ctrlMap = new Map(dataset.controls.map((c) => [c.id, c]));
+  const ucMap = new Map(dataset.useCases.map((u) => [u.id, u]));
+
+  const eqMappings = dataset.mappings.filter((m) => m.alignmentType === 'equivalent');
+  const dlMappings = dataset.mappings.filter((m) => m.alignmentType === 'delta');
+  const frMappings = dataset.mappings.filter((m) => m.alignmentType === 'friction');
+
+  const topConvergentPairs = [...pairwiseList]
+    .filter((p) => p.sharedCount >= 2)
+    .sort((a, b) => (b.rate - a.rate) || (b.eq - a.eq))
+    .slice(0, 8);
+
+  const clashPairs = pairwiseList
+    .filter((p) => p.fr > 0)
+    .sort((a, b) => (b.fr - a.fr) || (a.rate - b.rate));
+
+  const unescoInst = instMap.get('inst-unesco-rec');
+  const unescoMappings = dataset.mappings.filter((m) => m.instrumentId === 'inst-unesco-rec');
+  const unescoPairs = pairwiseList.filter(
+    (p) => p.instA.id === 'inst-unesco-rec' || p.instB.id === 'inst-unesco-rec'
+  );
+
+  const agenticUcs = dataset.useCases.filter((u) =>
+    /agent|tool|auton|exec|workflow/i.test(`${u.id} ${u.title} ${u.sector} ${u.summary}`)
+  );
+  const agenticMappings = dataset.mappings.filter(
+    (m) =>
+      agenticUcs.some((u) => u.id === m.useCaseId) ||
+      m.instrumentId === 'inst-sg-agentic' ||
+      m.controlId === 'ctrl-sandbox-audit'
+  );
+
+  const publicUcs = dataset.useCases.filter((u) =>
+    /public|welfare|procure|justice|court|flood|school|student|municip/i.test(
+      `${u.title} ${u.sector} ${u.deploymentContext}`
+    )
+  );
+  const publicMappings = dataset.mappings.filter((m) =>
+    publicUcs.some((u) => u.id === m.useCaseId)
+  );
+
+  const incidentMappings = dataset.mappings.filter(
+    (m) =>
+      m.controlId === 'ctrl-postmarket' ||
+      m.controlId === 'ctrl-contestability' ||
+      m.controlId === 'ctrl-sandbox-audit'
+  );
+
+  const guideDefs = [
+    {
+      slug: 'comply-once-global-ai-baseline',
+      title: 'Comply Once Global AI Baseline: Shared Controls Across EU AI Act, NIST RMF, ISO 42001 & UNESCO',
+      question:
+        'Which AI governance controls and verification artifacts satisfy EU AI Act, NIST AI RMF 1.0, ISO/IEC 42001, and the UNESCO Recommendation on the Ethics of AI simultaneously?',
+      keywords:
+        'Comply Once AI baseline, EU AI Act vs NIST AI RMF overlap, ISO 42001 crosswalk, shared AI governance controls, UNESCO Recommendation on the Ethics of AI',
+      deepLink: '../?tab=compare&pair=eu-ai-act-vs-nist-ai-rmf',
+      directAnswer: `Across ${dataset.mappings.length} verified primary clauses in the Open Atlas (v${dataset.metadata.datasetVersion}), ${eqMappings.length} mappings (${Math.round((eqMappings.length / Math.max(dataset.mappings.length, 1)) * 100)}%) fall into the Comply Once tier, led by ${topConvergentPairs[0] ? `${topConvergentPairs[0].instA.shortName} vs. ${topConvergentPairs[0].instB.shortName} (${topConvergentPairs[0].rate}%)` : 'high-overlap statutory pairs'}. Building one rigorous technical artifact—such as disaggregated fairness testing, human-override logs, and red-team safety records—satisfies multiple regulatory regimes concurrently.`,
+      facts: [
+        { label: 'Total Verified Clauses', value: `${dataset.mappings.length}` },
+        { label: 'Comply Once Mappings', value: `${eqMappings.length} (${Math.round((eqMappings.length / Math.max(dataset.mappings.length, 1)) * 100)}%)` },
+        { label: 'Operational Controls', value: `${dataset.controls.length}` },
+        { label: 'Tracked Regimes', value: `${dataset.instruments.length}` },
+      ],
+      mappingsSample: eqMappings.slice(0, 18),
+      pairHighlights: topConvergentPairs,
+      aboutInstIds: ['inst-eu-ai-act', 'inst-nist-ai-rmf', 'inst-iso-42001', 'inst-unesco-rec'],
+      faqs: [
+        {
+          question: 'Can ISO/IEC 42001 or NIST AI RMF satisfy EU AI Act technical documentation duties?',
+          answer: `They share substantial operational overlap (${pairwiseList.find((p) => (p.instA.id === 'inst-eu-ai-act' && p.instB.id === 'inst-nist-ai-rmf') || (p.instB.id === 'inst-eu-ai-act' && p.instA.id === 'inst-nist-ai-rmf'))?.rate ?? 78}% baseline between EU AI Act and NIST AI RMF), so core risk testing and data-governance logs transfer cleanly; teams must still layer EU-specific public database filings and Article 27 Fundamental Rights Impact Assessments where required.`,
+        },
+        {
+          question: 'Which operational controls carry the highest cross-regime leverage?',
+          answer: `Subgroup Disparity & Bias Audits, Meaningful Human Override Protocols, Citizen Contestability notices, and Post-Market Incident Monitoring consistently bridge European, North American, ISO technical, and UN multilateral norms.`,
+        },
+      ],
+    },
+    {
+      slug: 'global-ai-law-clashes-and-prohibitions',
+      title: 'Where Global AI Governance Laws Direct Clash: Prohibitions, Reporting Clocks & Disclosure Conflicts',
+      question:
+        'Where do EU AI Act, Brazil PL 2338, Korea AI Basic Act, Council of Europe CETS 225, and national AI rules directly contradict or clash with each other?',
+      keywords:
+        'AI law conflicts, EU AI Act Art 5 prohibitions, AI regulatory clashes, cross-border AI compliance conflict, Brazil PL 2338 vs EU AI Act',
+      deepLink: '../?tab=compare&pair=eu-ai-act-vs-brazil-korea-laws',
+      directAnswer: `The Open Atlas records ${frMappings.length} direct rule clashes across ${dataset.useCases.length} concrete deployments where engineering documentation alone cannot satisfy competing jurisdictions simultaneously. Clashes center on categorical biometric and emotion-inference bans, incompatible serious-incident notification deadlines, and mandatory administrative explainability disclosures conflicting with prompt-security confidentiality.`,
+      facts: [
+        { label: 'Direct Rule Clashes', value: `${frMappings.length} clauses` },
+        { label: 'Clashing Regime Pairs', value: `${clashPairs.length} pairs` },
+        { label: 'Extra Local Steps', value: `${dlMappings.length} clauses` },
+        { label: 'Updated', value: lastModDate },
+      ],
+      mappingsSample: frMappings,
+      pairHighlights: clashPairs.slice(0, 8),
+      aboutInstIds: ['inst-eu-ai-act', 'inst-br-kr-laws', 'inst-coe-treaty', 'inst-unesco-rec'],
+      faqs: [
+        {
+          question: 'Why cannot global AI vendors rely on one global compliance template for all countries?',
+          answer: `While roughly half of mapped controls are reusable, ${frMappings.length} provisions impose irreconcilable rules—such as hard EU AI Act Art. 5 prohibitions on workplace emotion inference or real-time biometric categorization, versus jurisdictions treating the same capability as permissible with risk mitigation.`,
+        },
+        {
+          question: 'How should compliance and legal teams handle a Direct Rule Clash?',
+          answer: `Enforce geo-fenced feature flags or architectural separation rather than trying to write harmonized policy prose, and isolate conflicting national datasets or reporting pipelines by deployment market.`,
+        },
+      ],
+    },
+    {
+      slug: 'unesco-ai-ethics-vs-binding-ai-laws',
+      title: 'UNESCO Recommendation on the Ethics of AI (2021) vs. Binding AI Laws: Normative Clauses & 2023 EIA Distinction',
+      question:
+        'How does the UNESCO Recommendation on the Ethics of AI (2021) align with binding AI statutes like the EU AI Act, Council of Europe CETS 225, and Brazil/Korea laws?',
+      keywords:
+        'UNESCO Recommendation on the Ethics of AI, UNESCO Ethical Impact Assessment EIA, UNESCO vs EU AI Act, global multilateral AI governance',
+      deepLink: '../?tab=compare&pair=unesco-ai-ethics-vs-eu-ai-act',
+      directAnswer: `Adopted in 2021 by 194 Member States, the UNESCO Recommendation on the Ethics of AI contributes ${unescoMappings.length} verified clause mappings across ${new Set(unescoMappings.map((m) => m.useCaseId)).size} deployments in the Open Atlas (${unescoPairs.find((p) => p.instA.id === 'inst-eu-ai-act' || p.instB.id === 'inst-eu-ai-act')?.rate ?? 56}% Comply Once baseline overlap with the EU AI Act and ${unescoPairs.find((p) => p.instA.id === 'inst-nist-ai-rmf' || p.instB.id === 'inst-nist-ai-rmf')?.rate ?? 100}% with NIST AI RMF). Crucially, the 2021 Recommendation is the formal normative instrument, whereas UNESCO's 2023 Ethical Impact Assessment (EIA) is an operational readiness tool built to implement its Policy Action Area 1 provisions.`,
+      facts: [
+        { label: 'Instrument Adoption', value: '2021 (194 Member States)' },
+        { label: 'EIA Tool Role', value: '2023 operational tool (Action Area 1)' },
+        { label: 'Verified UNESCO Clauses', value: `${unescoMappings.length}` },
+        { label: 'Overlap with NIST RMF', value: `${unescoPairs.find((p) => p.instA.id === 'inst-nist-ai-rmf' || p.instB.id === 'inst-nist-ai-rmf')?.rate ?? 100}%` },
+      ],
+      mappingsSample: unescoMappings,
+      pairHighlights: unescoPairs,
+      aboutInstIds: ['inst-unesco-rec', 'inst-eu-ai-act', 'inst-nist-ai-rmf', 'inst-coe-treaty'],
+      faqs: [
+        {
+          question: 'Should the UNESCO Recommendation on the Ethics of AI and UNESCO EIA be treated as the same document?',
+          answer: `No. The UNESCO Recommendation on the Ethics of AI (2021) is the intergovernmental normative recommendation itself, while the Ethical Impact Assessment (2023) is a practical implementation methodology built atop the Recommendation to help project teams operationalize ex-ante impact reviews.`,
+        },
+        {
+          question: 'Where does the UNESCO Recommendation go further than purely technical risk standards?',
+          answer: `${unescoInst?.summary || 'The Recommendation pairs core fairness, non-derogable human accountability, and affected-community consultation with explicit lifecycle environmental sustainability and cultural/linguistic protections.'}`,
+        },
+      ],
+    },
+    {
+      slug: 'agentic-ai-governance-crosswalk',
+      title: 'Agentic AI Governance Crosswalk: EU AI Act, Singapore Agentic Framework, NIST RMF & ISO 42001',
+      question:
+        'How do global AI governance frameworks regulate autonomous tool-using AI agents, action boundaries, and pre-release sandbox escapes?',
+      keywords:
+        'agentic AI governance, Singapore Model AI Governance Framework for Agentic AI, autonomous AI agents compliance, MCP tool boundary governance, EU AI Act Art 12',
+      deepLink: '../?tab=spotlights&spotlight=spot-agentic-sandbox-escape-2026',
+      directAnswer: `As autonomous tool-calling agents replace passive chatbots in public administration and enterprise workflows, regulatory convergence centers on runtime permission boundaries and immutable tool-call audit ledgers. Singapore's Model AI Governance Framework for Agentic AI and the Open Atlas's mapped controls link statutory logging (EU AI Act Art. 12), human stop-controls (Art. 14), NIST AI RMF MANAGE 2.4, and ISO/IEC 42001 A.6.2.8 into concrete pre-execution approval tokens.`,
+      facts: [
+        { label: 'Agentic Mapped Clauses', value: `${agenticMappings.length}` },
+        { label: 'Key Control', value: 'Runtime Agent Action Boundaries' },
+        { label: 'Spotlight Briefings', value: `${dataset.spotlights.length}` },
+        { label: 'Dataset Version', value: `v${dataset.metadata.datasetVersion}` },
+      ],
+      mappingsSample: agenticMappings.slice(0, 18),
+      pairHighlights: pairwiseList.filter(
+        (p) => p.instA.id === 'inst-sg-agentic' || p.instB.id === 'inst-sg-agentic'
+      ),
+      aboutInstIds: ['inst-sg-agentic', 'inst-eu-ai-act', 'inst-nist-ai-rmf', 'inst-iso-42001'],
+      faqs: [
+        {
+          question: 'What is the biggest interoperability gap for autonomous AI agents today?',
+          answer: `Statutory high-risk lists often exempt pre-release research agents or lack granular MCP/tool-call authorization schemas, while incident reporting triggers split between placed-on-market high-risk tiers, national FLOP thresholds, and voluntary vendor disclosures.`,
+        },
+        {
+          question: 'What concrete safeguard satisfies regulators for state-mutating AI agents?',
+          answer: `Enforce a runtime action-boundary manifest separating read-only queries from state-mutating writes, bind least-privilege API scopes to individual agent identities, and require out-of-band human confirmation tokens before external writes execute.`,
+        },
+      ],
+    },
+    {
+      slug: 'public-sector-ai-procurement-checklist',
+      title: 'Public-Sector AI Procurement Checklist: EU AI Act Art. 27, UNESCO, CoE CETS 225 & NIST RMF',
+      question:
+        'What concrete contractual and technical artifacts should public agencies require in AI procurement RFPs across global regimes?',
+      keywords:
+        'public sector AI procurement checklist, EU AI Act Article 27 FRIA, CoE AI Treaty public sector, government AI vendor requirements, UNESCO EIA procurement',
+      deepLink: '../?tab=use-cases&useCase=uc-welfare-triage',
+      directAnswer: `Across ${publicUcs.length} public-sector AI use cases tracked in the Open Atlas (${publicMappings.length} verified clause obligations), procurement teams should mandate eight verifiable artifacts: (1) Disaggregated Demographic Disparity Dossier, (2) Meaningful Human Override SOP, (3) Pre-Deployment Impact Assessment (EU AI Act Art. 27 FRIA / CoE Art. 16 / UNESCO EIA tool), (4) Training Data Provenance & AI Bill of Materials, (5) Runtime Action Boundary Logs, (6) Citizen Contestability & Redress Notice, (7) Compute/Water Footprint Disclosure, and (8) Post-Market Incident Telemetry SLA.`,
+      facts: [
+        { label: 'Public-Sector Deployments', value: `${publicUcs.length}` },
+        { label: 'Tracked Public Clauses', value: `${publicMappings.length}` },
+        { label: 'Core RFP Artifacts', value: `${dataset.controls.length}` },
+        { label: 'Open License', value: 'CC-BY-4.0' },
+      ],
+      mappingsSample: publicMappings.slice(0, 18),
+      pairHighlights: topConvergentPairs.slice(0, 5),
+      aboutInstIds: ['inst-eu-ai-act', 'inst-coe-treaty', 'inst-unesco-rec', 'inst-nist-ai-rmf'],
+      faqs: [
+        {
+          question: 'Which public AI uses are subject to mandatory Fundamental Rights or Ethical Impact Assessments?',
+          answer: `Public-assistance benefit triage, healthcare clinical triage, public procurement scoring, educational exam proctoring, biometric identification, creditworthiness, and judicial case-triage systems trigger ex-ante impact assessments under EU AI Act Art. 27, CoE CETS 225 Art. 16, and Brazil PL 2338.`,
+        },
+        {
+          question: 'Can procurement officers download a vendor checklist directly without GitHub?',
+          answer: `Yes. Every use case in the Open Atlas offers one-click Markdown and JSON procurement checklist exports both in the live app and via static use-case reference pages.`,
+        },
+      ],
+    },
+    {
+      slug: 'ai-incident-reporting-and-redress-comparison',
+      title: 'AI Incident Reporting Clocks, Audit Logs & Citizen Redress Compared Across Global Regimes',
+      question:
+        'How do serious-incident reporting timelines, runtime audit logs, and affected-person redress rights compare across the EU, Brazil, South Korea, UNESCO, NIST, and CoE?',
+      keywords:
+        'AI incident reporting EU AI Act Article 73, AI citizen redress explainability, runtime AI audit logs, Brazil PL 2338 Art 17, CoE CETS 225 remedy',
+      deepLink: '../?tab=compare&pair=eu-ai-act-vs-coe-ai-convention',
+      directAnswer: `The Open Atlas maps ${incidentMappings.length} primary clauses across Post-Market Incident Monitoring, Runtime Action Boundaries & Audit Logs, and Citizen Contestability & Redress. While EU AI Act Art. 73 ties reporting windows (2 to 15 days) to high-risk market placement (and Art. 86 grants explanation rights), Council of Europe CETS 225 mandates procedural remedies across public authorities, Brazil PL 2338 codifies broad explanation and non-discrimination rights, and technical standards anchor telemetry retention.`,
+      facts: [
+        { label: 'Redress & Incident Clauses', value: `${incidentMappings.length}` },
+        { label: 'Key Controls Covered', value: '3 accountability controls' },
+        { label: 'Global Jurisdictions', value: `${dataset.instruments.length} regimes` },
+        { label: 'Verified', value: lastModDate },
+      ],
+      mappingsSample: incidentMappings.slice(0, 18),
+      pairHighlights: pairwiseList.slice(0, 5),
+      aboutInstIds: ['inst-eu-ai-act', 'inst-coe-treaty', 'inst-br-kr-laws', 'inst-iso-42001'],
+      faqs: [
+        {
+          question: 'How long do providers have to report serious AI incidents under the EU AI Act vs. peer laws?',
+          answer: `Under EU AI Act Article 73, providers report widespread infringements or critical infrastructure disruptions within 2 days, deaths within 10 days, and other serious incidents within 15 days; timing divergence with national cyber/data-breach clocks creates an Extra Local Step or Direct Rule Clash unless automated routers handle multi-jurisdiction notifications.`,
+        },
+        {
+          question: 'How do transparency and explainability rights collide with agentic cybersecurity?',
+          answer: `Public-benefit explanation mandates (e.g., EU AI Act Art. 86 and Brazil PL 2338 Art. 18) can clash with security rules that forbid exposing system prompts or tool-routing rules; resolving this requires structured, citizen-safe factor explanations generated separately from confidential runtime routing instructions.`,
+        },
+      ],
+    },
+  ];
+
+  const guideSummaries = [];
+
+  for (const g of guideDefs) {
+    const fileName = `${g.slug}.html`;
+    const mdFileName = `${g.slug}.md`;
+    const canonicalUrl = `${BASE_URL}guides/${encodeURIComponent(fileName)}`;
+    const mdCanonicalUrl = `${BASE_URL}guides/${encodeURIComponent(mdFileName)}`;
+
+    const mappingRowsHtml = g.mappingsSample
+      .map((m) => {
+        const inst = instMap.get(m.instrumentId);
+        const ctrl = ctrlMap.get(m.controlId);
+        const uc = ucMap.get(m.useCaseId);
+        return `<tr>
+          <td><a href="../instruments/${encodeURIComponent(instrumentToSlug(m.instrumentId))}.html"><strong>${escapeHtml(inst?.shortName || m.instrumentId)}</strong></a><br/><a href="${escapeHtml(m.sourceUrl)}" target="_blank" rel="noopener noreferrer"><span class="pill">${escapeHtml(m.clauseCitation)}</span></a></td>
+          <td><a href="../use-cases/${encodeURIComponent(m.useCaseId)}.html">${escapeHtml(uc?.title || m.useCaseId)}</a><br/><span class="muted">${escapeHtml(ctrl?.title || m.controlId)}</span></td>
+          <td><span class="${alignmentBadgeClass(m.alignmentType)}">${escapeHtml(alignmentPlainLabel(m.alignmentType))}</span></td>
+          <td>${escapeHtml(m.rationale)}</td>
+        </tr>`;
+      })
+      .join('\n');
+
+    const pairLinksHtml = g.pairHighlights
+      .map(
+        (p) =>
+          `<li><a href="../compare/${encodeURIComponent(p.pairSlug)}.html">${escapeHtml(p.instA.shortName)} vs. ${escapeHtml(p.instB.shortName)}</a> &mdash; ${p.rate}% shared Comply Once baseline (${p.eq}/${p.sharedCount} equivalent, ${p.dl} extra, ${p.fr} clashes)</li>`
+      )
+      .join('\n');
+
+    const factsGridHtml = `<div class="geo-facts">
+      ${g.facts
+        .map(
+          (f) => `<div class="geo-fact"><div class="geo-fact-label">${escapeHtml(f.label)}</div><div class="geo-fact-val">${escapeHtml(f.value)}</div></div>`
+        )
+        .join('')}
+    </div>`;
+
+    const aboutEntities = g.aboutInstIds
+      .map((id) => instMap.get(id))
+      .filter(Boolean)
+      .map((inst) => buildInstrumentEntity(inst));
+
+    const html = renderStaticShell({
+      title: `${g.title} | Open Atlas of AI Governance`,
+      description: smartMetaDescription(g.directAnswer, 155),
+      canonicalUrl,
+      keywords: g.keywords,
+      markdownAltHref: mdCanonicalUrl,
+      citeDate: lastModDate,
+      datasetVersion: dataset.metadata.datasetVersion,
+      jsonLdGraph: [
+        {
+          '@type': 'TechArticle',
+          headline: g.title,
+          description: g.directAnswer,
+          dateModified: lastModDate,
+          author: { '@type': 'Person', name: 'Lihui Xu', url: 'https://github.com/lihui-aigov' },
+          isPartOf: { '@id': `${BASE_URL}#dataset` },
+          url: canonicalUrl,
+          about: aboutEntities,
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.capsule', '.geo-facts'],
+          },
+        },
+        buildFaqSchema(g.faqs),
+        buildBreadcrumbSchema([
+          { name: 'Open Atlas Home', url: BASE_URL },
+          { name: 'Reference Guides', url: `${BASE_URL}directory.html#guides-directory` },
+          { name: g.title, url: canonicalUrl },
+        ]),
+      ],
+      breadcrumbs: [
+        { name: 'Open Atlas Home', href: '../' },
+        { name: 'Reference Guides', href: '../directory.html#guides-directory' },
+        { name: g.slug, href: `./${fileName}` },
+      ],
+      bodyHtml: `
+        <div class="cta-bar">
+          <div>
+            <strong>Open Atlas Synthesis Guide</strong><br/>
+            <span style="font-size:13px;">Dataset v${escapeHtml(dataset.metadata.datasetVersion)} &mdash; Verified ${escapeHtml(lastModDate)} &mdash; <a href="./${escapeHtml(mdFileName)}">Plain Markdown (.md)</a></span>
+          </div>
+          <a class="cta-btn" href="${escapeHtml(g.deepLink)}">Explore in Interactive Observatory</a>
+        </div>
+        <h1>${escapeHtml(g.title)}</h1>
+        <div class="capsule">
+          <strong>Direct Answer (${escapeHtml(g.question)}):</strong> ${escapeHtml(g.directAnswer)}
+        </div>
+        ${factsGridHtml}
+        ${pairLinksHtml ? `<div class="card"><h2>Key Cross-Regime Comparisons</h2><ul>${pairLinksHtml}</ul></div>` : ''}
+        <div class="card" style="overflow-x:auto;">
+          <h2>Verified Primary Clauses (${g.mappingsSample.length} Evidence Records)</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Instrument &amp; Clause</th>
+                <th>AI System &amp; Control</th>
+                <th>Alignment</th>
+                <th>Operational &amp; Legal Rationale</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${mappingRowsHtml}
+            </tbody>
+          </table>
+        </div>
+        ${renderFaqSectionHtml(g.faqs)}
+      `,
+    });
+
+    fs.writeFileSync(path.join(guidesDir, fileName), html, 'utf-8');
+
+    const mdDoc = [
+      `# ${g.title}`,
+      ``,
+      `> Canonical Web Guide: ${canonicalUrl}`,
+      `> Interactive Workbench: ${BASE_URL}${g.deepLink.replace(/^\.\.\//, '')}`,
+      `> Dataset Version: ${dataset.metadata.datasetVersion} (Updated ${lastModDate}, CC-BY-4.0)`,
+      ``,
+      `## Question & Direct Answer`,
+      `**${g.question}**`,
+      ``,
+      `${g.directAnswer}`,
+      ``,
+      `## Key Metrics`,
+      ...g.facts.map((f) => `- **${f.label}:** ${f.value}`),
+      ``,
+      `## Key Pairwise Framework Comparisons`,
+      ...g.pairHighlights.map(
+        (p) =>
+          `- [${p.instA.shortName} vs. ${p.instB.shortName}](${BASE_URL}compare/${encodeURIComponent(p.pairSlug)}.html): ${p.rate}% shared baseline (${p.eq}/${p.sharedCount} Comply Once, ${p.dl} Extra, ${p.fr} Clashes)`
+      ),
+      ``,
+      `## Verified Primary Clauses (${g.mappingsSample.length})`,
+      ...g.mappingsSample.map((m) => {
+        const inst = instMap.get(m.instrumentId);
+        const ctrl = ctrlMap.get(m.controlId);
+        const uc = ucMap.get(m.useCaseId);
+        return `- **[${alignmentPlainLabel(m.alignmentType)}]** ${inst?.shortName || m.instrumentId} (${m.clauseCitation}) — ${uc?.title || m.useCaseId} / ${ctrl?.title || m.controlId}: ${m.rationale} ([Source](${m.sourceUrl}))`;
+      }),
+      ``,
+      `## Frequently Asked Questions`,
+      ...g.faqs.flatMap((f) => [`### ${f.question}`, f.answer, ``]),
+    ].join('\n');
+
+    fs.writeFileSync(path.join(guidesDir, mdFileName), mdDoc, 'utf-8');
+
+    sitemapEntries.push({ loc: canonicalUrl, lastmod: lastModDate, priority: '0.95' });
+    guideSummaries.push({
+      slug: g.slug,
+      fileName,
+      mdFileName,
+      title: g.title,
+      question: g.question,
+      directAnswer: g.directAnswer,
+      canonicalUrl,
+      mdCanonicalUrl,
+      faqs: g.faqs,
+    });
+  }
+
+  return guideSummaries;
+}
+
 function main() {
   if (!fs.existsSync(DIST_DIR)) {
     throw new Error(`Missing build directory ${DIST_DIR}. Run vite build first.`);
@@ -384,9 +826,18 @@ function main() {
   const useCasesDir = path.join(DIST_DIR, 'use-cases');
   const instrumentsDir = path.join(DIST_DIR, 'instruments');
   const spotlightsDir = path.join(DIST_DIR, 'spotlights');
-  for (const dir of [compareDir, useCasesDir, instrumentsDir, spotlightsDir]) {
+  const guidesDir = path.join(DIST_DIR, 'guides');
+  for (const dir of [compareDir, useCasesDir, instrumentsDir, spotlightsDir, guidesDir]) {
     fs.mkdirSync(dir, { recursive: true });
   }
+
+  const guideSummaries = generateSynthesisGuides(
+    dataset,
+    pairwiseList,
+    lastModDate,
+    guidesDir,
+    sitemapEntries
+  );
 
   // Generate /compare/<pair>.html pages (all overlapping framework pairs)
   for (const pair of pairwiseList) {
@@ -468,8 +919,10 @@ function main() {
 
     const html = renderStaticShell({
       title: `${pair.instA.shortName} vs ${pair.instB.shortName}: AI Governance Comparison, Overlap & Gap Checklist`,
-      description: verdictText.slice(0, 158),
+      description: smartMetaDescription(verdictText, 155),
       canonicalUrl,
+      citeDate: lastModDate,
+      datasetVersion: dataset.metadata.datasetVersion,
       keywords: `${pair.instA.shortName} vs ${pair.instB.shortName}, ${pair.instA.title}, ${pair.instB.title}, AI governance crosswalk, AI compliance gap analysis`,
       jsonLdGraph: [
         {
@@ -477,9 +930,14 @@ function main() {
           headline: `${pair.instA.shortName} vs ${pair.instB.shortName}: AI Governance Comparison & Gap Analysis`,
           description: verdictText,
           dateModified: lastModDate,
-          author: { '@type': 'Person', name: 'Lihui Xu' },
+          author: { '@type': 'Person', name: 'Lihui Xu', url: 'https://github.com/lihui-aigov' },
+          isPartOf: { '@id': `${BASE_URL}#dataset` },
           url: canonicalUrl,
-          about: [pair.instA.title, pair.instB.title],
+          about: [buildInstrumentEntity(pair.instA), buildInstrumentEntity(pair.instB)],
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.capsule'],
+          },
         },
         buildFaqSchema(faqPairs),
         buildBreadcrumbSchema([
@@ -584,8 +1042,10 @@ function main() {
 
     const html = renderStaticShell({
       title: `${inst.title} (${inst.adoptionYear}): Tracked Clauses, Use-Case Duties & Global Crosswalk`,
-      description: directSummary.slice(0, 158),
+      description: smartMetaDescription(directSummary, 155),
       canonicalUrl,
+      citeDate: lastModDate,
+      datasetVersion: dataset.metadata.datasetVersion,
       keywords: `${inst.shortName}, ${inst.title}, ${inst.issuingBody}, AI regulation clauses, AI compliance crosswalk`,
       jsonLdGraph: [
         {
@@ -593,9 +1053,14 @@ function main() {
           headline: `${inst.title}: Tracked AI Governance Clauses & Global Crosswalk`,
           description: directSummary,
           dateModified: lastModDate,
-          author: { '@type': 'Person', name: 'Lihui Xu' },
+          author: { '@type': 'Person', name: 'Lihui Xu', url: 'https://github.com/lihui-aigov' },
+          isPartOf: { '@id': `${BASE_URL}#dataset` },
           url: canonicalUrl,
-          about: inst.title,
+          about: buildInstrumentEntity(inst),
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.capsule'],
+          },
         },
         buildFaqSchema(faqPairs),
         buildBreadcrumbSchema([
@@ -711,8 +1176,10 @@ function main() {
 
     const html = renderStaticShell({
       title: `${uc.title}: Global AI Regulation, EU AI Act, NIST & Procurement Checklist`,
-      description: directSummary.slice(0, 158),
+      description: smartMetaDescription(directSummary, 155),
       canonicalUrl,
+      citeDate: lastModDate,
+      datasetVersion: dataset.metadata.datasetVersion,
       keywords: `${uc.title}, ${uc.sector}, EU AI Act checklist, NIST AI RMF, ISO 42001 procurement, AI governance requirements`,
       jsonLdGraph: [
         {
@@ -720,9 +1187,14 @@ function main() {
           headline: `${uc.title} — Global AI Governance Compliance Crosswalk`,
           description: directSummary,
           dateModified: lastModDate,
-          author: { '@type': 'Person', name: 'Lihui Xu' },
+          author: { '@type': 'Person', name: 'Lihui Xu', url: 'https://github.com/lihui-aigov' },
+          isPartOf: { '@id': `${BASE_URL}#dataset` },
           about: uc.sector,
           url: canonicalUrl,
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.capsule'],
+          },
         },
         buildFaqSchema(faqPairs),
         buildBreadcrumbSchema([
@@ -816,8 +1288,10 @@ function main() {
 
     const html = renderStaticShell({
       title: `${spot.headline} | Open Atlas Policy Briefing`,
-      description: spot.eventSummary.slice(0, 158),
+      description: smartMetaDescription(spot.eventSummary, 155),
       canonicalUrl,
+      citeDate: spot.publishedDate || lastModDate,
+      datasetVersion: dataset.metadata.datasetVersion,
       keywords: `${spot.regionTag}, AI policy briefing, ${spot.evidenceArguments.flatMap((a) => a.supportingCitations).slice(0, 6).join(', ')}`,
       jsonLdGraph: [
         {
@@ -826,9 +1300,14 @@ function main() {
           description: spot.eventSummary,
           datePublished: spot.publishedDate,
           dateModified: spot.publishedDate,
-          author: { '@type': 'Person', name: 'Lihui Xu' },
+          author: { '@type': 'Person', name: 'Lihui Xu', url: 'https://github.com/lihui-aigov' },
+          isPartOf: { '@id': `${BASE_URL}#dataset` },
           about: spot.regionTag,
           url: canonicalUrl,
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.capsule'],
+          },
         },
         buildFaqSchema(faqPairs),
         buildBreadcrumbSchema([
@@ -894,8 +1373,13 @@ function main() {
   // Generate master /directory.html page
   const directoryHtml = renderStaticShell({
     title: `Complete Reference Directory | ${dataset.metadata.atlasName}`,
-    description: `Browse all ${pairwiseList.length} head-to-head AI framework comparisons, ${dataset.useCases.length} concrete AI use-case checklists, ${dataset.instruments.length} tracked regimes, and ${spotlights.length} news policy briefings.`,
+    description: smartMetaDescription(
+      `Browse ${guideSummaries.length} synthesized AI governance guides, ${pairwiseList.length} head-to-head framework comparisons, ${dataset.useCases.length} concrete AI use-case checklists, ${dataset.instruments.length} tracked regimes, and ${spotlights.length} news policy briefings.`,
+      155
+    ),
     canonicalUrl: `${BASE_URL}directory.html`,
+    citeDate: lastModDate,
+    datasetVersion: dataset.metadata.datasetVersion,
     ogType: 'website',
     jsonLdGraph: [
       {
@@ -903,7 +1387,8 @@ function main() {
         name: `${dataset.metadata.atlasName} — Full Reference Directory`,
         url: `${BASE_URL}directory.html`,
         dateModified: lastModDate,
-        author: { '@type': 'Person', name: 'Lihui Xu' },
+        isPartOf: { '@id': `${BASE_URL}#dataset` },
+        author: { '@type': 'Person', name: 'Lihui Xu', url: 'https://github.com/lihui-aigov' },
       },
       buildBreadcrumbSchema([
         { name: 'Open Atlas Home', url: BASE_URL },
@@ -917,12 +1402,23 @@ function main() {
     bodyHtml: `
       <div class="cta-bar">
         <div>
-          <strong>${escapeHtml(dataset.metadata.atlasName)} · Reference Directory</strong><br/>
-          <span style="font-size:13px;opacity:0.88;">${pairwiseList.length} Framework Comparisons · ${dataset.useCases.length} AI Use Cases · ${dataset.instruments.length} Regimes · ${spotlights.length} Briefings</span>
+          <strong>${escapeHtml(dataset.metadata.atlasName)} — Reference Directory</strong><br/>
+          <span style="font-size:13px;">${guideSummaries.length} Synthesis Guides, ${pairwiseList.length} Framework Comparisons, ${dataset.useCases.length} AI Use Cases, ${dataset.instruments.length} Regimes, ${spotlights.length} Briefings</span>
         </div>
-        <a class="cta-btn" href="./">Launch Interactive Workbench &rarr;</a>
+        <a class="cta-btn" href="./">Launch Interactive Workbench</a>
       </div>
       <h1>Complete Reference Directory</h1>
+      <div id="guides-directory" class="card">
+        <h2>Synthesized Cross-Regime Reference Guides (${guideSummaries.length})</h2>
+        <ul>
+          ${guideSummaries
+            .map(
+              (g) =>
+                `<li><a href="./guides/${encodeURIComponent(g.fileName)}">${escapeHtml(g.title)}</a> (<a href="./guides/${encodeURIComponent(g.mdFileName)}">Markdown</a>) &mdash; ${escapeHtml(g.question)}</li>`
+            )
+            .join('\n')}
+        </ul>
+      </div>
       <div id="compare-directory" class="card">
         <h2>Head-to-Head Framework Comparisons (${pairwiseList.length})</h2>
         <ul>
@@ -962,7 +1458,7 @@ function main() {
           ${spotlights
             .map(
               (s) =>
-                `<li><a href="./spotlights/${encodeURIComponent(s.id)}.html">${escapeHtml(s.headline)}</a> (${escapeHtml(s.publishedDate)} · ${escapeHtml(s.regionTag)})</li>`
+                `<li><a href="./spotlights/${encodeURIComponent(s.id)}.html">${escapeHtml(s.headline)}</a> (${escapeHtml(s.publishedDate)}, ${escapeHtml(s.regionTag)})</li>`
             )
             .join('\n')}
         </ul>
@@ -1012,10 +1508,12 @@ function main() {
         },
         {
           '@type': 'Dataset',
+          '@id': `${BASE_URL}#dataset`,
           name: dataset.metadata.atlasName,
           description:
             'Use-case-anchored computational atlas comparing global AI governance instruments across Comply Once controls, extra local steps, and direct rule clashes.',
           url: BASE_URL,
+          sameAs: ['https://github.com/lihui-aigov/interoperability-atlas'],
           version: dataset.metadata.datasetVersion,
           dateModified: dataset.metadata.lastUpdated,
           license: 'https://creativecommons.org/licenses/by/4.0/',
@@ -1058,6 +1556,9 @@ function main() {
     <meta name="keywords" content="EU AI Act vs NIST AI RMF, ISO 42001 vs EU AI Act, UNESCO Ethics of AI, AI governance comparison, AI procurement checklist, Singapore Agentic AI, CoE CETS 225" />
     <link rel="canonical" href="${BASE_URL}" />
     <link rel="alternate" type="application/atom+xml" title="Open Atlas Briefings & Updates Feed" href="${BASE_URL}feed.xml" />
+    <link rel="alternate" type="text/plain" title="LLMs Index (llms.txt)" href="${BASE_URL}llms.txt" />
+    <link rel="alternate" type="text/plain" title="LLMs Full Corpus (llms-full.txt)" href="${BASE_URL}llms-full.txt" />
+    <link rel="alternate" type="application/json" title="Open Atlas Structured Dataset (CC-BY-4.0)" href="${BASE_URL}atlas-dataset.json" />
     <meta property="og:url" content="${BASE_URL}" />
     <meta property="og:image" content="${OG_IMAGE_URL}" />
     <meta name="twitter:image" content="${OG_IMAGE_URL}" />
@@ -1067,6 +1568,19 @@ function main() {
   }
 
   if (!indexHtml.includes('id="atlas-seo-fallback"')) {
+    const guideLinksHtml = guideSummaries
+      .map(
+        (g) =>
+          `<li><a href="./guides/${encodeURIComponent(g.fileName)}">${escapeHtml(g.title)}</a> (<a href="./guides/${encodeURIComponent(g.mdFileName)}">Markdown</a>) &mdash; ${escapeHtml(g.directAnswer)}</li>`
+      )
+      .join('\n          ');
+    const compareRowsHtml = pairwiseList
+      .slice(0, 10)
+      .map(
+        (p) =>
+          `<tr><td><a href="./compare/${encodeURIComponent(p.pairSlug)}.html">${escapeHtml(p.instA.shortName)} vs. ${escapeHtml(p.instB.shortName)}</a></td><td>${p.rate}%</td><td>${p.eq}/${p.sharedCount}</td><td>${p.dl}</td><td>${p.fr}</td></tr>`
+      )
+      .join('\n          ');
     const compareLinksHtml = pairwiseList
       .slice(0, 12)
       .map(
@@ -1097,7 +1611,16 @@ function main() {
       <main id="atlas-seo-fallback" style="max-width:960px;margin:24px auto;padding:20px;font-family:system-ui,sans-serif;line-height:1.6;">
         <h1>${escapeHtml(dataset.metadata.atlasName)} (v${escapeHtml(dataset.metadata.datasetVersion)})</h1>
         <p>Independent personal-capacity research by Lihui Xu (@lihui-aigov) mapping ${dataset.useCases.length} concrete AI use cases, ${dataset.controls.length} operational controls, ${dataset.instruments.length} global regimes, and ${dataset.mappings.length} cited primary clauses into Comply Once baselines, Extra Local Steps, and Direct Rule Clashes.</p>
-        <p><a href="./directory.html">Browse Complete Directory (54 Reference Pages)</a> · <a href="./atlas-dataset.json">Download Raw JSON (CC-BY-4.0)</a> · <a href="./llms.txt">llms.txt</a></p>
+        <p><a href="./directory.html">Browse Complete Directory (${sitemapEntries.length} Reference Pages)</a>, <a href="./atlas-dataset.json">Download Raw JSON (CC-BY-4.0)</a>, <a href="./llms.txt">llms.txt</a>, <a href="./llms-full.txt">llms-full.txt</a></p>
+        <h2>Synthesized Cross-Regime Reference Guides</h2>
+        <ul>
+          ${guideLinksHtml}
+        </ul>
+        <h2>Headline Framework Overlap Summary</h2>
+        <table>
+          <thead><tr><th>Framework Pair</th><th>Shared Overlap</th><th>Comply Once</th><th>Extra Steps</th><th>Clashes</th></tr></thead>
+          <tbody>${compareRowsHtml}</tbody>
+        </table>
         <h2>Featured Framework Comparisons</h2>
         <ul>
           ${compareLinksHtml}
@@ -1145,6 +1668,9 @@ ${sitemapEntries
     'User-agent: Googlebot',
     'Allow: /',
     '',
+    'User-agent: Google-Extended',
+    'Allow: /',
+    '',
     'User-agent: Bingbot',
     'Allow: /',
     '',
@@ -1154,7 +1680,13 @@ ${sitemapEntries
     'User-agent: ChatGPT-User',
     'Allow: /',
     '',
+    'User-agent: GPTBot',
+    'Allow: /',
+    '',
     'User-agent: PerplexityBot',
+    'Allow: /',
+    '',
+    'User-agent: Perplexity-User',
     'Allow: /',
     '',
     'User-agent: ClaudeBot',
@@ -1163,13 +1695,27 @@ ${sitemapEntries
     'User-agent: Claude-SearchBot',
     'Allow: /',
     '',
-    'User-agent: Google-Extended',
+    'User-agent: Claude-User',
+    'Allow: /',
+    '',
+    'User-agent: DuckAssistBot',
+    'Allow: /',
+    '',
+    'User-agent: Meta-ExternalAgent',
+    'Allow: /',
+    '',
+    'User-agent: MistralAI-User',
     'Allow: /',
     '',
     'User-agent: Applebot-Extended',
     'Allow: /',
     '',
+    'User-agent: YouBot',
+    'Allow: /',
+    '',
     `Sitemap: ${BASE_URL}sitemap.xml`,
+    `# LLMs-Index: ${BASE_URL}llms.txt`,
+    `# LLMs-Full: ${BASE_URL}llms-full.txt`,
     '',
   ].join('\n');
   fs.writeFileSync(path.join(DIST_DIR, 'robots.txt'), robotsTxt, 'utf-8');
@@ -1190,6 +1736,14 @@ Every verified record links a concrete AI deployment to an operational control a
 - Comply Once (equivalent): Shared verification evidence satisfies multiple regimes together.
 - Extra Local Step (delta): Additional statutory filing, public registration, or regional threshold.
 - Direct Rule Clash (friction): Incompatible legal rule, prohibition, or reporting deadline.
+
+## Synthesized Cross-Regime Topic Guides (${guideSummaries.length})
+${guideSummaries
+  .map(
+    (g) =>
+      `- [${g.title}](${g.canonicalUrl}) ([Markdown](${g.mdCanonicalUrl})): ${g.directAnswer}`
+  )
+  .join('\n')}
 
 ## Head-to-Head Framework Comparisons (${pairwiseList.length})
 ${pairwiseList
@@ -1230,6 +1784,13 @@ ${dataset.instruments
     ``,
     `Dataset Version: ${dataset.metadata.datasetVersion} | Updated: ${lastModDate} | License: MIT (code), CC-BY-4.0 (data)`,
     `Canonical Observatory: ${BASE_URL}`,
+    `Repository: https://github.com/lihui-aigov/interoperability-atlas`,
+    ``,
+    `## 0. Synthesized Policy Guides & Direct Answers (${guideSummaries.length})`,
+    ...guideSummaries.map((g) => {
+      const qaLines = g.faqs.map((f) => `  Q: ${f.question}\n  A: ${f.answer}`).join('\n');
+      return `### ${g.title}\nHTML: ${g.canonicalUrl}\nMarkdown: ${g.mdCanonicalUrl}\nDirect Answer: ${g.directAnswer}\n${qaLines}`;
+    }),
     ``,
     `## 1. Pairwise Framework Comparison Summaries (${pairwiseList.length})`,
     ...pairwiseList.map((p) => {
@@ -1328,7 +1889,7 @@ ${feedEntries
   );
 
   console.log(
-    `[seo-engine] Generated ${sitemapEntries.length} crawlable HTML pages (${pairwiseList.length} compare, ${dataset.useCases.length} use-cases, ${dataset.instruments.length} instruments, ${spotlights.length} spotlights, plus / & /directory.html), sitemap.xml, robots.txt, llms.txt, llms-full.txt, atlas-dataset.json, feed.xml, og-card.svg, and IndexNow payload.`
+    `[seo-engine] Generated ${sitemapEntries.length} crawlable HTML pages (${guideSummaries.length} synthesis guides, ${pairwiseList.length} compare, ${dataset.useCases.length} use-cases, ${dataset.instruments.length} instruments, ${spotlights.length} spotlights, plus / & /directory.html), sitemap.xml, robots.txt, llms.txt, llms-full.txt, atlas-dataset.json, feed.xml, og-card.svg, and IndexNow payload.`
   );
 }
 

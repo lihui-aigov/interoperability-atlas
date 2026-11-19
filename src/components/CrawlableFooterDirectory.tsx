@@ -156,8 +156,53 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
             </ul>
           </div>
 
-          {/* Column 4: Policy Briefings & Machine-Readable Feeds */}
+          {/* Column 4: Policy Briefings, Synthesized Guides & Machine-Readable Feeds */}
           <div className="space-y-5">
+            <div>
+              <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2.5">
+                Synthesized Reference Guides (6)
+              </h3>
+              <ul className="space-y-1.5">
+                {[
+                  {
+                    slug: 'comply-once-global-ai-baseline',
+                    label: 'Comply Once Global AI Baseline',
+                  },
+                  {
+                    slug: 'global-ai-law-clashes-and-prohibitions',
+                    label: 'Where Global AI Laws Directly Clash',
+                  },
+                  {
+                    slug: 'unesco-ai-ethics-vs-binding-ai-laws',
+                    label: 'UNESCO Ethics vs. Binding AI Laws',
+                  },
+                  {
+                    slug: 'agentic-ai-governance-crosswalk',
+                    label: 'Agentic AI Governance Crosswalk',
+                  },
+                  {
+                    slug: 'public-sector-ai-procurement-checklist',
+                    label: 'Public-Sector AI Procurement Checklist',
+                  },
+                  {
+                    slug: 'ai-incident-reporting-and-redress-comparison',
+                    label: 'Incident Clocks, Logs & Citizen Redress',
+                  },
+                ].map((g) => (
+                  <li key={g.slug}>
+                    <a
+                      href={`${CANONICAL_BASE_URL}guides/${encodeURIComponent(g.slug)}.html`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 block truncate"
+                    >
+                      {g.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             <div>
               <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2.5">
                 In-the-News Policy Briefings ({spotlights.length})

@@ -70,6 +70,15 @@ function verifySeoArtifacts() {
     'instruments/unesco-ai-ethics.html',
     'spotlights/spot-agentic-public-oversight.html',
     'use-cases/uc-hiring-workforce.html',
+    'guides/comply-once-global-ai-baseline.html',
+    'guides/comply-once-global-ai-baseline.md',
+    'guides/global-ai-law-clashes-and-prohibitions.html',
+    'guides/global-ai-law-clashes-and-prohibitions.md',
+    'guides/unesco-ai-ethics-vs-binding-ai-laws.html',
+    'guides/unesco-ai-ethics-vs-binding-ai-laws.md',
+    'guides/agentic-ai-governance-crosswalk.html',
+    'guides/public-sector-ai-procurement-checklist.html',
+    'guides/ai-incident-reporting-and-redress-comparison.html',
   ];
 
   for (const rel of requiredFiles) {
@@ -79,10 +88,21 @@ function verifySeoArtifacts() {
     }
   }
 
+  const compareHtml = fs.readFileSync(
+    path.join(DIST_DIR, 'compare/eu-ai-act-vs-nist-ai-rmf.html'),
+    'utf-8'
+  );
+  if (compareHtml.includes('can be sati"')) {
+    throw new Error('Mid-word truncated meta description detected on compare page.');
+  }
+  if (!compareHtml.includes('SpeakableSpecification') || !compareHtml.includes('llms.txt')) {
+    throw new Error('Missing SpeakableSpecification or llms.txt discovery link on compare page.');
+  }
+
   const sitemapText = fs.readFileSync(path.join(DIST_DIR, 'sitemap.xml'), 'utf-8');
   const locCount = (sitemapText.match(/<loc>/g) || []).length;
-  if (locCount < 50) {
-    throw new Error(`Expected >= 50 sitemap URLs, found only ${locCount}`);
+  if (locCount < 60) {
+    throw new Error(`Expected >= 60 sitemap URLs, found only ${locCount}`);
   }
   console.log(`[verify-ui] Verified ${requiredFiles.length} SEO/GEO artifacts and ${locCount} sitemap URLs.`);
 }
