@@ -5,6 +5,21 @@ Automated runs via `scripts/curate-atlas.mjs` enforce HTTP `200–399` source re
 
 ---
 
+## [2026.11.7] — 2026-11-19 (`gh-run-44487247089`)
+
+- **Change Type:** `new_mapping`
+- **Summary:** Added uc-public-defender-triage with 5 cross-instrument mappings (Singapore IMDA Agentic v1.5, ASEAN Expanded GenAI Guide, CoE CETS 225, AU Strategy, EU AI Act) and published a new Spotlight on autonomous agent sandbox escapes and incident-reporting clocks.
+- **New Use Case Added:** `uc-public-defender-triage` — *Public Defender, Legal-Aid Eligibility & Judicial Case Triage AI* (Justice, Courts & Public Legal Services)
+- **News Spotlight Published:** `spot-agent-escape-breach-reporting` — *Autonomous Agent Sandbox Escapes Trigger California Enforcement Suit and Australian Mandatory Reporting Reforms* ([Source](https://oag.ca.gov/news/press-releases/it%E2%80%99s-golden-state-not-wild-west-attorney-general-bonta-sues-openai-over))
+- **Verified Mappings Added (5):**
+  - `delta` · **Singapore Model AI Governance Framework for Agentic AI v1.5 (2026), §§2.1.1–2.1.2 & §§2.3.1, 2.3.3** (`uc-public-defender-triage` → `ctrl-agent-boundaries` → `inst-sg-agentic`) — [Verified Source](https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/artificial-intelligence)
+  - `equivalent` · **Expanded ASEAN Guide on AI Governance and Ethics - Generative AI (2025), §3.4 & §3.6; ASEAN Guide (2024), Part C** (`uc-public-defender-triage` → `ctrl-post-market` → `inst-asean-guide`) — [Verified Source](https://asean.org/wp-content/uploads/2025/01/Expanded-ASEAN-Guide-on-AI-Governance-and-Ethics-Generative-AI.pdf)
+  - `friction` · **CoE AI Convention (CETS 225) Art. 5, Art. 14 & Art. 16 vs. EU AI Act Annex III(8)(a) & EC Draft Guidelines §3.8.1(416)** (`uc-public-defender-triage` → `ctrl-ex-ante-fria` → `inst-coe-treaty`) — [Verified Source](https://rm.coe.int/1680afae3c)
+  - `delta` · **AU Continental AI Strategy (2024), §2.4 (African Data Governance & Localised Datasets) & Action Line 10** (`uc-public-defender-triage` → `ctrl-data-aibom` → `inst-au-strategy`) — [Verified Source](https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy)
+  - `friction` · **EU AI Act Art. 53(1)(a) & Annex XI §1(2)(e) vs. UNESCO Recommendation §84 & NIST AI RMF MEASURE 2.12** (`uc-public-defender-triage` → `ctrl-env-footprint` → `inst-eu-ai-act`) — [Verified Source](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)
+- **Source Reference:** IMDA MGF Agentic AI v1.5 (2026); Expanded ASEAN GenAI Guide (2025); CoE CETS 225; AU Continental AI Strategy (2024); EU AI Act Reg. (EU) 2024/1689; California AG Bonta v. OpenAI (Nov 2026); Australia Rapid Review (Nov 2026)
+- **Dataset Totals:** 12 Use Cases · 8 Operational Controls · 9 Global Instruments · 124 Verified Citations
+
 ## [2026.11.6] — 2026-11-18 (`gh-run-44305078916`)
 
 - **Change Type:** `new_mapping`
