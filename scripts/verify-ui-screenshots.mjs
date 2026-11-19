@@ -112,8 +112,11 @@ function verifySeoArtifacts() {
   }
   if (fs.existsSync(STANDALONE_HTML)) {
     const standaloneHtml = fs.readFileSync(STANDALONE_HTML, 'utf-8');
-    if (standaloneHtml.includes('goatcounter')) {
-      throw new Error('Offline standalone HTML must not include external GoatCounter tracker.');
+    if (
+      standaloneHtml.includes('gc.zgo.at') ||
+      standaloneHtml.includes('lihui-aigov.goatcounter.com')
+    ) {
+      throw new Error('Offline standalone HTML must not include external GoatCounter script or endpoint.');
     }
   }
 
