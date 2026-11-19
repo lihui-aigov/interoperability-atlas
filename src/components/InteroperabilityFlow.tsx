@@ -360,8 +360,7 @@ export function InteroperabilityFlow({
               }}
               className="absolute flex items-baseline justify-between pr-1"
             >
-              <span className="text-xs font-semibold text-slate-900 tracking-tight">
-                <span className="font-mono text-slate-400 mr-1.5">{col.indexLabel}.</span>
+              <span className="text-xs font-semibold text-[var(--atlas-ink)] tracking-tight">
                 {col.title}
               </span>
             </div>

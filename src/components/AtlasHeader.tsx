@@ -97,7 +97,7 @@ export function AtlasHeader({
               aria-expanded={isSearchOpen}
               aria-controls="global-clause-finder"
               aria-label={isSearchOpen ? 'Close clause search' : 'Search clauses and articles'}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-[2px] border transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--atlas-accent)] ${
+              className={`inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-medium rounded-[2px] border transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--atlas-accent)] ${
                 isSearchOpen
                   ? 'bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)] border-[var(--atlas-accent)]'
                   : 'bg-white text-[var(--atlas-ink-secondary)] border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] hover:text-[var(--atlas-ink)]'
@@ -124,10 +124,11 @@ export function AtlasHeader({
             <button
               type="button"
               onClick={onOpenCiteModal}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[var(--atlas-ink)] bg-white hover:bg-[var(--atlas-surface)] border border-[var(--atlas-border-control)] rounded-[2px] transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--atlas-accent)]"
+              aria-label="Cite this Atlas"
+              className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 text-xs font-medium text-[var(--atlas-ink)] bg-white hover:bg-[var(--atlas-surface)] border border-[var(--atlas-border-control)] rounded-[2px] transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--atlas-accent)]"
             >
               <BookMarked className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-              <span>Cite</span>
+              <span className="sr-only sm:not-sr-only">Cite</span>
             </button>
 
             <button
@@ -143,12 +144,12 @@ export function AtlasHeader({
         </div>
       </header>
 
-      {/* Non-sticky quiet context strip: alignment key + live corpus volume */}
+      {/* Non-sticky single-row context strip: alignment key + live corpus volume */}
       <div className="bg-[var(--atlas-surface)] border-b border-[var(--atlas-rule-subtle)]">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-1.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[11px]">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[var(--atlas-ink-secondary)]">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-1.5 flex items-center justify-between gap-2 text-[11px]">
+          <div className="flex items-center gap-3 sm:gap-4 text-[var(--atlas-ink-secondary)] whitespace-nowrap overflow-x-auto">
             <span
-              className="inline-flex items-center gap-1.5"
+              className="inline-flex items-center gap-1.5 shrink-0"
               title="One shared verification test, audit, or log satisfies multiple regimes simultaneously"
             >
               <span
@@ -156,11 +157,13 @@ export function AtlasHeader({
                 aria-hidden="true"
               />
               <span>
-                Comply Once <span className="tabular-nums text-[var(--atlas-ink-muted)]">({eqPct}%)</span>
+                <span className="sm:hidden">Eq</span>
+                <span className="hidden sm:inline">Comply Once</span>{' '}
+                <span className="tabular-nums text-[var(--atlas-ink-muted)]">({eqPct}%)</span>
               </span>
             </span>
             <span
-              className="inline-flex items-center gap-1.5"
+              className="inline-flex items-center gap-1.5 shrink-0"
               title="Additional national filing, public notice, or local threshold beyond core controls"
             >
               <span
@@ -168,11 +171,13 @@ export function AtlasHeader({
                 aria-hidden="true"
               />
               <span>
-                Extra Local Step <span className="tabular-nums text-[var(--atlas-ink-muted)]">({dlPct}%)</span>
+                <span className="sm:hidden">Step</span>
+                <span className="hidden sm:inline">Extra Local Step</span>{' '}
+                <span className="tabular-nums text-[var(--atlas-ink-muted)]">({dlPct}%)</span>
               </span>
             </span>
             <span
-              className="inline-flex items-center gap-1.5"
+              className="inline-flex items-center gap-1.5 shrink-0"
               title="Incompatible legal prohibition, reporting clock, or disclosure rule requiring legal review"
             >
               <span
@@ -180,13 +185,15 @@ export function AtlasHeader({
                 aria-hidden="true"
               />
               <span>
-                Direct Rule Clash <span className="tabular-nums text-[var(--atlas-ink-muted)]">({frPct}%)</span>
+                <span className="sm:hidden">Clash</span>
+                <span className="hidden sm:inline">Direct Rule Clash</span>{' '}
+                <span className="tabular-nums text-[var(--atlas-ink-muted)]">({frPct}%)</span>
               </span>
             </span>
           </div>
 
-          <div className="flex items-center gap-3 font-mono tabular-nums text-[var(--atlas-ink-muted)]">
-            <span>
+          <div className="flex items-center gap-3 font-mono tabular-nums text-[var(--atlas-ink-muted)] shrink-0">
+            <span className="hidden md:inline">
               {useCases.length} use cases, {instruments.length} regimes, {mappings.length} verified clauses
             </span>
             <button
@@ -194,7 +201,10 @@ export function AtlasHeader({
               onClick={onOpenUpdates}
               className="text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] underline underline-offset-4 cursor-pointer whitespace-nowrap"
             >
-              v{metadata.datasetVersion} log ({metadata.recentUpdates.length})
+              <span className="sm:hidden">v{metadata.datasetVersion}</span>
+              <span className="hidden sm:inline">
+                v{metadata.datasetVersion} log ({metadata.recentUpdates.length})
+              </span>
             </button>
           </div>
         </div>

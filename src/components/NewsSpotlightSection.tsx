@@ -143,53 +143,43 @@ export function NewsSpotlightSection({
     <section
       id="news-spotlight"
       aria-labelledby="news-spotlight-heading"
-      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-6 pb-12"
+      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-4 sm:pt-5 pb-12"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
-        {/* Compact Header Row: Page H1 + Inline Case Switcher */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--atlas-rule)]">
-          <div>
-            <h1
-              id="news-spotlight-heading"
-              className="font-editorial text-[26px] sm:text-[30px] font-semibold tracking-[-0.015em] leading-[1.2] text-[var(--atlas-ink)]"
-            >
-              In-the-News Policy Briefings
-            </h1>
-            <p className="text-sm text-[var(--atlas-ink-secondary)] mt-1 max-w-[68ch]">
-              Cite-ready evidence arguments, regional legal lenses, and interoperability bottlenecks
-              anchored on current AI governance cases.
-            </p>
-          </div>
+        {/* Ultra-compact inline header row: title left, single-row horizontal case tabs right */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-3 border-b border-[var(--atlas-rule)]">
+          <h1
+            id="news-spotlight-heading"
+            className="font-editorial text-[20px] sm:text-[22px] font-semibold tracking-[-0.01em] leading-tight text-[var(--atlas-ink)] shrink-0"
+          >
+            In-the-News Policy Briefings
+          </h1>
 
           <div
             role="tablist"
             aria-label="Select recent AI governance news spotlight"
-            className="flex flex-wrap items-center gap-1.5 shrink-0"
+            className="flex items-center gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1"
           >
-            {spotlights.map((spot, idx) => {
+            {spotlights.map((spot) => {
               const selected = spot.id === activeSpotlight.id;
+              const shortDate = spot.publishedDate.slice(5);
+              const compactScope = spot.regionTag.split('/')[0]?.trim() ?? spot.regionTag;
               return (
                 <button
                   key={spot.id}
                   type="button"
                   role="tab"
                   aria-selected={selected}
+                  title={`${spot.publishedDate} — ${spot.regionTag}: ${spot.headline}`}
                   onClick={() => handleChooseSpotlight(spot.id)}
-                  className={`px-3 py-1.5 rounded-[2px] border text-left transition-colors cursor-pointer ${
+                  className={`h-7 px-2.5 rounded-[2px] border inline-flex items-center gap-1.5 text-xs whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                     selected
-                      ? 'bg-[var(--atlas-accent)] text-white border-[var(--atlas-accent)]'
-                      : 'bg-white text-[var(--atlas-ink-secondary)] border-[var(--atlas-border-control)] hover:bg-[var(--atlas-surface)] hover:text-[var(--atlas-ink)]'
+                      ? 'bg-[var(--atlas-accent)] text-white border-[var(--atlas-accent)] font-medium'
+                      : 'bg-white text-[var(--atlas-ink-secondary)] border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] hover:text-[var(--atlas-ink)]'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono tabular-nums leading-tight">
-                    <span className="font-medium">Case {idx + 1}</span>
-                    <span className={selected ? 'text-white/80' : 'text-[var(--atlas-ink-muted)]'}>
-                      {spot.publishedDate}
-                    </span>
-                  </div>
-                  <div className="text-xs font-medium truncate max-w-[190px] mt-0.5">
-                    {spot.regionTag}
-                  </div>
+                  <span className="font-mono text-[11px] tabular-nums">{shortDate}</span>
+                  <span>{compactScope}</span>
                 </button>
               );
             })}
@@ -197,7 +187,7 @@ export function NewsSpotlightSection({
         </div>
 
         {/* Main 2-Column Editorial Briefing Layout */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="mt-4 sm:mt-5 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column (7 cols): Case Narrative, Question, Evidence Arguments */}
           <div className="lg:col-span-7">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-xs text-[var(--atlas-ink-muted)]">
@@ -256,7 +246,7 @@ export function NewsSpotlightSection({
                           {arg.supportingCitations.map((cit) => (
                             <code
                               key={cit}
-                              className="px-2 py-0.5 text-[11px] font-mono bg-[var(--atlas-surface)] text-[var(--atlas-ink-secondary)] border border-[var(--atlas-rule)] rounded-[2px]"
+                              className="px-1.5 py-0.5 text-[11px] leading-snug font-mono bg-[var(--atlas-surface)] text-[var(--atlas-ink-muted)] border border-[var(--atlas-rule-subtle)] rounded-[2px]"
                             >
                               {cit}
                             </code>

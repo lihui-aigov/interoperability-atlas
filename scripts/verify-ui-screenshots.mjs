@@ -125,7 +125,7 @@ async function main() {
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(150);
     const headlineBox = await page.locator('#news-spotlight h2').first().boundingBox();
-    if (!headlineBox || headlineBox.y > 420) {
+    if (!headlineBox || headlineBox.y > 320) {
       throw new Error(
         `Above-the-fold failure: primary spotlight headline starts too low (y=${headlineBox?.y})`
       );
@@ -134,6 +134,23 @@ async function main() {
       path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-and-tabs.png'),
       fullPage: false,
     });
+
+    // 1a. Capture true Mobile 390x844 above-the-fold first screen BEFORE sandbox mutations
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(200);
+    const mobileHeadlineBox = await page.locator('#news-spotlight h2').first().boundingBox();
+    if (!mobileHeadlineBox || mobileHeadlineBox.y > 260) {
+      throw new Error(
+        `Mobile above-the-fold failure: lead headline starts too low (y=${mobileHeadlineBox?.y})`
+      );
+    }
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, '06-mobile-task-navigation.png'),
+      fullPage: false,
+    });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.waitForTimeout(150);
 
     // 1b. Verify collapsible header search drawer works end-to-end and closes cleanly
     await page.locator('#header-search-toggle').click();
@@ -232,23 +249,7 @@ async function main() {
     await page.locator('#use-case-sandbox button:has-text("Run Instant Demo")').first().click();
     await page.waitForSelector('text=Scenario mapped — reviewing your cross-border compliance checklist below.');
 
-    // 8. Capture true Mobile 390x844 above-the-fold first screen on Briefings
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.locator('#workspace-tab-spotlights').click();
-    await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(250);
-    const mobileSpotlightBox = await page.locator('#news-spotlight').boundingBox();
-    if (!mobileSpotlightBox || mobileSpotlightBox.y > 240) {
-      throw new Error(
-        `Mobile above-the-fold failure: news spotlight starts too low (y=${mobileSpotlightBox?.y})`
-      );
-    }
-    await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, '06-mobile-task-navigation.png'),
-      fullPage: false,
-    });
-
-    // 9. Verify URL deep link ?tab=compare&pair=eu-ai-act-vs-iso-42001
+    // 8. Verify URL deep link ?tab=compare&pair=eu-ai-act-vs-iso-42001
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${baseUrl}?tab=compare&pair=eu-ai-act-vs-iso-42001`, {
       waitUntil: 'networkidle',
