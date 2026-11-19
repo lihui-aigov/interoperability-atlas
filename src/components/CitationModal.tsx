@@ -46,7 +46,7 @@ export function CitationModal({ isOpen, onClose, dataset }: CitationModalProps) 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/45"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#1A1D23]/35"
       role="dialog"
       aria-modal="true"
       aria-labelledby="citation-modal-title"
@@ -54,15 +54,15 @@ export function CitationModal({ isOpen, onClose, dataset }: CitationModalProps) 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-2xl bg-white border border-slate-200 rounded-lg overflow-hidden shadow-xl animate-fade-in">
-        <div className="px-6 py-4 border-b border-slate-200 flex items-start justify-between gap-4">
+      <div className="w-full max-w-2xl bg-white border border-[var(--atlas-rule)] rounded-[2px] overflow-hidden shadow-lg animate-fade-in">
+        <div className="px-6 py-4 border-b border-[var(--atlas-rule)] flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-mono text-slate-500 tabular-nums">
-              Dataset v{dataset.metadata.datasetVersion} · Schema {dataset.metadata.schemaVersion}
+            <p className="text-xs font-mono text-[var(--atlas-ink-muted)] tabular-nums">
+              Dataset v{dataset.metadata.datasetVersion}, Schema {dataset.metadata.schemaVersion}
             </p>
             <h2
               id="citation-modal-title"
-              className="font-editorial text-xl font-medium text-slate-950 mt-0.5"
+              className="font-editorial text-xl font-semibold text-[var(--atlas-ink)] mt-0.5"
             >
               Cite &amp; Reuse This Atlas
             </h2>
@@ -71,26 +71,29 @@ export function CitationModal({ isOpen, onClose, dataset }: CitationModalProps) 
             type="button"
             onClick={onClose}
             aria-label="Close citation dialog"
-            className="p-2 text-slate-500 hover:text-slate-900 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+            className="p-2 text-[var(--atlas-ink-muted)] hover:text-[var(--atlas-ink)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto overscroll-contain">
           <div>
             <div className="flex items-center justify-between gap-3 mb-2">
-              <span className="text-xs font-semibold text-slate-800">
+              <span className="text-xs font-semibold text-[var(--atlas-ink)]">
                 Policy &amp; Academic Reference (APA 7th Edition)
               </span>
               <button
                 type="button"
                 onClick={() => handleCopy('apa', apaCitation)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-800 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[var(--atlas-ink)] bg-[var(--atlas-surface)] hover:bg-[var(--atlas-elevated)] rounded-[2px] border border-[var(--atlas-rule)] transition-colors cursor-pointer"
               >
                 {copiedFormat === 'apa' ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
+                    <Check
+                      className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)]"
+                      aria-hidden="true"
+                    />
                     <span>Copied</span>
                   </>
                 ) : (
@@ -101,22 +104,25 @@ export function CitationModal({ isOpen, onClose, dataset }: CitationModalProps) 
                 )}
               </button>
             </div>
-            <p className="p-3.5 bg-slate-50 border border-slate-200 rounded-md text-xs sm:text-sm text-slate-800 leading-relaxed select-all">
+            <p className="p-3.5 bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] text-xs sm:text-sm text-[var(--atlas-ink)] leading-relaxed select-all">
               {apaCitation}
             </p>
           </div>
 
           <div>
             <div className="flex items-center justify-between gap-3 mb-2">
-              <span className="text-xs font-semibold text-slate-800">BibTeX Entry</span>
+              <span className="text-xs font-semibold text-[var(--atlas-ink)]">BibTeX Entry</span>
               <button
                 type="button"
                 onClick={() => handleCopy('bibtex', bibtexCitation)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-800 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[var(--atlas-ink)] bg-[var(--atlas-surface)] hover:bg-[var(--atlas-elevated)] rounded-[2px] border border-[var(--atlas-rule)] transition-colors cursor-pointer"
               >
                 {copiedFormat === 'bibtex' ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
+                    <Check
+                      className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)]"
+                      aria-hidden="true"
+                    />
                     <span>Copied</span>
                   </>
                 ) : (
@@ -127,35 +133,36 @@ export function CitationModal({ isOpen, onClose, dataset }: CitationModalProps) 
                 )}
               </button>
             </div>
-            <pre className="p-4 bg-slate-950 text-slate-100 rounded-md text-[11.5px] font-mono leading-relaxed overflow-x-auto select-all">
+            <pre className="p-4 bg-[#1A1D23] text-[#F5F6F8] rounded-[2px] text-[11.5px] font-mono leading-relaxed overflow-x-auto select-all">
               {bibtexCitation}
             </pre>
           </div>
 
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-600 leading-relaxed space-y-2">
-            <div className="flex items-center gap-2 font-semibold text-slate-900">
-              <Scale className="w-4 h-4 text-slate-700 shrink-0" aria-hidden="true" />
+          <div className="p-4 bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] text-xs text-[var(--atlas-ink-secondary)] leading-relaxed space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-[var(--atlas-ink)]">
+              <Scale className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>Dual Open License &amp; Institutional Neutrality Notice</span>
             </div>
             <p>
               Software components are released under the MIT License; structured governance mappings
-              and schema documentation in <code className="font-mono text-slate-800">src/data/atlas.json</code>{' '}
-              carry a CC-BY-4.0 attribution license.
+              and schema documentation in{' '}
+              <code className="font-mono text-[var(--atlas-ink)]">src/data/atlas.json</code> carry a
+              CC-BY-4.0 attribution license.
             </p>
             <p>
-              Maintained independently by Lihui Xu (@lihui-aigov) in a personal scholarly capacity.
-              Published using solely official public statutory and standards texts; does not
-              represent official positions of UNESCO or Member States.
+              Maintained independently by Lihui Xu (@lihui-aigov) in a personal scholarly capacity
+              using solely official public statutory and standards texts; does not represent
+              official positions of UNESCO or Member States.
             </p>
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-slate-200 bg-white flex items-center justify-between gap-4 text-xs">
+        <div className="px-6 py-4 border-t border-[var(--atlas-rule)] bg-white flex items-center justify-between gap-4 text-xs">
           <a
             href="https://github.com/lihui-aigov/interoperability-atlas"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-medium text-slate-800 hover:text-slate-950 underline underline-offset-4"
+            className="inline-flex items-center gap-1.5 font-medium text-[var(--atlas-accent)] underline underline-offset-4"
           >
             <span>View Repository &amp; CITATION.cff on GitHub</span>
             <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
@@ -164,7 +171,7 @@ export function CitationModal({ isOpen, onClose, dataset }: CitationModalProps) 
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
+            className="px-4 py-2 font-medium text-white bg-[var(--atlas-accent)] rounded-[2px] hover:bg-[var(--atlas-accent-hover)] transition-colors cursor-pointer"
           >
             Done
           </button>

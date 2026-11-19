@@ -78,32 +78,30 @@ export function MatrixExportView({
     <section
       id="comparison-matrix"
       aria-labelledby="matrix-section-heading"
-      className="scroll-mt-16 border-t border-slate-200 bg-white py-12"
+      className="scroll-mt-16 border-t border-[var(--atlas-rule)] bg-[var(--atlas-ground)] py-8"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
-        {/* Section Header & 1-Click Export Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+        {/* Section Header & Export Actions */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--atlas-rule)]">
           <div>
-            <p className="text-xs font-mono text-slate-500">
-              Use-Case Compliance Table · Control-by-Framework Breakdown
-            </p>
             <h2
               id="matrix-section-heading"
-              className="font-editorial text-2xl sm:text-3xl font-medium text-slate-950 mt-1"
+              className="font-editorial text-[22px] sm:text-[26px] font-semibold text-[var(--atlas-ink)]"
             >
-              System Obligations Checklist &amp; Procurement Export
+              Obligations Table &amp; Procurement Export
             </h2>
-            <p className="text-sm text-slate-600 mt-1.5 max-w-2xl">
-              Review what all {dataset.instruments.length} global regimes require for the selected AI
-              use case, read exact primary clauses in the sidebar, or export a team checklist.
+            <p className="text-sm text-[var(--atlas-ink-secondary)] mt-1 max-w-[68ch]">
+              Review what all {dataset.instruments.length} frameworks require for{' '}
+              <span className="font-medium text-[var(--atlas-ink)]">{selectedUseCase.title}</span>,
+              inspect clauses in the sidebar, or export a checklist.
             </p>
           </div>
 
-          <div className="flex flex-wrap lg:flex-nowrap items-center gap-2.5 shrink-0">
+          <div className="flex flex-wrap lg:flex-nowrap items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={handleDirectMarkdownDownload}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[var(--atlas-accent)] hover:bg-[var(--atlas-accent-hover)] rounded-[2px] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span>Export Checklist (.md)</span>
@@ -112,7 +110,7 @@ export function MatrixExportView({
             <button
               type="button"
               onClick={handleDirectJsonDownload}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-800 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--atlas-ink)] bg-white border border-[var(--atlas-border-control)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               <FileCode2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span>Export JSON (.json)</span>
@@ -121,7 +119,7 @@ export function MatrixExportView({
             <button
               type="button"
               onClick={onOpenExportModal}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--atlas-ink-secondary)] bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] hover:text-[var(--atlas-ink)] hover:border-[var(--atlas-border-control)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span>Preview Deliverable</span>
@@ -130,12 +128,12 @@ export function MatrixExportView({
         </div>
 
         {/* Filter Bar */}
-        <div className="py-4 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="py-4 border-b border-[var(--atlas-rule)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
             <div className="flex items-center gap-2 min-w-0">
               <label
                 htmlFor="matrix-usecase-select"
-                className="text-xs font-medium text-slate-700 whitespace-nowrap shrink-0"
+                className="text-xs font-medium text-[var(--atlas-ink-secondary)] whitespace-nowrap shrink-0"
               >
                 Use Case:
               </label>
@@ -146,7 +144,7 @@ export function MatrixExportView({
                   onChangeUseCase(e.target.value);
                   setInspectedMapping(null);
                 }}
-                className="text-xs sm:text-sm bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-900 max-w-md w-full truncate focus-visible:outline-2 focus-visible:outline-slate-900"
+                className="text-base sm:text-sm bg-white border border-[var(--atlas-border-control)] rounded-[2px] px-3 py-1.5 text-[var(--atlas-ink)] max-w-md w-full truncate focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
               >
                 {dataset.useCases.map((uc) => (
                   <option key={uc.id} value={uc.id}>
@@ -161,7 +159,7 @@ export function MatrixExportView({
                 Search controls, citations, or rationales
               </label>
               <Search
-                className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                className="w-4 h-4 text-[var(--atlas-ink-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
                 aria-hidden="true"
               />
               <input
@@ -170,7 +168,7 @@ export function MatrixExportView({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter clause, article, or artifact..."
-                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-md text-slate-900 placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-slate-900"
+                className="w-full pl-9 pr-3 py-1.5 text-base sm:text-sm bg-white border border-[var(--atlas-border-control)] rounded-[2px] text-[var(--atlas-ink)] placeholder:text-[var(--atlas-ink-muted)] focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
               />
             </div>
           </div>
@@ -178,7 +176,7 @@ export function MatrixExportView({
           <div
             role="group"
             aria-label="Filter matrix cells by alignment type"
-            className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 rounded-md self-start lg:self-auto"
+            className="flex flex-wrap items-center gap-1 p-1 bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] self-start lg:self-auto"
           >
             {(
               [
@@ -193,10 +191,10 @@ export function MatrixExportView({
                 type="button"
                 onClick={() => setMatrixFilter(opt.value)}
                 aria-pressed={matrixFilter === opt.value}
-                className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                className={`px-3 py-1 text-xs font-medium rounded-[2px] transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                   matrixFilter === opt.value
-                    ? 'bg-white text-slate-950 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[var(--atlas-ink)] border border-[var(--atlas-rule)]'
+                    : 'text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-ink)] border border-transparent'
                 }`}
               >
                 {opt.label}
@@ -207,39 +205,33 @@ export function MatrixExportView({
 
         {/* Inspected Citation Detail Bar (when a matrix cell is clicked) */}
         {inspectedMapping && (
-          <div className="mt-4 p-4 bg-slate-50 border border-slate-300 rounded-md flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="space-y-2 max-w-4xl">
+          <div className="mt-4 p-5 bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div className="space-y-2.5 max-w-4xl">
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">
-                <AlignmentIndicator type={inspectedMapping.alignmentType} />
-                <span aria-hidden="true" className="text-slate-300">
-                  ·
-                </span>
-                <span className="font-semibold text-slate-900">
+                <AlignmentIndicator type={inspectedMapping.alignmentType} dotOnly />
+                <span className="font-semibold text-[var(--atlas-ink)]">
                   {instMap.get(inspectedMapping.instrumentId)?.title}
                 </span>
-                <span aria-hidden="true" className="text-slate-300">
-                  ·
-                </span>
-                <span className="text-slate-600">
-                  {ctrlMap.get(inspectedMapping.controlId)?.title}
+                <span className="text-[var(--atlas-ink-secondary)]">
+                  ({ctrlMap.get(inspectedMapping.controlId)?.title})
                 </span>
               </div>
-              <p className="text-xs font-mono text-slate-900 font-medium">
-                {inspectedMapping.clauseCitation} · Verified {inspectedMapping.lastVerified}
+              <p className="text-xs font-mono text-[var(--atlas-ink)] font-medium tabular-nums">
+                {inspectedMapping.clauseCitation}, verified {inspectedMapping.lastVerified}
               </p>
               {inspectedMapping.clauseExcerpt && (
-                <p className="text-xs sm:text-sm text-slate-800 bg-white p-3 border border-slate-200 rounded leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--atlas-ink)] bg-white p-3.5 border border-[var(--atlas-rule)] rounded-[2px] leading-[1.6] max-w-[68ch]">
                   {inspectedMapping.clauseExcerpt}
                 </p>
               )}
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-[var(--atlas-ink-secondary)] leading-[1.55] max-w-[68ch]">
                 {inspectedMapping.rationale}
               </p>
               <div className="flex flex-wrap items-center gap-4 pt-1">
                 <button
                   type="button"
                   onClick={() => onInspectClause(inspectedMapping)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[var(--atlas-accent)] rounded-[2px] hover:bg-[var(--atlas-accent-hover)] transition-colors cursor-pointer"
                 >
                   <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>Open Full Clause Reader &amp; Verification Steps</span>
@@ -248,7 +240,7 @@ export function MatrixExportView({
                   href={resolveDeepLinkUrl(inspectedMapping).url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-medium text-slate-900 underline underline-offset-4 hover:text-emerald-800"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[var(--atlas-accent)] underline underline-offset-4"
                 >
                   <span>Jump to Section in Official Text</span>
                   <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
@@ -259,20 +251,20 @@ export function MatrixExportView({
               type="button"
               onClick={() => setInspectedMapping(null)}
               aria-label="Dismiss citation inspector"
-              className="p-1.5 text-slate-500 hover:text-slate-900 rounded hover:bg-slate-200/70 self-start cursor-pointer"
+              className="p-1.5 text-[var(--atlas-ink-muted)] hover:text-[var(--atlas-ink)] rounded-[2px] hover:bg-white self-start cursor-pointer"
             >
               <X className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         )}
 
-        {/* Matrix Table */}
+        {/* Calm Hairline Crosswalk Table */}
         {rows.length === 0 ? (
-          <div className="mt-6 py-12 text-center border border-slate-200 rounded-lg bg-slate-50/50">
-            <p className="text-sm font-medium text-slate-800">
+          <div className="mt-6 py-12 text-center border border-[var(--atlas-rule)] rounded-[2px] bg-[var(--atlas-surface)]">
+            <p className="text-sm font-medium text-[var(--atlas-ink)]">
               No control mappings match your current search and alignment filter.
             </p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
               Clear the query or switch back to &ldquo;All&rdquo; alignment types to view the full crosswalk.
             </p>
             <button
@@ -281,19 +273,19 @@ export function MatrixExportView({
                 setMatrixFilter('all');
                 setSearchQuery('');
               }}
-              className="mt-4 px-4 py-2 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
+              className="mt-4 px-4 py-2 text-xs font-medium text-white bg-[var(--atlas-accent)] rounded-[2px] hover:bg-[var(--atlas-accent-hover)] transition-colors cursor-pointer"
             >
               Reset Matrix Filters
             </button>
           </div>
         ) : (
-          <div className="mt-6 border border-slate-200 rounded-lg overflow-x-auto">
+          <div className="mt-6 border border-[var(--atlas-rule)] rounded-[2px] overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[1320px]">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
+                <tr className="bg-[var(--atlas-elevated)] border-b border-[var(--atlas-rule)]">
                   <th
                     scope="col"
-                    className="sticky left-0 z-20 bg-slate-50 py-3.5 px-4 text-xs font-semibold text-slate-900 w-64 border-r border-slate-200 shadow-[2px_0_6px_-2px_rgba(15,23,42,0.06)]"
+                    className="sticky left-0 z-20 bg-[var(--atlas-elevated)] py-3.5 px-4 text-xs font-semibold text-[var(--atlas-ink)] w-64 border-r border-[var(--atlas-rule)]"
                   >
                     Operational Control &amp; Artifact
                   </th>
@@ -303,33 +295,33 @@ export function MatrixExportView({
                       <th
                         key={inst.id}
                         scope="col"
-                        className="py-3.5 px-2.5 text-xs font-semibold text-slate-900 align-top border-r last:border-r-0 border-slate-200 w-36"
+                        className="py-3 px-2.5 text-xs font-semibold text-[var(--atlas-ink)] align-top border-r last:border-r-0 border-[var(--atlas-rule)] w-36"
                       >
                         <div className="leading-snug">{inst.shortName}</div>
-                        <div className="text-[11px] font-normal text-slate-500 font-mono tabular-nums mt-0.5">
-                          {inst.adoptionYear} · {inst.legalNature.split(' ')[0]}
+                        <div className="text-[11px] font-normal text-[var(--atlas-ink-muted)] font-mono tabular-nums mt-0.5">
+                          {inst.adoptionYear}, {inst.legalNature.split(' ')[0]}
                         </div>
-                        <div className="text-[10px] font-mono tabular-nums mt-1 text-slate-600">
-                          <span className="text-emerald-700">{summary.eq} once</span> ·{' '}
-                          <span className="text-amber-700">{summary.dl} extra</span> ·{' '}
-                          <span className="text-rose-700">{summary.fr} clash</span>
+                        <div className="text-[10.5px] font-mono font-normal tabular-nums mt-1 text-[var(--atlas-ink-secondary)]">
+                          <span className="text-[var(--align-equivalent-ink)]">{summary.eq} once</span>,{' '}
+                          <span className="text-[var(--align-delta-ink)]">{summary.dl} extra</span>,{' '}
+                          <span className="text-[var(--align-friction-ink)]">{summary.fr} clash</span>
                         </div>
                       </th>
                     );
                   })}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-[var(--atlas-rule-subtle)] bg-white">
                 {rows.map((row) => (
-                  <tr key={row.control.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={row.control.id} className="hover:bg-[var(--atlas-surface)]/50 transition-colors">
                     <th
                       scope="row"
-                      className="sticky left-0 z-10 py-3.5 px-4 align-top border-r border-slate-200 bg-white shadow-[2px_0_6px_-2px_rgba(15,23,42,0.06)]"
+                      className="sticky left-0 z-10 py-3.5 px-4 align-top border-r border-[var(--atlas-rule)] bg-white"
                     >
-                      <div className="text-xs font-semibold text-slate-900 leading-snug">
+                      <div className="text-xs font-semibold text-[var(--atlas-ink)] leading-snug">
                         {row.control.title}
                       </div>
-                      <div className="text-[11px] text-slate-500 mt-1 leading-snug font-normal">
+                      <div className="text-[11px] text-[var(--atlas-ink-muted)] mt-1 leading-snug font-normal">
                         {row.control.artifactName}
                       </div>
                     </th>
@@ -339,23 +331,16 @@ export function MatrixExportView({
                       return (
                         <td
                           key={inst.id}
-                          className="p-2 align-top border-r last:border-r-0 border-slate-200"
+                          className="p-2 align-top border-r last:border-r-0 border-[var(--atlas-rule-subtle)] bg-white"
                         >
                           {cellItems.length === 0 ? (
-                            <span className="text-[11px] text-slate-300 font-mono select-none">
+                            <span className="text-[11px] text-[var(--atlas-ink-muted)] font-mono select-none">
                               —
                             </span>
                           ) : (
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                               {cellItems.map((m) => {
                                 const isSelected = inspectedMapping?.id === m.id;
-                                const bgTone =
-                                  m.alignmentType === 'equivalent'
-                                    ? 'bg-emerald-50/60 hover:bg-emerald-50 border-emerald-200'
-                                    : m.alignmentType === 'delta'
-                                      ? 'bg-amber-50/60 hover:bg-amber-50 border-amber-200'
-                                      : 'bg-rose-50/70 hover:bg-rose-50 border-rose-200';
-
                                 return (
                                   <button
                                     key={m.id}
@@ -363,15 +348,18 @@ export function MatrixExportView({
                                     onClick={() => setInspectedMapping(m)}
                                     onDoubleClick={() => onInspectClause(m)}
                                     aria-label={`Inspect ${inst.shortName} ${m.clauseCitation} for ${row.control.title}`}
-                                    className={`w-full text-left p-2 rounded border transition-colors cursor-pointer ${bgTone} ${
-                                      isSelected ? 'ring-2 ring-slate-900' : ''
+                                    className={`w-full text-left p-2 rounded-[2px] border transition-colors cursor-pointer bg-white hover:bg-[var(--atlas-surface)] ${
+                                      isSelected
+                                        ? 'border-[var(--atlas-accent)] ring-1 ring-[var(--atlas-accent)] bg-[var(--atlas-accent-tint)]'
+                                        : 'border-[var(--atlas-rule)]'
                                     }`}
                                   >
                                     <AlignmentIndicator
                                       type={m.alignmentType}
                                       compact
+                                      dotOnly
                                     />
-                                    <p className="text-[11px] font-mono text-slate-800 leading-tight mt-1 line-clamp-2">
+                                    <p className="text-[11px] font-mono text-[var(--atlas-ink)] leading-tight mt-1 line-clamp-2">
                                       {m.clauseCitation}
                                     </p>
                                   </button>

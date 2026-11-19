@@ -48,7 +48,7 @@ export function ClauseReaderDrawer({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-slate-950/40"
+      className="fixed inset-0 z-50 flex justify-end bg-[#1A1D23]/30"
       role="dialog"
       aria-modal="true"
       aria-labelledby="clause-reader-title"
@@ -56,35 +56,29 @@ export function ClauseReaderDrawer({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-2xl bg-white h-full border-l border-slate-200 flex flex-col overflow-hidden animate-drawer-in">
+      <div className="w-full max-w-2xl bg-white h-full border-l border-[var(--atlas-rule)] flex flex-col overflow-hidden animate-drawer-in">
         {/* Top Header */}
-        <div className="px-6 py-5 border-b border-slate-200 flex items-start justify-between gap-4">
+        <div className="px-6 py-5 border-b border-[var(--atlas-rule)] flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <AlignmentIndicator type={mapping.alignmentType} />
-              <span aria-hidden="true" className="text-slate-300">
-                ·
-              </span>
-              <span className="font-semibold text-slate-800">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">
+              <AlignmentIndicator type={mapping.alignmentType} dotOnly />
+              <span className="font-semibold text-[var(--atlas-ink)]">
                 {detail.instrument?.shortName ?? mapping.instrumentId}
               </span>
-              <span aria-hidden="true" className="text-slate-300">
-                ·
-              </span>
-              <span className="font-mono tabular-nums text-slate-500">
-                Verified {mapping.lastVerified}
+              <span className="font-mono tabular-nums text-[var(--atlas-ink-muted)]">
+                verified {mapping.lastVerified}
               </span>
             </div>
 
             <h2
               id="clause-reader-title"
-              className="font-editorial text-xl sm:text-2xl font-medium text-slate-950 mt-1.5 leading-snug"
+              className="font-editorial text-[22px] sm:text-2xl font-semibold text-[var(--atlas-ink)] mt-1.5 leading-snug"
             >
               {mapping.clauseCitation}
             </h2>
 
             {detail.instrument && (
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
                 {detail.instrument.title} ({detail.instrument.issuingBody})
               </p>
             )}
@@ -94,17 +88,17 @@ export function ClauseReaderDrawer({
             type="button"
             onClick={onClose}
             aria-label="Close clause reader"
-            className="p-2 text-slate-500 hover:text-slate-900 rounded-md hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
+            className="p-2 text-[var(--atlas-ink-muted)] hover:text-[var(--atlas-ink)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors shrink-0 cursor-pointer"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Instant Document Locator & Deep-Link Action Strip */}
-        <div className="px-6 py-3.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          <div className="text-xs text-slate-600 flex items-center gap-2 min-w-0">
-            <span className="text-slate-500 shrink-0">Document Locator:</span>
-            <code className="font-mono font-semibold text-slate-900 bg-white px-2 py-0.5 border border-slate-200 rounded truncate">
+        <div className="px-6 py-3 bg-[var(--atlas-surface)] border-b border-[var(--atlas-rule)] flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-[var(--atlas-ink-secondary)] flex items-center gap-2 min-w-0">
+            <span className="shrink-0">Document locator:</span>
+            <code className="font-mono font-medium text-[var(--atlas-ink)] bg-white px-2 py-0.5 border border-[var(--atlas-rule)] rounded-[2px] truncate">
               {detail.sectionAnchor}
             </code>
           </div>
@@ -113,11 +107,14 @@ export function ClauseReaderDrawer({
             <button
               type="button"
               onClick={handleCopyLocator}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-100 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--atlas-ink)] bg-white border border-[var(--atlas-border-control)] rounded-[2px] hover:bg-[var(--atlas-elevated)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               {copiedAnchor ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
+                  <Check
+                    className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)]"
+                    aria-hidden="true"
+                  />
                   <span>Copied &ldquo;{detail.sectionAnchor}&rdquo;</span>
                 </>
               ) : (
@@ -132,7 +129,7 @@ export function ClauseReaderDrawer({
               href={detail.deepLinkUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-[var(--atlas-accent)] rounded-[2px] hover:bg-[var(--atlas-accent-hover)] transition-colors whitespace-nowrap shrink-0"
             >
               <span>Jump to Section in Official Text</span>
               <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
@@ -141,16 +138,16 @@ export function ClauseReaderDrawer({
         </div>
 
         {/* Main Scrollable Reader Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-          {/* 1. Substantive Normative Provision (Readable In-App!) */}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-6 space-y-6">
+          {/* 1. Substantive Normative Provision */}
           <section aria-labelledby="reader-provision-heading">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 mb-2">
-              <BookOpen className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
-              <h3 id="reader-provision-heading">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--atlas-ink)] mb-2">
+              <BookOpen className="w-3.5 h-3.5 text-[var(--atlas-ink-secondary)]" aria-hidden="true" />
+              <h3 id="reader-provision-heading" className="font-sans">
                 Substantive Provision &amp; Normative Scope
               </h3>
             </div>
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-md text-sm text-slate-800 leading-relaxed">
+            <div className="p-4 bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] text-sm text-[var(--atlas-ink)] leading-[1.6] max-w-[68ch]">
               {detail.clauseExcerpt}
             </div>
           </section>
@@ -158,16 +155,16 @@ export function ClauseReaderDrawer({
           {/* 2. Use-Case Operational Rationale & Control Context */}
           <section
             aria-labelledby="reader-rationale-heading"
-            className="pt-5 border-t border-slate-200"
+            className="pt-5 border-t border-[var(--atlas-rule)]"
           >
             <h3
               id="reader-rationale-heading"
-              className="text-xs font-semibold text-slate-800 mb-2"
+              className="font-sans text-xs font-semibold text-[var(--atlas-ink)] mb-2"
             >
-              How This Applies to the Concrete AI Use Case
+              How this applies to the selected AI system
             </h3>
 
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 mb-2">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--atlas-ink-secondary)] mb-2">
               {detail.useCase && (
                 <button
                   type="button"
@@ -175,12 +172,12 @@ export function ClauseReaderDrawer({
                     onSelectEntity({ type: 'useCase', id: detail.useCase!.id });
                     onClose();
                   }}
-                  className="font-medium text-slate-900 underline underline-offset-4 hover:text-emerald-800 cursor-pointer text-left"
+                  className="font-medium text-[var(--atlas-accent)] underline underline-offset-4 cursor-pointer text-left"
                 >
                   {detail.useCase.title}
                 </button>
               )}
-              <span aria-hidden="true">&rarr;</span>
+              <span aria-hidden="true">—</span>
               {detail.control && (
                 <button
                   type="button"
@@ -188,65 +185,61 @@ export function ClauseReaderDrawer({
                     onSelectEntity({ type: 'control', id: detail.control!.id });
                     onClose();
                   }}
-                  className="font-medium text-slate-900 underline underline-offset-4 hover:text-emerald-800 cursor-pointer text-left"
+                  className="font-medium text-[var(--atlas-accent)] underline underline-offset-4 cursor-pointer text-left"
                 >
                   {detail.control.title}
                 </button>
               )}
             </div>
 
-            <p className="text-sm text-slate-700 leading-relaxed">{mapping.rationale}</p>
+            <p className="text-sm text-[var(--atlas-ink-secondary)] leading-[1.6] max-w-[68ch]">
+              {mapping.rationale}
+            </p>
 
             {detail.control && (
-              <p className="mt-2.5 text-xs text-slate-600">
-                Target Verification Artifact:{' '}
-                <span className="font-medium text-slate-900">{detail.control.artifactName}</span>
+              <p className="mt-2.5 text-xs text-[var(--atlas-ink-secondary)]">
+                Target verification artifact:{' '}
+                <span className="font-medium text-[var(--atlas-ink)]">
+                  {detail.control.artifactName}
+                </span>
               </p>
             )}
           </section>
 
-          {/* 3. Concrete Engineering & Procurement Verification Checklist */}
+          {/* 3. Engineering & Procurement Verification Checklist */}
           <section
             aria-labelledby="reader-steps-heading"
-            className="pt-5 border-t border-slate-200"
+            className="pt-5 border-t border-[var(--atlas-rule)]"
           >
             <h3
               id="reader-steps-heading"
-              className="text-xs font-semibold text-slate-800 mb-3"
+              className="font-sans text-xs font-semibold text-[var(--atlas-ink)] mb-3"
             >
               Engineering &amp; Procurement Verification Steps
             </h3>
-            <ol className="space-y-2.5">
+            <ol className="list-decimal pl-5 space-y-2 text-xs sm:text-sm text-[var(--atlas-ink-secondary)] leading-[1.55] max-w-[68ch]">
               {detail.verificationSteps.map((step, index) => (
-                <li
-                  key={index}
-                  className="flex items-start gap-3 text-xs sm:text-sm text-slate-700 leading-relaxed"
-                >
-                  <span className="font-mono text-xs font-semibold text-slate-500 tabular-nums mt-0.5 shrink-0">
-                    0{index + 1}.
-                  </span>
-                  <span>{step}</span>
-                </li>
+                <li key={index}>{step}</li>
               ))}
             </ol>
           </section>
 
-          {/* 4. Sibling Clauses Across Other Global Frameworks (Side-by-Side Pivot) */}
+          {/* 4. Sibling Clauses Across Other Global Frameworks */}
           {detail.peerMappings.length > 0 && (
             <section
               aria-labelledby="reader-peers-heading"
-              className="pt-5 border-t border-slate-200"
+              className="pt-5 border-t border-[var(--atlas-rule)]"
             >
               <h3
                 id="reader-peers-heading"
-                className="text-xs font-semibold text-slate-800 mb-1"
+                className="font-sans text-xs font-semibold text-[var(--atlas-ink)] mb-1"
               >
                 Same Operational Control Across Other Frameworks ({detail.peerMappings.length})
               </h3>
-              <p className="text-xs text-slate-500 mb-3">
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mb-3">
                 Switch directly to compare how peer instruments regulate this exact control on this use case:
               </p>
-              <div className="divide-y divide-slate-200 border border-slate-200 rounded-md overflow-hidden">
+              <div className="divide-y divide-[var(--atlas-rule-subtle)] border-t border-[var(--atlas-rule-subtle)]">
                 {detail.peerMappings.map((peer) => {
                   const peerInst = instMap.get(peer.instrumentId);
                   return (
@@ -254,26 +247,23 @@ export function ClauseReaderDrawer({
                       key={peer.id}
                       type="button"
                       onClick={() => onSelectMapping(peer)}
-                      className="w-full text-left px-4 py-3 bg-white hover:bg-slate-50 transition-colors flex items-start justify-between gap-3 cursor-pointer"
+                      className="w-full text-left py-3 px-2 bg-white hover:bg-[var(--atlas-surface)] transition-colors flex items-start justify-between gap-3 cursor-pointer"
                     >
                       <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 text-xs">
-                          <span className="font-semibold text-slate-900">
+                        <div className="flex flex-wrap items-baseline gap-2 text-xs">
+                          <span className="font-semibold text-[var(--atlas-ink)]">
                             {peerInst?.shortName ?? peer.instrumentId}
                           </span>
-                          <span aria-hidden="true" className="text-slate-300">
-                            ·
-                          </span>
-                          <span className="font-mono text-slate-700">
+                          <span className="font-mono text-[var(--atlas-ink-secondary)]">
                             {peer.clauseCitation}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">
+                        <p className="text-xs text-[var(--atlas-ink-muted)] mt-0.5 line-clamp-1">
                           {peer.rationale}
                         </p>
                       </div>
                       <div className="shrink-0">
-                        <AlignmentIndicator type={peer.alignmentType} compact />
+                        <AlignmentIndicator type={peer.alignmentType} compact dotOnly />
                       </div>
                     </button>
                   );

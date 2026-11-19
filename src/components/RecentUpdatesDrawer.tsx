@@ -11,10 +11,10 @@ interface RecentUpdatesDrawerProps {
 }
 
 const CHANGE_TYPE_LABELS: Record<UpdateChangeType, { label: string; colorClass: string }> = {
-  new_mapping: { label: 'New Verified Mapping', colorClass: 'text-emerald-800' },
-  citation_verified: { label: 'Citation Re-Verified', colorClass: 'text-slate-800' },
-  instrument_update: { label: 'Instrument Amendment', colorClass: 'text-amber-800' },
-  friction_alert: { label: 'Regulatory Friction Alert', colorClass: 'text-rose-800' },
+  new_mapping: { label: 'New Verified Mapping', colorClass: 'text-[var(--align-equivalent-ink)]' },
+  citation_verified: { label: 'Citation Re-Verified', colorClass: 'text-[var(--atlas-ink)]' },
+  instrument_update: { label: 'Instrument Amendment', colorClass: 'text-[var(--align-delta-ink)]' },
+  friction_alert: { label: 'Regulatory Friction Alert', colorClass: 'text-[var(--align-friction-ink)]' },
 };
 
 export function RecentUpdatesDrawer({
@@ -48,7 +48,7 @@ export function RecentUpdatesDrawer({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-slate-950/35"
+      className="fixed inset-0 z-50 flex justify-end bg-[#1A1D23]/30"
       role="dialog"
       aria-modal="true"
       aria-labelledby="updates-drawer-title"
@@ -56,60 +56,61 @@ export function RecentUpdatesDrawer({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-xl bg-white h-full border-l border-slate-200 flex flex-col overflow-hidden animate-drawer-in">
-        <div className="px-6 py-5 border-b border-slate-200 flex items-start justify-between gap-4">
+      <div className="w-full max-w-xl bg-white h-full border-l border-[var(--atlas-rule)] flex flex-col overflow-hidden animate-drawer-in">
+        <div className="px-6 py-5 border-b border-[var(--atlas-rule)] flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-mono text-slate-500 tabular-nums">
-              {metadata.repositoryWorkflow} · v{metadata.datasetVersion}
+            <p className="text-xs font-mono text-[var(--atlas-ink-muted)] tabular-nums">
+              {metadata.repositoryWorkflow}, v{metadata.datasetVersion}
             </p>
             <h2
               id="updates-drawer-title"
-              className="font-editorial text-xl font-medium text-slate-950 mt-1"
+              className="font-editorial text-xl font-semibold text-[var(--atlas-ink)] mt-1"
             >
-              Recent Automated Dataset Updates
+              Autonomous Dataset Curation Log
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close automated updates drawer"
-            className="p-2 text-slate-500 hover:text-slate-900 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+            className="p-2 text-[var(--atlas-ink-muted)] hover:text-[var(--atlas-ink)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 leading-relaxed">
-          All domain records reside in <code className="font-mono text-slate-900">src/data/atlas.json</code>{' '}
-          conforming to <code className="font-mono text-slate-900">src/types/atlas.ts</code> (Schema{' '}
-          <span className="font-mono tabular-nums">{metadata.schemaVersion}</span>). External
-          scheduled GitHub Actions append verified clause citations without modifying UI code.
+        <div className="px-6 py-4 bg-[var(--atlas-surface)] border-b border-[var(--atlas-rule)] text-xs text-[var(--atlas-ink-secondary)] leading-relaxed">
+          All domain records reside in{' '}
+          <code className="font-mono text-[var(--atlas-ink)]">src/data/atlas.json</code> conforming
+          to <code className="font-mono text-[var(--atlas-ink)]">src/types/atlas.ts</code> (Schema{' '}
+          <span className="font-mono tabular-nums">{metadata.schemaVersion}</span>). Scheduled
+          workflows verify links and append clause records independently from UI code.
         </div>
 
-        <div className="flex-1 overflow-y-auto divide-y divide-slate-200 px-6">
+        <div className="flex-1 overflow-y-auto overscroll-contain divide-y divide-[var(--atlas-rule-subtle)] px-6">
           {metadata.recentUpdates.map((entry) => {
             const typeMeta = CHANGE_TYPE_LABELS[entry.changeType];
             return (
               <article key={entry.id} className="py-5">
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono tabular-nums text-slate-500">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono tabular-nums text-[var(--atlas-ink-muted)]">
                   <span className={`font-sans font-semibold ${typeMeta.colorClass}`}>
                     {typeMeta.label}
                   </span>
-                  <span aria-hidden="true">·</span>
                   <time dateTime={entry.timestamp}>{entry.timestamp.slice(0, 10)}</time>
-                  <span aria-hidden="true">·</span>
                   <span>{entry.runId}</span>
                 </div>
 
-                <p className="mt-2 text-sm text-slate-800 leading-relaxed">{entry.summary}</p>
+                <p className="mt-2 text-sm text-[var(--atlas-ink)] leading-relaxed max-w-[68ch]">
+                  {entry.summary}
+                </p>
 
-                <p className="mt-2 text-xs text-slate-500">
-                  Source: <span className="text-slate-700">{entry.sourceReference}</span>
+                <p className="mt-2 text-xs text-[var(--atlas-ink-muted)]">
+                  Source: <span className="text-[var(--atlas-ink-secondary)]">{entry.sourceReference}</span>
                 </p>
 
                 {entry.affectedIds.length > 0 && (
                   <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
-                    <span className="text-slate-500">Inspect in Flow:</span>
+                    <span className="text-[var(--atlas-ink-muted)]">Inspect:</span>
                     {entry.affectedIds.map((affectedId) => {
                       const resolved = resolveEntityLabel(affectedId);
                       if (!resolved) return null;
@@ -121,7 +122,7 @@ export function RecentUpdatesDrawer({
                             onSelectEntity(resolved.selection);
                             onClose();
                           }}
-                          className="text-slate-900 font-medium underline underline-offset-4 hover:text-emerald-800 transition-colors cursor-pointer text-left"
+                          className="text-[var(--atlas-accent)] font-medium underline underline-offset-4 cursor-pointer text-left"
                         >
                           {resolved.label}
                         </button>

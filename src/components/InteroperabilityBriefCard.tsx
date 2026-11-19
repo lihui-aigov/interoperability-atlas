@@ -13,9 +13,9 @@ interface InteroperabilityBriefCardProps {
 }
 
 const FOCUS_KIND_LABEL: Record<FocusSelection['type'], string> = {
-  useCase: 'Selected Use Case · 80/20 Interoperability Brief',
-  control: 'Selected Operational Control · Cross-Instrument Coverage Brief',
-  instrument: 'Selected Governance Instrument · Use-Case Obligation Brief',
+  useCase: 'Selected use case, 80/20 interoperability brief',
+  control: 'Selected operational control, cross-instrument brief',
+  instrument: 'Selected governance instrument, obligations brief',
 };
 
 export function InteroperabilityBriefCard({
@@ -39,74 +39,74 @@ export function InteroperabilityBriefCard({
       aria-labelledby="brief-card-heading"
       className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-12"
     >
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-white border border-[var(--atlas-rule)] rounded-[2px] overflow-hidden">
         {/* Top Synthesis Header */}
-        <div className="p-6 sm:p-8 border-b border-slate-200">
+        <div className="p-5 sm:p-6 border-b border-[var(--atlas-rule)]">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-            <div className="max-w-3xl">
-              <p className="text-xs font-mono text-slate-500">
-                {FOCUS_KIND_LABEL[brief.focusType]} · {brief.subtitle}
+            <div className="max-w-[68ch]">
+              <p className="text-xs font-mono text-[var(--atlas-ink-muted)]">
+                {FOCUS_KIND_LABEL[brief.focusType]}, {brief.subtitle}
               </p>
               <h3
                 id="brief-card-heading"
-                className="font-editorial text-2xl sm:text-3xl font-medium text-slate-950 mt-1.5"
+                className="font-editorial text-[22px] sm:text-[26px] font-semibold text-[var(--atlas-ink)] mt-1.5"
               >
                 {brief.title}
               </h3>
-              <p className="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed">
+              <p className="mt-2.5 text-sm text-[var(--atlas-ink-secondary)] leading-[1.6]">
                 {brief.summary}
               </p>
-              <p className="mt-3 text-xs text-slate-500 flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-slate-600 shrink-0" aria-hidden="true" />
+              <p className="mt-3 text-xs text-[var(--atlas-ink-muted)] flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                 <span>
-                  Click any clause citation below to read its substantive text &amp; verification steps inside the app, or use <ExternalLink className="w-3 h-3 inline" aria-hidden="true" /> to jump directly to the anchored section.
+                  Click any clause citation below to read substantive text and verification steps inside
+                  the sidebar reader.
                 </span>
               </p>
             </div>
 
             <div className="lg:w-80 shrink-0 flex flex-col gap-3">
-              <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs font-mono tabular-nums text-slate-600">
-                <span>{brief.counts.total} Active Clause Mappings</span>
+              <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs font-mono tabular-nums text-[var(--atlas-ink-secondary)]">
+                <span>{brief.counts.total} active clause mappings</span>
                 <span>
-                  {brief.counts.equivalent} Once · {brief.counts.delta} Extra · {brief.counts.friction} Clash
+                  {brief.counts.equivalent} once, {brief.counts.delta} extra, {brief.counts.friction} clash
                 </span>
               </div>
 
-              {/* Proportion Bar paired with explicit text counts below */}
               <div
-                className="h-2.5 w-full bg-slate-100 rounded-sm overflow-hidden flex"
+                className="h-2 w-full bg-[var(--atlas-elevated)] rounded-[1px] overflow-hidden flex"
                 aria-hidden="true"
               >
                 {brief.counts.equivalent > 0 && (
                   <div
                     style={{ width: `${eqPct}%` }}
-                    className="bg-emerald-600 h-full"
+                    className="bg-[var(--align-equivalent-ink)] h-full"
                   />
                 )}
                 {brief.counts.delta > 0 && (
                   <div
                     style={{ width: `${dlPct}%` }}
-                    className="bg-amber-500 h-full"
+                    className="bg-[var(--align-delta-ink)] h-full"
                   />
                 )}
                 {brief.counts.friction > 0 && (
                   <div
                     style={{ width: `${frPct}%` }}
-                    className="bg-rose-600 h-full"
+                    className="bg-[var(--align-friction-ink)] h-full"
                   />
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-xs font-mono tabular-nums text-slate-600">
-                <span className="text-emerald-800">{eqPct}% Comply Once</span>
-                <span className="text-amber-800">{dlPct}% Extra Step</span>
-                <span className="text-rose-800">{frPct}% Rule Clash</span>
+              <div className="flex items-center justify-between text-xs font-mono tabular-nums">
+                <span className="text-[var(--align-equivalent-ink)]">{eqPct}% Comply Once</span>
+                <span className="text-[var(--align-delta-ink)]">{dlPct}% Extra Step</span>
+                <span className="text-[var(--align-friction-ink)]">{frPct}% Rule Clash</span>
               </div>
 
               <button
                 type="button"
                 onClick={onOpenExportModal}
-                className="mt-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                className="mt-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-[var(--atlas-ink)] bg-[var(--atlas-surface)] hover:bg-[var(--atlas-elevated)] border border-[var(--atlas-border-control)] rounded-[2px] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <FileCheck2 className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>Generate Procurement Checklist</span>
@@ -116,25 +116,25 @@ export function InteroperabilityBriefCard({
         </div>
 
         {/* 3-Column 80/20 Analytical Breakdown */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
-          {/* Column A: Comply Once, Verify Across (Shared Core Controls) */}
-          <div className="p-6 sm:p-7">
-            <div className="pb-4 border-b border-slate-200">
-              <AlignmentIndicator type="equivalent" />
-              <h4 className="text-base font-semibold text-slate-950 mt-1">
+        <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[var(--atlas-rule)]">
+          {/* Column A: Comply Once */}
+          <div className="p-5 sm:p-6">
+            <div className="pb-3.5 border-b border-[var(--atlas-rule)]">
+              <AlignmentIndicator type="equivalent" dotOnly />
+              <h4 className="font-sans text-sm font-semibold text-[var(--atlas-ink)] mt-1">
                 Comply Once, Verify Across ({brief.counts.equivalent})
               </h4>
-              <p className="text-xs text-slate-500 mt-1">
-                Operational verification artifacts satisfying multiple global governance instruments simultaneously.
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
+                Operational artifacts satisfying multiple global governance instruments together.
               </p>
             </div>
 
             {brief.coreControls.filter((c) => c.equivalentMappings.length > 0).length === 0 ? (
-              <p className="py-6 text-xs text-slate-500">
+              <p className="py-6 text-xs text-[var(--atlas-ink-muted)]">
                 No equivalent core mappings match the current filter selection.
               </p>
             ) : (
-              <div className="divide-y divide-slate-200">
+              <div className="divide-y divide-[var(--atlas-rule-subtle)]">
                 {brief.coreControls
                   .filter((c) => c.equivalentMappings.length > 0)
                   .map((item) => (
@@ -145,23 +145,23 @@ export function InteroperabilityBriefCard({
                           onClick={() =>
                             onSelectEntity({ type: 'control', id: item.control.id })
                           }
-                          className="text-sm font-semibold text-slate-900 hover:text-emerald-800 hover:underline underline-offset-4 text-left cursor-pointer"
+                          className="text-[13px] font-semibold text-[var(--atlas-ink)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 text-left cursor-pointer"
                         >
                           {item.control.title}
                         </button>
-                        <span className="text-xs font-mono tabular-nums text-emerald-800 shrink-0">
+                        <span className="text-xs font-mono tabular-nums text-[var(--align-equivalent-ink)] shrink-0">
                           {item.coveredInstruments.length}/{dataset.instruments.length} regimes
                         </span>
                       </div>
 
-                      <p className="text-xs text-slate-600 mt-1">
+                      <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
                         Artifact:{' '}
-                        <span className="font-medium text-slate-800">
+                        <span className="font-medium text-[var(--atlas-ink)]">
                           {item.control.artifactName}
                         </span>
                       </p>
 
-                      <ul className="mt-3 space-y-2.5">
+                      <ul className="mt-2.5 divide-y divide-[var(--atlas-rule-subtle)]">
                         {item.equivalentMappings.map((eq) => {
                           const inst = instMap.get(eq.instrumentId);
                           const uc = ucMap.get(eq.useCaseId);
@@ -172,32 +172,23 @@ export function InteroperabilityBriefCard({
                           const { url: deepLinkUrl } = resolveDeepLinkUrl(eq);
 
                           return (
-                            <li
-                              key={eq.id}
-                              className="p-2.5 rounded-md bg-slate-50/80 hover:bg-emerald-50/50 border border-slate-200/80 transition-colors"
-                            >
+                            <li key={eq.id} className="py-2 first:pt-1">
                               <div className="flex items-start justify-between gap-2">
                                 <button
                                   type="button"
                                   onClick={() => onInspectClause(eq)}
                                   className="text-left group cursor-pointer min-w-0 flex-1"
                                 >
-                                  <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                                    <span className="font-semibold text-slate-900">
+                                  <div className="flex flex-wrap items-baseline gap-2 text-xs">
+                                    <span className="font-semibold text-[var(--atlas-ink)]">
                                       {contextName}
                                     </span>
-                                    <span aria-hidden="true" className="text-slate-300">
-                                      ·
-                                    </span>
-                                    <span className="font-mono text-emerald-800 group-hover:underline inline-flex items-center gap-1">
-                                      <BookOpen
-                                        className="w-3 h-3 shrink-0"
-                                        aria-hidden="true"
-                                      />
+                                    <span className="font-mono text-[var(--atlas-accent)] group-hover:underline inline-flex items-center gap-1">
+                                      <BookOpen className="w-3 h-3 shrink-0" aria-hidden="true" />
                                       <span>{eq.clauseCitation}</span>
                                     </span>
                                   </div>
-                                  <p className="text-[11.5px] text-slate-600 mt-1 line-clamp-2 leading-snug">
+                                  <p className="text-xs text-[var(--atlas-ink-secondary)] mt-0.5 line-clamp-2 leading-snug">
                                     {eq.rationale}
                                   </p>
                                 </button>
@@ -208,7 +199,7 @@ export function InteroperabilityBriefCard({
                                   rel="noopener noreferrer"
                                   aria-label={`Jump directly to ${eq.clauseCitation} in official source`}
                                   title="Open official text at anchored section"
-                                  className="p-1 text-slate-400 hover:text-slate-900 rounded hover:bg-white shrink-0"
+                                  className="p-1 text-[var(--atlas-ink-muted)] hover:text-[var(--atlas-accent)] rounded-[2px] shrink-0"
                                 >
                                   <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                                 </a>
@@ -224,23 +215,23 @@ export function InteroperabilityBriefCard({
           </div>
 
           {/* Column B: Jurisdictional & Normative Deltas */}
-          <div className="p-6 sm:p-7">
-            <div className="pb-4 border-b border-slate-200">
-              <AlignmentIndicator type="delta" />
-              <h4 className="text-base font-semibold text-slate-950 mt-1">
+          <div className="p-5 sm:p-6">
+            <div className="pb-3.5 border-b border-[var(--atlas-rule)]">
+              <AlignmentIndicator type="delta" dotOnly />
+              <h4 className="font-sans text-sm font-semibold text-[var(--atlas-ink)] mt-1">
                 Jurisdictional &amp; Normative Deltas ({brief.deltaMappings.length})
               </h4>
-              <p className="text-xs text-slate-500 mt-1">
-                Extra statutory filings, local cohort validations, or agentic checkpoints beyond baseline AIMS/RMF controls.
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
+                Extra statutory filings, local cohort validations, or agentic checkpoints.
               </p>
             </div>
 
             {brief.deltaMappings.length === 0 ? (
-              <p className="py-6 text-xs text-slate-500">
+              <p className="py-6 text-xs text-[var(--atlas-ink-muted)]">
                 No jurisdictional deltas match the current filter selection.
               </p>
             ) : (
-              <div className="divide-y divide-slate-200">
+              <div className="divide-y divide-[var(--atlas-rule-subtle)]">
                 {brief.deltaMappings.map((dm) => {
                   const inst = instMap.get(dm.instrumentId);
                   const ctrl = ctrlMap.get(dm.controlId);
@@ -250,20 +241,17 @@ export function InteroperabilityBriefCard({
                   return (
                     <div key={dm.id} className="py-4">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs">
                           <button
                             type="button"
                             onClick={() =>
                               onSelectEntity({ type: 'instrument', id: dm.instrumentId })
                             }
-                            className="font-semibold text-slate-900 hover:underline underline-offset-4 cursor-pointer"
+                            className="font-semibold text-[var(--atlas-ink)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 cursor-pointer"
                           >
                             {inst?.shortName ?? dm.instrumentId}
                           </button>
-                          <span aria-hidden="true" className="text-slate-300">
-                            ·
-                          </span>
-                          <span className="text-slate-600">
+                          <span className="text-[var(--atlas-ink-muted)]">
                             {brief.focusType === 'control'
                               ? uc?.title ?? dm.useCaseId
                               : ctrl?.title ?? dm.controlId}
@@ -276,7 +264,7 @@ export function InteroperabilityBriefCard({
                           rel="noopener noreferrer"
                           aria-label={`Jump directly to ${dm.clauseCitation} in official source`}
                           title="Open official text at anchored section"
-                          className="p-1 text-slate-400 hover:text-slate-900 rounded hover:bg-slate-100 shrink-0"
+                          className="p-1 text-[var(--atlas-ink-muted)] hover:text-[var(--atlas-accent)] rounded-[2px] shrink-0"
                         >
                           <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                         </a>
@@ -286,14 +274,14 @@ export function InteroperabilityBriefCard({
                         <button
                           type="button"
                           onClick={() => onInspectClause(dm)}
-                          className="text-xs font-mono text-amber-800 hover:underline inline-flex items-center gap-1 text-left cursor-pointer"
+                          className="text-xs font-mono text-[var(--align-delta-ink)] hover:underline inline-flex items-center gap-1 text-left cursor-pointer"
                         >
                           <BookOpen className="w-3 h-3 shrink-0" aria-hidden="true" />
                           <span>{dm.clauseCitation}</span>
                         </button>
                       </div>
 
-                      <p className="mt-1.5 text-xs text-slate-700 leading-relaxed">
+                      <p className="mt-1.5 text-xs text-[var(--atlas-ink-secondary)] leading-relaxed">
                         {dm.rationale}
                       </p>
                     </div>
@@ -303,24 +291,24 @@ export function InteroperabilityBriefCard({
             )}
           </div>
 
-          {/* Column C: Interoperability Friction & Normative Clashes */}
-          <div className="p-6 sm:p-7 bg-rose-50/25">
-            <div className="pb-4 border-b border-slate-200">
-              <AlignmentIndicator type="friction" />
-              <h4 className="text-base font-semibold text-slate-950 mt-1">
+          {/* Column C: Direct Rule Clashes */}
+          <div className="p-5 sm:p-6">
+            <div className="pb-3.5 border-b border-[var(--atlas-rule)]">
+              <AlignmentIndicator type="friction" dotOnly />
+              <h4 className="font-sans text-sm font-semibold text-[var(--atlas-ink)] mt-1">
                 Interoperability Friction ({brief.frictionMappings.length})
               </h4>
-              <p className="text-xs text-slate-500 mt-1">
-                Categorical prohibitions, conflicting incident clocks, or privacy-vs-audit tensions where technical controls alone cannot bridge regimes.
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
+                Categorical prohibitions, competing incident clocks, or privacy-vs-audit tensions.
               </p>
             </div>
 
             {brief.frictionMappings.length === 0 ? (
-              <p className="py-6 text-xs text-slate-500">
+              <p className="py-6 text-xs text-[var(--atlas-ink-muted)]">
                 No regulatory friction points match the current filter selection.
               </p>
             ) : (
-              <div className="divide-y divide-slate-200">
+              <div className="divide-y divide-[var(--atlas-rule-subtle)]">
                 {brief.frictionMappings.map((fm) => {
                   const inst = instMap.get(fm.instrumentId);
                   const ctrl = ctrlMap.get(fm.controlId);
@@ -330,20 +318,17 @@ export function InteroperabilityBriefCard({
                   return (
                     <div key={fm.id} className="py-4">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs">
                           <button
                             type="button"
                             onClick={() =>
                               onSelectEntity({ type: 'instrument', id: fm.instrumentId })
                             }
-                            className="font-semibold text-rose-900 hover:underline underline-offset-4 cursor-pointer"
+                            className="font-semibold text-[var(--align-friction-ink)] hover:underline underline-offset-4 cursor-pointer"
                           >
                             {inst?.shortName ?? fm.instrumentId}
                           </button>
-                          <span aria-hidden="true" className="text-slate-300">
-                            ·
-                          </span>
-                          <span className="text-slate-600">
+                          <span className="text-[var(--atlas-ink-muted)]">
                             {brief.focusType === 'control'
                               ? uc?.title ?? fm.useCaseId
                               : ctrl?.title ?? fm.controlId}
@@ -356,7 +341,7 @@ export function InteroperabilityBriefCard({
                           rel="noopener noreferrer"
                           aria-label={`Jump directly to ${fm.clauseCitation} in official source`}
                           title="Open official text at anchored section"
-                          className="p-1 text-slate-400 hover:text-rose-900 rounded hover:bg-rose-100/60 shrink-0"
+                          className="p-1 text-[var(--atlas-ink-muted)] hover:text-[var(--align-friction-ink)] rounded-[2px] shrink-0"
                         >
                           <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                         </a>
@@ -366,17 +351,17 @@ export function InteroperabilityBriefCard({
                         <button
                           type="button"
                           onClick={() => onInspectClause(fm)}
-                          className="text-xs font-mono text-rose-800 hover:underline inline-flex items-center gap-1 text-left cursor-pointer"
+                          className="text-xs font-mono text-[var(--align-friction-ink)] hover:underline inline-flex items-center gap-1 text-left cursor-pointer"
                         >
                           <BookOpen className="w-3 h-3 shrink-0" aria-hidden="true" />
                           <span>{fm.clauseCitation}</span>
                         </button>
                       </div>
 
-                      <p className="mt-1.5 text-xs text-slate-800 leading-relaxed">
+                      <p className="mt-1.5 text-xs text-[var(--atlas-ink)] leading-relaxed">
                         {fm.rationale}
                       </p>
-                      <p className="mt-1 text-[11px] font-mono tabular-nums text-slate-500">
+                      <p className="mt-1 text-[11px] font-mono tabular-nums text-[var(--atlas-ink-muted)]">
                         Verified {fm.lastVerified}
                       </p>
                     </div>

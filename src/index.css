@@ -1,34 +1,64 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Fraunces", Georgia, Cambria, "Times New Roman", serif;
-  --font-sans: "Public Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  --atlas-ground: #FFFFFF;
+  --atlas-surface: #F5F6F8;
+  --atlas-elevated: #ECEEF2;
+  --atlas-ink: #1A1D23;
+  --atlas-ink-secondary: #4B5261;
+  --atlas-ink-muted: #5E6676;
+  --atlas-rule: #D6D9E0;
+  --atlas-rule-subtle: #E8EAEF;
+  --atlas-border-control: #8A92A3;
+  --atlas-accent: #2554A3;
+  --atlas-accent-hover: #1D4382;
+  --atlas-accent-tint: #EEF2FA;
+
+  --align-equivalent-ink: #1B6B4E;
+  --align-equivalent-tint: #EDF5F1;
+  --align-equivalent-rule: #B8D4C7;
+
+  --align-delta-ink: #7A5C1F;
+  --align-delta-tint: #F8F3E8;
+  --align-delta-rule: #DFD0A8;
+
+  --align-friction-ink: #993333;
+  --align-friction-tint: #FAF0F0;
+  --align-friction-rule: #DDB8B8;
 }
 
 @layer base {
   html {
     font-family: var(--font-sans);
     scroll-behavior: smooth;
-    background-color: #F7F8FA;
-    color: #0B1220;
+    scroll-padding-block-start: 64px;
+    background-color: var(--atlas-ground);
+    color: var(--atlas-ink);
   }
 
-  h1, h2, .font-editorial {
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-editorial {
     font-family: var(--font-serif);
     text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
-}
-
-.atlas-grid-backdrop {
-  background-image:
-    linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
-  background-size: 32px 32px;
 }
 
 @keyframes slideInRight {
@@ -61,23 +91,23 @@
   animation: fadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Subtle custom scrollbars for crosswalk tables and drawers */
+/* Restrained custom scrollbars for tables and drawers */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: var(--atlas-surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 4px;
+  background: #C5CAD4;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: var(--atlas-border-control);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -90,20 +120,27 @@
 }
 
 @media print {
+  :root {
+    --atlas-ground: #FFFFFF;
+    --atlas-surface: #FFFFFF;
+    --atlas-elevated: #F5F6F8;
+    --atlas-ink: #000000;
+    --atlas-ink-secondary: #1A1D23;
+    --atlas-ink-muted: #333333;
+    --atlas-rule: #999999;
+  }
+
   header,
   nav,
   #use-case-sandbox,
+  #global-clause-finder,
   .no-print {
     display: none !important;
   }
 
   body,
   section {
-    background: #ffffff !important;
+    background: #FFFFFF !important;
     color: #000000 !important;
-  }
-
-  .border {
-    border-color: #cbd5e1 !important;
   }
 }

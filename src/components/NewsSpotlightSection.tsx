@@ -1,15 +1,4 @@
-import {
-  AlertCircle,
-  Check,
-  Compass,
-  Copy,
-  ExternalLink,
-  Globe2,
-  Link2,
-  Newspaper,
-  ShieldCheck,
-  Wrench,
-} from 'lucide-react';
+import { Check, Copy, ExternalLink, Link2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { AtlasDataset, JurisdictionLensId, NewsSpotlight } from '../types/atlas';
 
@@ -35,7 +24,7 @@ function formatSpotlightBriefMarkdown(
     `# Policy & Interoperability Briefing Note`,
     ``,
     `**Case Spotlight:** ${spotlight.headline}`,
-    `**Date:** ${spotlight.publishedDate} · **Scope:** ${spotlight.regionTag}`,
+    `**Date:** ${spotlight.publishedDate}, **Scope:** ${spotlight.regionTag}`,
     `**Primary Trigger Source:** [${spotlight.newsSourceTitle}](${spotlight.newsSourceUrl})`,
     `**Direct Atlas Link:** ${CANONICAL_SITE_URL}?spotlight=${encodeURIComponent(spotlight.id)}`,
     ``,
@@ -142,48 +131,40 @@ export function NewsSpotlightSection({
 
   const handleOpenUseCaseChecklist = () => {
     onTraceUseCase(activeSpotlight.linkedUseCaseId);
-    document
-      .getElementById('workspace-tabs')
-      ?.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenCompare = () => {
     onOpenCompareTab?.();
-    document
-      .getElementById('workspace-tabs')
-      ?.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <section
       id="news-spotlight"
       aria-labelledby="news-spotlight-heading"
-      className="scroll-mt-16 border-b border-slate-200 bg-white py-9 sm:py-10"
+      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-6 pb-12"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
-        {/* Top Strip: Section Kicker & Spotlight Selector Pills */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+        {/* Compact Header Row: Page H1 + Inline Case Switcher */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[var(--atlas-rule)]">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-800">
-              <Newspaper className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-              <span>IN-THE-NEWS POLICY BRIEFING · CURATED TWICE WEEKLY</span>
-            </div>
-            <h2
+            <h1
               id="news-spotlight-heading"
-              className="font-editorial text-2xl sm:text-3xl font-medium text-slate-950 mt-1"
+              className="font-editorial text-[26px] sm:text-[30px] font-semibold tracking-[-0.015em] leading-[1.2] text-[var(--atlas-ink)]"
             >
-              Real-World Governance Spotlight &amp; Evidence Arguments
-            </h2>
-            <p className="text-sm text-slate-600 mt-1 max-w-3xl">
-              Practical policy implications, exact clause citations, and cross-jurisdictional
-              bottlenecks anchored on live AI developments.
+              In-the-News Policy Briefings
+            </h1>
+            <p className="text-sm text-[var(--atlas-ink-secondary)] mt-1 max-w-[68ch]">
+              Cite-ready evidence arguments, regional legal lenses, and interoperability bottlenecks
+              anchored on current AI governance cases.
             </p>
           </div>
 
           <div
             role="tablist"
             aria-label="Select recent AI governance news spotlight"
-            className="flex flex-wrap items-center gap-2"
+            className="flex flex-wrap items-center gap-1.5 shrink-0"
           >
             {spotlights.map((spot, idx) => {
               const selected = spot.id === activeSpotlight.id;
@@ -194,21 +175,19 @@ export function NewsSpotlightSection({
                   role="tab"
                   aria-selected={selected}
                   onClick={() => handleChooseSpotlight(spot.id)}
-                  className={`px-3 py-2 rounded-md border text-left transition-colors cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-[2px] border text-left transition-colors cursor-pointer ${
                     selected
-                      ? 'bg-[#0B1220] text-white border-[#0B1220]'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-400 hover:bg-white'
+                      ? 'bg-[var(--atlas-accent)] text-white border-[var(--atlas-accent)]'
+                      : 'bg-white text-[var(--atlas-ink-secondary)] border-[var(--atlas-border-control)] hover:bg-[var(--atlas-surface)] hover:text-[var(--atlas-ink)]'
                   }`}
                 >
-                  <div className="flex items-center gap-2 text-[10.5px] font-mono tabular-nums">
-                    <span className={selected ? 'text-emerald-300' : 'text-emerald-700'}>
-                      #{idx + 1}
-                    </span>
-                    <span className={selected ? 'text-slate-300' : 'text-slate-500'}>
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono tabular-nums leading-tight">
+                    <span className="font-medium">Case {idx + 1}</span>
+                    <span className={selected ? 'text-white/80' : 'text-[var(--atlas-ink-muted)]'}>
                       {spot.publishedDate}
                     </span>
                   </div>
-                  <div className="text-xs font-semibold truncate max-w-[210px] mt-0.5">
+                  <div className="text-xs font-medium truncate max-w-[190px] mt-0.5">
                     {spot.regionTag}
                   </div>
                 </button>
@@ -217,77 +196,70 @@ export function NewsSpotlightSection({
           </div>
         </div>
 
-        {/* Main 2-Column Analytical Briefing Grid */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column (7 cols): Event Trigger, Core Question & Evidence-Backed Arguments */}
-          <div className="lg:col-span-7 space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex flex-wrap items-center gap-2 font-mono text-slate-600">
-                <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800 font-medium">
-                  {activeSpotlight.regionTag}
-                </span>
-                <span className="tabular-nums">{activeSpotlight.publishedDate}</span>
+        {/* Main 2-Column Editorial Briefing Layout */}
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column (7 cols): Case Narrative, Question, Evidence Arguments */}
+          <div className="lg:col-span-7">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-xs text-[var(--atlas-ink-muted)]">
+              <div className="font-mono tabular-nums">
+                <span>{activeSpotlight.publishedDate}</span>
+                <span>, {activeSpotlight.regionTag}</span>
               </div>
 
               <a
                 href={activeSpotlight.newsSourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-800 hover:text-emerald-800 underline underline-offset-4"
+                className="inline-flex items-center gap-1 font-medium text-[var(--atlas-accent)] hover:underline underline-offset-4"
               >
                 <span className="truncate max-w-[320px]">{activeSpotlight.newsSourceTitle}</span>
-                <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
               </a>
             </div>
 
-            <div>
-              <h3 className="font-editorial text-xl sm:text-2xl font-medium text-slate-950 leading-snug">
-                {activeSpotlight.headline}
-              </h3>
-              <p className="mt-2.5 text-sm text-slate-700 leading-relaxed">
-                {activeSpotlight.eventSummary}
-              </p>
-            </div>
+            <h2 className="font-editorial text-[22px] sm:text-[26px] font-semibold tracking-[-0.01em] text-[var(--atlas-ink)] leading-[1.24] mt-2">
+              {activeSpotlight.headline}
+            </h2>
 
-            {/* Core Governance Question */}
-            <div className="p-4 rounded-md bg-slate-50 border border-slate-200 border-l-4 border-l-[#0B1220]">
-              <p className="text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wide">
-                Core Governance Question
+            <p className="mt-3 text-sm text-[var(--atlas-ink-secondary)] leading-[1.6] max-w-[68ch]">
+              {activeSpotlight.eventSummary}
+            </p>
+
+            {/* Core Governance Question — editorial blockquote with clean accent bar */}
+            <blockquote className="my-5 border-l-[3px] border-[var(--atlas-accent)] pl-4 py-0.5 max-w-[68ch]">
+              <p className="text-xs font-medium text-[var(--atlas-accent)]">
+                Core governance question
               </p>
-              <p className="mt-1 text-sm font-medium text-slate-950 leading-relaxed">
+              <p className="mt-1 font-editorial text-base text-[var(--atlas-ink)] leading-snug">
                 {activeSpotlight.coreGovernanceQuestion}
               </p>
-            </div>
+            </blockquote>
 
-            {/* Evidence-Backed Arguments for Policymakers */}
-            <div>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900 mb-3">
-                <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
-                <span>Evidence-Backed Policy Arguments Across Frameworks</span>
-              </div>
+            {/* Evidence-Backed Arguments — hairline separated list without stacked cards */}
+            <div className="mt-6">
+              <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] pb-2.5 border-b border-[var(--atlas-rule)]">
+                Evidence-backed policy arguments across frameworks
+              </h3>
 
-              <ol className="space-y-3">
+              <ol className="divide-y divide-[var(--atlas-rule-subtle)]">
                 {activeSpotlight.evidenceArguments.map((arg, idx) => (
-                  <li
-                    key={`${activeSpotlight.id}-arg-${idx}`}
-                    className="p-3.5 rounded-md bg-white border border-slate-200"
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="font-mono text-xs font-semibold text-slate-400 mt-0.5 tabular-nums shrink-0">
-                        0{idx + 1}.
+                  <li key={`${activeSpotlight.id}-arg-${idx}`} className="py-4">
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-xs text-[var(--atlas-ink-muted)] tabular-nums shrink-0">
+                        {idx + 1}.
                       </span>
-                      <div className="space-y-2 min-w-0">
-                        <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                      <div className="space-y-2 min-w-0 max-w-[68ch]">
+                        <p className="text-sm text-[var(--atlas-ink)] leading-[1.55]">
                           {arg.claim}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {arg.supportingCitations.map((cit) => (
-                            <span
+                            <code
                               key={cit}
-                              className="px-2 py-0.5 text-[11px] font-mono bg-slate-100 text-slate-700 border border-slate-200 rounded"
+                              className="px-2 py-0.5 text-[11px] font-mono bg-[var(--atlas-surface)] text-[var(--atlas-ink-secondary)] border border-[var(--atlas-rule)] rounded-[2px]"
                             >
                               {cit}
-                            </span>
+                            </code>
                           ))}
                         </div>
                       </div>
@@ -297,41 +269,40 @@ export function NewsSpotlightSection({
               </ol>
             </div>
 
-            {/* Practical Action Buttons */}
-            <div className="pt-1 flex flex-wrap items-center gap-2.5">
+            {/* Quiet Action Bar — no arrow suffixes, restrained secondary/ghost controls */}
+            <div className="mt-4 pt-4 border-t border-[var(--atlas-rule)] flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
                 onClick={handleOpenUseCaseChecklist}
-                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-[#0B1220] rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
+                className="px-3.5 py-2 text-xs font-medium text-[var(--atlas-ink)] bg-white border border-[var(--atlas-border-control)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors cursor-pointer"
               >
-                <Compass className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                <span>Open Use-Case Compliance Checklist &rarr;</span>
+                Open Use-Case Compliance Checklist
               </button>
 
               {onOpenCompareTab && (
                 <button
                   type="button"
                   onClick={handleOpenCompare}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-800 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 transition-colors cursor-pointer"
+                  className="px-3.5 py-2 text-xs font-medium text-[var(--atlas-ink-secondary)] bg-white border border-[var(--atlas-rule)] rounded-[2px] hover:border-[var(--atlas-border-control)] hover:text-[var(--atlas-ink)] transition-colors cursor-pointer"
                 >
-                  <span>Compare Frameworks Side by Side &rarr;</span>
+                  Compare Frameworks Side by Side
                 </button>
               )}
 
               <button
                 type="button"
                 onClick={handleCopyBrief}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-800 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-medium text-[var(--atlas-accent)] hover:underline underline-offset-4 transition-colors cursor-pointer"
               >
                 {copiedBrief ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
-                    <span>Briefing Note Copied</span>
+                    <Check className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)] shrink-0" aria-hidden="true" />
+                    <span>Briefing Copied</span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                    <span>Copy Talking Points &amp; Citations (.md)</span>
+                    <span>Copy Talking Points (.md)</span>
                   </>
                 )}
               </button>
@@ -339,11 +310,11 @@ export function NewsSpotlightSection({
               <button
                 type="button"
                 onClick={handleCopyShareLink}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-medium text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 transition-colors cursor-pointer"
               >
                 {copiedLink ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
+                    <Check className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)] shrink-0" aria-hidden="true" />
                     <span>Link Copied</span>
                   </>
                 ) : (
@@ -356,18 +327,16 @@ export function NewsSpotlightSection({
             </div>
           </div>
 
-          {/* Right Column (5 cols): Jurisdiction Lens Switcher + Bottleneck + Engineering Translation */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-5">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900">
-                <Globe2 className="w-4 h-4 text-slate-600 shrink-0" aria-hidden="true" />
-                <span>Compare Jurisdictional Implications</span>
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Select a policy region or standards lens to inspect obligations and blind spots:
+          {/* Right Column (5 cols): Single Jurisdiction Panel + Restrained Bottleneck & Translation */}
+          <aside className="lg:col-span-5 space-y-6">
+            <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px] p-5">
+              <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)]">
+                Compare jurisdictional implications
+              </h3>
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mt-0.5">
+                Select a regional or standards lens to inspect applicable duties and blind spots.
               </p>
 
-              {/* Jurisdiction Lens Tabs */}
               <div
                 role="tablist"
                 aria-label="Jurisdictional analysis lenses"
@@ -382,10 +351,10 @@ export function NewsSpotlightSection({
                       role="tab"
                       aria-selected={isSelected}
                       onClick={() => setActiveLensId(view.lensId)}
-                      className={`px-2.5 py-1.5 text-xs font-medium rounded border transition-colors cursor-pointer ${
+                      className={`px-2.5 py-1 text-xs font-medium rounded-[2px] border transition-colors cursor-pointer ${
                         isSelected
-                          ? 'bg-slate-900 text-white border-slate-900'
-                          : 'bg-white text-slate-700 border-slate-200 hover:border-slate-400'
+                          ? 'bg-[var(--atlas-accent)] text-white border-[var(--atlas-accent)]'
+                          : 'bg-white text-[var(--atlas-ink-secondary)] border-[var(--atlas-border-control)] hover:text-[var(--atlas-ink)]'
                       }`}
                     >
                       {view.lensLabel}
@@ -395,18 +364,20 @@ export function NewsSpotlightSection({
               </div>
 
               {activeLens && (
-                <div className="mt-4 p-4 bg-white border border-slate-200 rounded-md space-y-3">
-                  <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                <div className="mt-4 pt-4 border-t border-[var(--atlas-rule)] space-y-3.5">
+                  <p className="text-[13px] text-[var(--atlas-ink)] leading-[1.6]">
                     {activeLens.stanceSummary}
                   </p>
 
                   <div>
-                    <p className="text-[11px] font-mono text-slate-500 mb-1">Clauses to Cite:</p>
+                    <p className="text-xs font-medium text-[var(--atlas-ink-muted)] mb-1.5">
+                      Clauses to cite
+                    </p>
                     <div className="flex flex-wrap gap-1.5">
                       {activeLens.citedClauses.map((clause) => (
                         <span
                           key={clause}
-                          className="px-2 py-0.5 text-[11px] font-mono bg-emerald-50 text-emerald-900 border border-emerald-200 rounded"
+                          className="px-2 py-0.5 text-[11px] font-mono bg-white text-[var(--align-equivalent-ink)] border border-[var(--align-equivalent-rule)] rounded-[2px]"
                         >
                           {clause}
                         </span>
@@ -414,36 +385,36 @@ export function NewsSpotlightSection({
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-100 text-xs text-slate-600 leading-relaxed">
-                    <span className="font-semibold text-slate-800">Leverage / Blind Spot: </span>
+                  <div className="pt-3 border-t border-[var(--atlas-rule)] text-xs text-[var(--atlas-ink-secondary)] leading-relaxed">
+                    <span className="font-semibold text-[var(--atlas-ink)]">
+                      Leverage and blind spot:{' '}
+                    </span>
                     {activeLens.leverageOrBlindSpot}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Interoperability Bottleneck */}
-            <div className="p-4 rounded-lg bg-rose-50/60 border border-rose-200">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-950">
-                <AlertCircle className="w-4 h-4 text-rose-700 shrink-0" aria-hidden="true" />
-                <span>Where Interoperability Stalls (The Bottleneck)</span>
-              </div>
-              <p className="mt-1.5 text-xs text-rose-950/90 leading-relaxed">
+            {/* Interoperability Bottleneck — quiet editorial border-l-2 callout */}
+            <div className="border-l-2 border-[var(--align-friction-ink)] pl-4 py-0.5">
+              <h3 className="font-sans text-xs font-semibold text-[var(--align-friction-ink)]">
+                Where interoperability stalls (bottleneck)
+              </h3>
+              <p className="mt-1 text-[13px] text-[var(--atlas-ink-secondary)] leading-[1.55]">
                 {activeSpotlight.interoperabilityBottleneck}
               </p>
             </div>
 
-            {/* Policymaker-to-Engineer Translation */}
-            <div className="p-4 rounded-lg bg-emerald-50/55 border border-emerald-200">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-950">
-                <Wrench className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
-                <span>Policymaker-to-Engineer Translation</span>
-              </div>
-              <p className="mt-1.5 text-xs text-emerald-950/90 leading-relaxed">
+            {/* Policymaker-to-Engineer Translation — quiet editorial border-l-2 callout */}
+            <div className="border-l-2 border-[var(--align-equivalent-ink)] pl-4 py-0.5">
+              <h3 className="font-sans text-xs font-semibold text-[var(--align-equivalent-ink)]">
+                Policymaker-to-engineer translation
+              </h3>
+              <p className="mt-1 text-[13px] text-[var(--atlas-ink-secondary)] leading-[1.55]">
                 {activeSpotlight.engineeringTranslation}
               </p>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </section>

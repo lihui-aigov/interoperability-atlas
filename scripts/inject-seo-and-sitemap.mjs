@@ -168,28 +168,33 @@ function renderStaticShell({
     <meta name="twitter:title" content="${escapeHtml(title)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${escapeHtml(OG_IMAGE_URL)}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&display=swap" rel="stylesheet" />
     <script type="application/ld+json">${safeJsonLd(jsonLd)}</script>
     <style>
-      body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F7F8FA; color: #0B1220; margin: 0; line-height: 1.6; }
-      .wrap { max-width: 1020px; margin: 0 auto; padding: 28px 20px 64px; }
-      .crumbs { font-size: 13px; color: #475569; margin-bottom: 14px; }
-      .crumbs a { color: #0F172A; text-decoration: none; border-bottom: 1px solid #CBD5E1; }
-      .cta-bar { background: #0B1220; color: #ffffff; padding: 16px 20px; border-radius: 8px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 24px; }
-      .cta-btn { background: #10B981; color: #06281E; font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-size: 14px; display: inline-block; }
-      .capsule { background: #ECFDF5; border: 1px solid #A7F3D0; border-left: 4px solid #059669; border-radius: 8px; padding: 16px 18px; margin-bottom: 20px; }
-      .card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 8px; padding: 20px; margin-bottom: 18px; }
-      .pill { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: #F1F5F9; border: 1px solid #CBD5E1; padding: 2px 8px; border-radius: 4px; margin: 2px 4px 2px 0; }
-      .badge-eq { color: #065F46; font-weight: 700; }
-      .badge-dl { color: #92400E; font-weight: 700; }
-      .badge-fr { color: #9F1239; font-weight: 700; }
-      table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #ffffff; }
-      th, td { border: 1px solid #E2E8F0; padding: 10px 12px; text-align: left; vertical-align: top; }
-      th { background: #F8FAFC; font-weight: 600; color: #0F172A; }
-      h1 { font-family: Georgia, Cambria, serif; font-size: 1.95rem; line-height: 1.2; margin: 0 0 12px; }
-      h2 { font-family: Georgia, Cambria, serif; font-size: 1.25rem; margin: 0 0 12px; }
-      a { color: #0B1220; }
-      .muted { color: #475569; font-size: 13.5px; }
-      .footer-nav { margin-top: 28px; padding-top: 16px; border-top: 1px solid #CBD5E1; font-size: 13px; color: #475569; display: flex; flex-wrap: wrap; gap: 16px; }
+      body { font-family: "Inter", system-ui, -apple-system, sans-serif; background: #FFFFFF; color: #1A1D23; margin: 0; line-height: 1.6; }
+      .wrap { max-width: 1040px; margin: 0 auto; padding: 28px 24px 64px; }
+      .crumbs { font-size: 13px; color: #5E6676; margin-bottom: 14px; }
+      .crumbs a { color: #2554A3; text-decoration: none; border-bottom: 1px solid #D6D9E0; }
+      .cta-bar { background: #F5F6F8; border: 1px solid #D6D9E0; border-top: 2px solid #2554A3; color: #1A1D23; padding: 16px 20px; border-radius: 2px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 24px; }
+      .cta-btn { background: #2554A3; color: #FFFFFF; font-weight: 600; text-decoration: none; padding: 9px 15px; border-radius: 2px; font-size: 13px; display: inline-block; }
+      .cta-btn:hover { background: #1D4382; }
+      .capsule { background: #F5F6F8; border: 1px solid #D6D9E0; border-left: 3px solid #2554A3; border-radius: 2px; padding: 15px 18px; margin-bottom: 20px; max-width: 72ch; }
+      .card { background: #FFFFFF; border: 1px solid #D6D9E0; border-radius: 2px; padding: 20px; margin-bottom: 18px; }
+      .pill { display: inline-block; font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12px; background: #F5F6F8; border: 1px solid #D6D9E0; padding: 2px 7px; border-radius: 2px; margin: 2px 4px 2px 0; color: #1A1D23; }
+      .badge-eq { display: inline-block; padding: 2px 8px; border-radius: 9999px; background: #EDF5F1; color: #1B6B4E; border: 1px solid #B8D4C7; font-size: 12px; font-weight: 600; }
+      .badge-dl { display: inline-block; padding: 2px 8px; border-radius: 9999px; background: #F8F3E8; color: #7A5C1F; border: 1px solid #DFD0A8; font-size: 12px; font-weight: 600; }
+      .badge-fr { display: inline-block; padding: 2px 8px; border-radius: 9999px; background: #FAF0F0; color: #993333; border: 1px solid #DDB8B8; font-size: 12px; font-weight: 600; }
+      table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #FFFFFF; }
+      th, td { border: 1px solid #D6D9E0; padding: 10px 12px; text-align: left; vertical-align: top; }
+      th { background: #ECEEF2; font-weight: 600; color: #1A1D23; }
+      h1 { font-family: "Source Serif 4", Georgia, serif; font-size: 1.9rem; font-weight: 600; line-height: 1.2; margin: 0 0 12px; color: #1A1D23; }
+      h2 { font-family: "Source Serif 4", Georgia, serif; font-size: 1.25rem; font-weight: 600; margin: 0 0 12px; color: #1A1D23; }
+      h3 { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; color: #1A1D23; }
+      a { color: #2554A3; }
+      .muted { color: #4B5261; font-size: 13.5px; }
+      .footer-nav { margin-top: 28px; padding-top: 16px; border-top: 1px solid #D6D9E0; font-size: 13px; color: #5E6676; display: flex; flex-wrap: wrap; gap: 16px; }
     </style>
   </head>
   <body>
@@ -350,19 +355,20 @@ function main() {
   );
 
   const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#0B1220"/>
-  <rect x="48" y="48" width="1104" height="534" rx="14" fill="#111C33" stroke="#1E293B" stroke-width="2"/>
-  <text x="88" y="132" font-family="ui-monospace, monospace" font-size="22" fill="#34D399" font-weight="600">OPEN GOVERNANCE OBSERVATORY · CC-BY-4.0 DATASET</text>
-  <text x="88" y="218" font-family="Georgia, serif" font-size="54" fill="#FFFFFF" font-weight="600">Open Atlas of AI Governance</text>
-  <text x="88" y="284" font-family="Georgia, serif" font-size="54" fill="#E2E8F0" font-weight="600">Interoperability</text>
-  <text x="88" y="362" font-family="system-ui, sans-serif" font-size="28" fill="#CBD5E1">Compare 9 Global Regimes · Audit ${dataset.useCases.length} Concrete AI Systems · Cite ${dataset.mappings.length} Clauses</text>
-  <rect x="88" y="422" width="310" height="72" rx="8" fill="#064E3B" stroke="#10B981"/>
-  <text x="112" y="466" font-family="system-ui, sans-serif" font-size="24" fill="#ECFDF5" font-weight="600">Comply Once Baseline</text>
-  <rect x="422" y="422" width="310" height="72" rx="8" fill="#451A03" stroke="#F59E0B"/>
-  <text x="448" y="466" font-family="system-ui, sans-serif" font-size="24" fill="#FEF3C7" font-weight="600">Extra Local Steps</text>
-  <rect x="756" y="422" width="310" height="72" rx="8" fill="#4C0519" stroke="#F43F5E"/>
-  <text x="782" y="466" font-family="system-ui, sans-serif" font-size="24" fill="#FFE4E6" font-weight="600">Direct Rule Clashes</text>
-  <text x="88" y="544" font-family="ui-monospace, monospace" font-size="19" fill="#94A3B8">https://lihui-aigov.github.io/interoperability-atlas/</text>
+  <rect width="1200" height="630" fill="#F5F6F8"/>
+  <rect x="48" y="48" width="1104" height="534" rx="2" fill="#FFFFFF" stroke="#D6D9E0" stroke-width="2"/>
+  <rect x="48" y="48" width="1104" height="8" fill="#2554A3"/>
+  <text x="88" y="128" font-family="ui-monospace, monospace" font-size="21" fill="#2554A3" font-weight="600">Open Governance Observatory, CC-BY-4.0 Dataset</text>
+  <text x="88" y="216" font-family="Georgia, serif" font-size="54" fill="#1A1D23" font-weight="600">Open Atlas of AI Governance</text>
+  <text x="88" y="282" font-family="Georgia, serif" font-size="54" fill="#1A1D23" font-weight="600">Interoperability</text>
+  <text x="88" y="360" font-family="system-ui, sans-serif" font-size="27" fill="#4B5261">Compare 9 Global Regimes, Audit ${dataset.useCases.length} AI Systems, Cite ${dataset.mappings.length} Verified Clauses</text>
+  <rect x="88" y="422" width="310" height="72" rx="2" fill="#EDF5F1" stroke="#B8D4C7"/>
+  <text x="114" y="466" font-family="system-ui, sans-serif" font-size="23" fill="#1B6B4E" font-weight="600">Comply Once Baseline</text>
+  <rect x="422" y="422" width="310" height="72" rx="2" fill="#F8F3E8" stroke="#DFD0A8"/>
+  <text x="454" y="466" font-family="system-ui, sans-serif" font-size="23" fill="#7A5C1F" font-weight="600">Extra Local Steps</text>
+  <rect x="756" y="422" width="310" height="72" rx="2" fill="#FAF0F0" stroke="#DDB8B8"/>
+  <text x="794" y="466" font-family="system-ui, sans-serif" font-size="23" fill="#993333" font-weight="600">Direct Rule Clashes</text>
+  <text x="88" y="544" font-family="ui-monospace, monospace" font-size="19" fill="#5E6676">https://lihui-aigov.github.io/interoperability-atlas/</text>
 </svg>
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'og-card.svg'), ogSvg, 'utf-8');

@@ -3,16 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  ArrowLeftRight,
-  CheckCircle2,
-  ClipboardCheck,
-  Eye,
-  EyeOff,
-  FlaskConical,
-  Newspaper,
-  X,
-} from 'lucide-react';
+import { CheckCircle2, Eye, EyeOff, History, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import rawAtlasData from './data/atlas.json';
 import { AtlasHeader, type WorkspaceTabId } from './components/AtlasHeader';
@@ -45,43 +36,6 @@ const baseDataset = rawAtlasData as AtlasDataset;
 const SANDBOX_STORAGE_KEY = 'open_atlas_sandbox_results_v1';
 
 const VALID_TABS: WorkspaceTabId[] = ['spotlights', 'compare', 'use-cases', 'sandbox'];
-
-const WORKSPACE_TABS: {
-  id: WorkspaceTabId;
-  step: string;
-  title: string;
-  subtitle: string;
-  Icon: typeof Newspaper;
-}[] = [
-  {
-    id: 'spotlights',
-    step: '01',
-    title: 'In-the-News Briefings',
-    subtitle: 'Cite-ready arguments & 5 regional lenses on live AI controversies',
-    Icon: Newspaper,
-  },
-  {
-    id: 'compare',
-    step: '02',
-    title: 'Compare Two Frameworks',
-    subtitle: 'Side-by-side gap check: reusable baseline, extra steps & clashes',
-    Icon: ArrowLeftRight,
-  },
-  {
-    id: 'use-cases',
-    step: '03',
-    title: 'Check an AI Use Case',
-    subtitle: 'Cross-border obligations & procurement checklist for 11 AI systems',
-    Icon: ClipboardCheck,
-  },
-  {
-    id: 'sandbox',
-    step: '04',
-    title: 'Test Custom Scenario & Data',
-    subtitle: 'Map your own AI deployment, review methodology, or download JSON',
-    Icon: FlaskConical,
-  },
-];
 
 function defaultPairForInstrument(instId: string): { aId: string; bId: string } {
   if (instId === 'inst-eu-ai-act') {
@@ -138,15 +92,6 @@ function readInitialQueryParams(): {
       initialSelection = { type: 'useCase', id: useCaseParam };
     } else if (instParam && baseDataset.instruments.some((i) => i.id === instParam)) {
       initialSelection = { type: 'instrument', id: instParam };
-    } else if (spotlightParam) {
-      const matchedSpot = baseDataset.spotlights?.find((s) => s.id === spotlightParam);
-      if (
-        matchedSpot &&
-        baseDataset.useCases.some((u) => u.id === matchedSpot.linkedUseCaseId)
-      ) {
-        resolvedUcId = matchedSpot.linkedUseCaseId;
-        initialSelection = { type: 'useCase', id: matchedSpot.linkedUseCaseId };
-      }
     }
 
     let initialTab: WorkspaceTabId = 'spotlights';
@@ -241,6 +186,7 @@ export default function App() {
     initialQuery.initialMatrixUseCaseId
   );
 
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [showVisualTopology, setShowVisualTopology] = useState<boolean>(false);
   const [scenarioBanner, setScenarioBanner] = useState<string | null>(null);
   const [alignmentFilter, setAlignmentFilter] = useState<AlignmentType | 'all'>('all');
@@ -287,7 +233,7 @@ export default function App() {
       'Scenario mapped — reviewing your cross-border compliance checklist below.'
     );
     handleSelectTab('use-cases');
-    document.getElementById('workspace-tabs')?.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleRemoveSandboxUseCase = (useCaseId: string) => {
@@ -327,10 +273,12 @@ export default function App() {
   }, [activeDataset.mappings]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F8FA] text-[#0B1220]">
+    <div className="min-h-screen flex flex-col bg-[var(--atlas-ground)] text-[var(--atlas-ink)]">
       <AtlasHeader
         dataset={activeDataset}
         activeTab={activeTab}
+        isSearchOpen={isSearchOpen}
+        onToggleSearch={() => setIsSearchOpen((prev) => !prev)}
         onSelectTab={handleSelectTab}
         onOpenUpdates={() => setIsUpdatesDrawerOpen(true)}
         onOpenExportModal={() => setIsExportModalOpen(true)}
@@ -339,74 +287,10 @@ export default function App() {
 
       <GlobalClauseFinder
         dataset={activeDataset}
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
         onOpenClause={handleOpenClauseFromFinder}
       />
-
-      {/* Primary 4-Mode Task Switcher */}
-      <section
-        id="workspace-tabs"
-        aria-label="Choose an Atlas task mode"
-        className="scroll-mt-16 border-b border-slate-200 bg-white"
-      >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-4">
-          <div
-            role="tablist"
-            aria-label="Open Atlas workbench views"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
-          >
-            {WORKSPACE_TABS.map((tab) => {
-              const selected = activeTab === tab.id;
-              const Icon = tab.Icon;
-              return (
-                <button
-                  key={tab.id}
-                  id={`workspace-tab-${tab.id}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  onClick={() => handleSelectTab(tab.id)}
-                  className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer flex items-start gap-3 ${
-                    selected
-                      ? 'bg-[#0B1220] text-white border-[#0B1220] shadow-xs'
-                      : 'bg-slate-50/80 text-slate-900 border-slate-200 hover:border-slate-400 hover:bg-white'
-                  }`}
-                >
-                  <div
-                    className={`p-2 rounded-md shrink-0 mt-0.5 ${
-                      selected
-                        ? 'bg-white/10 text-emerald-300'
-                        : 'bg-white border border-slate-200 text-slate-700'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" aria-hidden="true" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className={`text-[10.5px] font-mono font-semibold tabular-nums ${
-                          selected ? 'text-emerald-300' : 'text-emerald-700'
-                        }`}
-                      >
-                        {tab.step}.
-                      </span>
-                      <span className="text-xs sm:text-sm font-semibold leading-tight">
-                        {tab.title}
-                      </span>
-                    </div>
-                    <p
-                      className={`text-[11.5px] mt-1 leading-snug ${
-                        selected ? 'text-slate-300' : 'text-slate-600'
-                      }`}
-                    >
-                      {tab.subtitle}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       <main className="flex-1">
         {/* TAB 1: In-the-News Briefings */}
@@ -439,9 +323,7 @@ export default function App() {
             onOpenUseCaseChecklist={(ucId) => {
               handleChangeMatrixUseCase(ucId);
               handleSelectTab('use-cases');
-              document
-                .getElementById('workspace-tabs')
-                ?.scrollIntoView({ behavior: 'smooth' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         )}
@@ -452,39 +334,36 @@ export default function App() {
             <section
               id="use-case-quick-picker"
               aria-label="Select a concrete AI deployment to inspect"
-              className="border-b border-slate-200 bg-[#F7F8FA] py-6"
+              className="bg-[var(--atlas-ground)] pt-6 pb-8"
             >
-              <div className="max-w-[1400px] mx-auto px-4 sm:px-8 space-y-4">
+              <div className="max-w-[1400px] mx-auto px-4 sm:px-8 space-y-5">
                 {scenarioBanner && (
-                  <div className="p-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-xs sm:text-sm text-emerald-950 flex items-center justify-between gap-3">
+                  <div className="p-3.5 rounded-[2px] bg-[var(--align-equivalent-tint)] border border-[var(--align-equivalent-rule)] text-xs sm:text-sm text-[var(--align-equivalent-ink)] flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 font-medium">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
+                      <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
                       <span>{scenarioBanner}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setScenarioBanner(null)}
                       aria-label="Dismiss scenario notice"
-                      className="p-1 text-emerald-800 hover:text-emerald-950 cursor-pointer"
+                      className="p-1 text-[var(--align-equivalent-ink)] hover:opacity-75 cursor-pointer"
                     >
                       <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 )}
 
-                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 border-b border-[var(--atlas-rule)]">
                   <div>
-                    <p className="text-xs font-mono text-emerald-800">
-                      SYSTEM COMPLIANCE &amp; PROCUREMENT CHECKLIST
+                    <h1 className="font-editorial text-[26px] sm:text-[30px] font-semibold tracking-[-0.015em] leading-[1.2] text-[var(--atlas-ink)]">
+                      Use-Case Compliance Checklists ({activeDataset.useCases.length} Systems)
+                    </h1>
+                    <p className="text-sm text-[var(--atlas-ink-secondary)] mt-1 max-w-[68ch]">
+                      Select an AI deployment below to update both the cross-regime obligations
+                      table and the procurement checklist summary.
                     </p>
-                    <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-950 mt-0.5">
-                      Pick a Concrete AI System ({activeDataset.useCases.length} Deployments)
-                    </h2>
                   </div>
-                  <p className="text-xs text-slate-600">
-                    Switching systems updates both the compliance table and the executive summary
-                    below.
-                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
@@ -496,29 +375,28 @@ export default function App() {
                         key={uc.id}
                         type="button"
                         onClick={() => handleChangeMatrixUseCase(uc.id)}
-                        className={`p-3 rounded-md border text-left transition-colors cursor-pointer ${
+                        aria-pressed={isSelected}
+                        className={`p-3 rounded-[2px] border text-left transition-colors cursor-pointer ${
                           isSelected
-                            ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                            : 'bg-white text-slate-900 border-slate-200 hover:border-slate-400'
+                            ? 'bg-[var(--atlas-accent-tint)] text-[var(--atlas-ink)] border-[var(--atlas-accent)] ring-1 ring-[var(--atlas-accent)]'
+                            : 'bg-white text-[var(--atlas-ink)] border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] hover:bg-[var(--atlas-surface)]'
                         }`}
                       >
-                        <div className="flex items-center justify-between gap-2 text-[10.5px] font-mono">
+                        <div className="flex items-center justify-between gap-2 text-[11px] font-mono tabular-nums">
                           <span
                             className={`truncate ${
-                              isSelected ? 'text-emerald-300' : 'text-emerald-800'
+                              isSelected
+                                ? 'text-[var(--atlas-accent)] font-medium'
+                                : 'text-[var(--atlas-ink-muted)]'
                             }`}
                           >
                             {uc.isCustomSandbox ? 'Custom Sandbox' : uc.sector}
                           </span>
-                          <span
-                            className={`shrink-0 tabular-nums ${
-                              isSelected ? 'text-slate-300' : 'text-slate-500'
-                            }`}
-                          >
+                          <span className="shrink-0 text-[var(--atlas-ink-muted)]">
                             {clauseTotal} clauses
                           </span>
                         </div>
-                        <p className="text-xs font-semibold leading-snug mt-1 line-clamp-2">
+                        <p className="text-[13px] font-semibold leading-snug mt-1 line-clamp-2">
                           {uc.title}
                         </p>
                       </button>
@@ -536,7 +414,7 @@ export default function App() {
               onOpenExportModal={() => setIsExportModalOpen(true)}
             />
 
-            <div className="pt-8 bg-[#F7F8FA]">
+            <div className="pt-8 bg-[var(--atlas-ground)]">
               <InteroperabilityBriefCard
                 dataset={activeDataset}
                 brief={brief}
@@ -550,14 +428,14 @@ export default function App() {
             <section
               id="visual-topology-toggle-bar"
               aria-label="Toggle 3-Column Visual Pathway Diagram"
-              className="border-t border-slate-200 bg-white py-5"
+              className="border-t border-[var(--atlas-rule-subtle)] bg-[var(--atlas-surface)] py-5"
             >
               <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs sm:text-sm font-semibold text-slate-900">
+                  <p className="text-xs sm:text-sm font-semibold text-[var(--atlas-ink)]">
                     Prefer a visual map of how controls connect to regimes?
                   </p>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-[var(--atlas-ink-secondary)]">
                     Expand the three-column interactive pathway diagram showing how this AI system
                     links to operational artifacts and global rules.
                   </p>
@@ -566,7 +444,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setShowVisualTopology((prev) => !prev)}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[var(--atlas-ink)] bg-white border border-[var(--atlas-border-control)] hover:bg-[var(--atlas-elevated)] rounded-[2px] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   {showVisualTopology ? (
                     <>
@@ -610,9 +488,7 @@ export default function App() {
                   'Scenario mapped — reviewing your cross-border compliance checklist below.'
                 );
                 handleSelectTab('use-cases');
-                document
-                  .getElementById('workspace-tabs')
-                  ?.scrollIntoView({ behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
 
@@ -623,9 +499,7 @@ export default function App() {
                   setSelectedPair(defaultPairForInstrument(sel.id));
                   updateQueryParamSafe('instrument', sel.id);
                   handleSelectTab('compare');
-                  document
-                    .getElementById('workspace-tabs')
-                    ?.scrollIntoView({ behavior: 'smooth' });
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
               onOpenUpdates={() => setIsUpdatesDrawerOpen(true)}
@@ -634,16 +508,56 @@ export default function App() {
         )}
       </main>
 
+      {/* Quiet Editorial Colophon / Personal-Capacity Origin Note */}
+      <section
+        aria-label="About this independent observatory"
+        className="border-t border-[var(--atlas-rule)] bg-white py-8"
+      >
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-baseline">
+          <div className="lg:col-span-8">
+            <h2 className="font-editorial text-lg font-semibold text-[var(--atlas-ink)]">
+              About this observatory
+            </h2>
+            <p className="mt-1.5 text-[13px] text-[var(--atlas-ink-secondary)] leading-relaxed max-w-[68ch]">
+              I started this side project because reading AI governance news and policy debates kept
+              raising practical questions about what multiple regimes actually require on the ground,
+              and no existing tracker linked breaking cases directly to cross-framework evidence and
+              operational controls. Maintained independently by {activeDataset.metadata.maintainer} in
+              a personal scholarly capacity from published primary texts under a CC-BY-4.0 dataset
+              license.
+            </p>
+          </div>
+          <div className="lg:col-span-4 lg:text-right text-xs text-[var(--atlas-ink-muted)] space-y-1.5">
+            <p className="font-mono tabular-nums">
+              Dataset v{activeDataset.metadata.datasetVersion}, Schema{' '}
+              {activeDataset.metadata.schemaVersion}, updated{' '}
+              {activeDataset.metadata.lastUpdated.slice(0, 10)}
+            </p>
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsUpdatesDrawerOpen(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--atlas-accent)] hover:underline underline-offset-4 cursor-pointer"
+              >
+                <History className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>
+                  View Autonomous Curation Log ({activeDataset.metadata.recentUpdates.length})
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <CrawlableFooterDirectory dataset={activeDataset} />
 
-      <footer className="border-t border-slate-200 bg-white py-6">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <footer className="border-t border-[var(--atlas-rule)] bg-white py-5">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--atlas-ink-muted)]">
           <p>
-            {activeDataset.metadata.atlasName} · Maintained by{' '}
-            {activeDataset.metadata.maintainer}
+            {activeDataset.metadata.atlasName}, maintained by {activeDataset.metadata.maintainer}
           </p>
           <p className="font-mono tabular-nums">
-            Dataset v{activeDataset.metadata.datasetVersion} · Last Synced{' '}
+            Dataset v{activeDataset.metadata.datasetVersion}, last synced{' '}
             {activeDataset.metadata.lastUpdated.slice(0, 10)}
           </p>
         </div>
@@ -663,7 +577,7 @@ export default function App() {
               setShowVisualTopology(true);
             }
           }
-          document.getElementById('workspace-tabs')?.scrollIntoView({ behavior: 'smooth' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
 

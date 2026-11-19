@@ -54,15 +54,15 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
     <section
       id="indexed-directory"
       aria-label="Indexed Governance Crosswalks and Reference Pages"
-      className="border-t border-slate-200 bg-slate-50 py-10"
+      className="border-t border-[var(--atlas-rule)] bg-[var(--atlas-surface)] py-10"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-5 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-5 border-b border-[var(--atlas-rule)]">
           <div>
-            <h2 className="font-editorial text-lg sm:text-xl font-medium text-slate-950">
+            <h2 className="font-editorial text-xl font-semibold text-[var(--atlas-ink)]">
               Printable Reference Pages &amp; Open Data Feeds
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="text-xs text-[var(--atlas-ink-secondary)] mt-0.5">
               Static crawlable pages for search indexing, academic citation, and offline reading.
             </p>
           </div>
@@ -70,7 +70,7 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
             href={`${CANONICAL_BASE_URL}directory.html`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-900 hover:text-emerald-800 underline underline-offset-4 whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--atlas-ink)] hover:text-[var(--atlas-accent)] underline underline-offset-4 whitespace-nowrap shrink-0"
           >
             <span>Browse Full Reference Directory</span>
             <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
@@ -80,23 +80,23 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
           {/* Column 1: Popular Framework Comparisons */}
           <div>
-            <h3 className="font-semibold text-slate-900 mb-2.5">
+            <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2.5">
               Popular Framework Comparisons
             </h3>
-            <ul className="space-y-1.5 text-slate-600">
+            <ul className="space-y-1.5">
               {featuredPairs.map((pair) => (
-                <li key={pair.slug}>
+                <li key={pair.slug} className="flex items-baseline justify-between gap-2">
                   <a
                     href={`${CANONICAL_BASE_URL}compare/${encodeURIComponent(pair.slug)}.html`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-slate-950 hover:underline underline-offset-2 inline-flex items-baseline justify-between gap-2 w-full"
+                    className="text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 truncate"
                   >
-                    <span className="truncate">{pair.label}</span>
-                    <span className="font-mono text-[10.5px] text-emerald-800 shrink-0 tabular-nums">
-                      {pair.meta}
-                    </span>
+                    {pair.label}
                   </a>
+                  <span className="font-mono text-[11px] tabular-nums text-[var(--atlas-ink-muted)] shrink-0">
+                    {pair.meta}
+                  </span>
                 </li>
               ))}
               <li className="pt-1">
@@ -104,43 +104,41 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
                   href={`${CANONICAL_BASE_URL}directory.html#compare-directory`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-slate-900 hover:underline underline-offset-2"
+                  className="text-[var(--atlas-accent)] font-medium hover:underline underline-offset-4"
                 >
-                  All pairwise comparisons &rarr;
+                  All pairwise comparisons
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 2: AI Use-Case Checklists */}
+          {/* Column 2: Concrete AI Use-Case Checklists */}
           <div>
-            <h3 className="font-semibold text-slate-900 mb-2.5">
+            <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2.5">
               AI Use-Case Checklists ({dataset.useCases.length})
             </h3>
-            <ul className="space-y-1.5 text-slate-600">
-              {dataset.useCases
-                .filter((u) => !u.isCustomSandbox)
-                .map((uc) => (
-                  <li key={uc.id}>
-                    <a
-                      href={`${CANONICAL_BASE_URL}use-cases/${encodeURIComponent(uc.id)}.html`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-slate-950 hover:underline underline-offset-2 block truncate"
-                    >
-                      {uc.title}
-                    </a>
-                  </li>
-                ))}
+            <ul className="space-y-1.5">
+              {dataset.useCases.map((uc) => (
+                <li key={uc.id}>
+                  <a
+                    href={`${CANONICAL_BASE_URL}use-cases/${encodeURIComponent(uc.id)}.html`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 block truncate"
+                  >
+                    {uc.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 3: Tracked Regimes & Standards */}
+          {/* Column 3: Tracked Global & Regional Instruments */}
           <div>
-            <h3 className="font-semibold text-slate-900 mb-2.5">
-              Tracked Regimes &amp; Standards ({dataset.instruments.length})
+            <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2.5">
+              Tracked Frameworks ({dataset.instruments.length})
             </h3>
-            <ul className="space-y-1.5 text-slate-600">
+            <ul className="space-y-1.5">
               {dataset.instruments.map((inst) => (
                 <li key={inst.id}>
                   <a
@@ -149,12 +147,9 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
                     )}.html`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-slate-950 hover:underline underline-offset-2 inline-flex items-baseline justify-between gap-2 w-full"
+                    className="text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 block truncate"
                   >
-                    <span className="truncate">{inst.shortName}</span>
-                    <span className="font-mono text-[10.5px] text-slate-400 shrink-0 tabular-nums">
-                      {inst.adoptionYear}
-                    </span>
+                    {inst.shortName} ({inst.adoptionYear})
                   </a>
                 </li>
               ))}
@@ -162,71 +157,77 @@ export function CrawlableFooterDirectory({ dataset }: CrawlableFooterDirectoryPr
           </div>
 
           {/* Column 4: Policy Briefings & Machine-Readable Feeds */}
-          <div>
-            <h3 className="font-semibold text-slate-900 mb-2.5">
-              Policy Briefings &amp; Open Feeds
-            </h3>
-            <ul className="space-y-1.5 text-slate-600">
-              {spotlights.map((s) => (
-                <li key={s.id}>
+          <div className="space-y-5">
+            <div>
+              <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2.5">
+                In-the-News Policy Briefings ({spotlights.length})
+              </h3>
+              <ul className="space-y-1.5">
+                {spotlights.map((s) => (
+                  <li key={s.id}>
+                    <a
+                      href={`${CANONICAL_BASE_URL}spotlights/${encodeURIComponent(s.id)}.html`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 block truncate"
+                    >
+                      {s.headline}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)] mb-2">
+                Open Data &amp; LLM Feeds
+              </h3>
+              <ul className="space-y-1.5 text-[var(--atlas-ink-secondary)]">
+                <li>
                   <a
-                    href={`${CANONICAL_BASE_URL}spotlights/${encodeURIComponent(s.id)}.html`}
+                    href={`${CANONICAL_BASE_URL}atlas-dataset.json`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-slate-950 hover:underline underline-offset-2 block truncate"
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--atlas-accent)] hover:underline underline-offset-4"
                   >
-                    {s.headline}
+                    <FileJson className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span>atlas-dataset.json (CC-BY-4.0)</span>
                   </a>
                 </li>
-              ))}
-            </ul>
-
-            <div className="mt-4 pt-3 border-t border-slate-200 grid grid-cols-2 gap-1.5 font-mono text-[11px]">
-              <a
-                href={`${CANONICAL_BASE_URL}sitemap.xml`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 hover:underline"
-              >
-                <MapIcon className="w-3 h-3 shrink-0" aria-hidden="true" />
-                <span>sitemap.xml</span>
-              </a>
-              <a
-                href={`${CANONICAL_BASE_URL}feed.xml`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 hover:underline"
-              >
-                <Rss className="w-3 h-3 shrink-0" aria-hidden="true" />
-                <span>feed.xml</span>
-              </a>
-              <a
-                href={`${CANONICAL_BASE_URL}llms.txt`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 hover:underline"
-              >
-                <FileText className="w-3 h-3 shrink-0" aria-hidden="true" />
-                <span>llms.txt</span>
-              </a>
-              <a
-                href={`${CANONICAL_BASE_URL}llms-full.txt`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 hover:underline"
-              >
-                <FileText className="w-3 h-3 shrink-0" aria-hidden="true" />
-                <span>llms-full.txt</span>
-              </a>
-              <a
-                href={`${CANONICAL_BASE_URL}atlas-dataset.json`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 hover:underline col-span-2"
-              >
-                <FileJson className="w-3 h-3 shrink-0" aria-hidden="true" />
-                <span>atlas-dataset.json (CC-BY-4.0)</span>
-              </a>
+                <li>
+                  <a
+                    href={`${CANONICAL_BASE_URL}llms-full.txt`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--atlas-accent)] hover:underline underline-offset-4"
+                  >
+                    <FileText className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span>llms.txt &amp; llms-full.txt (AI Search Corpus)</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${CANONICAL_BASE_URL}feed.xml`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--atlas-accent)] hover:underline underline-offset-4"
+                  >
+                    <Rss className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span>Atom Updates Feed (feed.xml)</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`${CANONICAL_BASE_URL}sitemap.xml`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--atlas-accent)] hover:underline underline-offset-4"
+                  >
+                    <MapIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    <span>sitemap.xml</span>
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

@@ -2,8 +2,9 @@
 /**
  * Headless Chromium Visual & Functional Audit (`scripts/verify-ui-screenshots.mjs`)
  * Verifies SEO/GEO static artifacts in `dist/`, audits the 4-tab workbench across
- * desktop (1440x900), mobile (390x844), deep links, and offline `file://` execution,
- * and saves clean visual captures into `dist-standalone/screenshots/`.
+ * desktop (1440x900), mobile (390x844), deep links, header clause search drawer,
+ * and offline `file://` execution, and saves clean visual captures into
+ * `dist-standalone/screenshots/`.
  */
 
 import fs from 'node:fs';
@@ -66,6 +67,7 @@ function verifySeoArtifacts() {
     'compare/eu-ai-act-vs-nist-ai-rmf.html',
     'compare/eu-ai-act-vs-iso-42001.html',
     'instruments/eu-ai-act.html',
+    'instruments/unesco-ai-ethics.html',
     'spotlights/spot-agentic-public-oversight.html',
     'use-cases/uc-hiring-workforce.html',
   ];
@@ -119,16 +121,27 @@ async function main() {
     await page.waitForSelector('#news-spotlight');
     await page.waitForTimeout(300);
 
-    // 1. Capture Desktop Masthead + Personal Note + 4-Mode Task Switcher at scrollY=0
+    // 1. Verify & Capture true Above-the-Fold Desktop Landing (1440x900, scrollY=0)
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(150);
-    const tabsBox = await page.locator('#workspace-tabs').boundingBox();
-    const tabsBottom = tabsBox ? Math.ceil(tabsBox.y + tabsBox.height) : 780;
+    const headlineBox = await page.locator('#news-spotlight h2').first().boundingBox();
+    if (!headlineBox || headlineBox.y > 420) {
+      throw new Error(
+        `Above-the-fold failure: primary spotlight headline starts too low (y=${headlineBox?.y})`
+      );
+    }
     await page.screenshot({
       path: path.join(SCREENSHOTS_DIR, '01-desktop-masthead-and-tabs.png'),
-      fullPage: true,
-      clip: { x: 0, y: 0, width: 1440, height: tabsBottom },
+      fullPage: false,
     });
+
+    // 1b. Verify collapsible header search drawer works end-to-end and closes cleanly
+    await page.locator('#header-search-toggle').click();
+    await page.waitForSelector('#global-clause-search');
+    await page.fill('#global-clause-search', 'Art. 10');
+    await page.waitForSelector('#global-clause-finder:has-text("matching clause provisions")');
+    await page.locator('#header-search-toggle').click();
+    await page.waitForTimeout(150);
 
     // 2. Tab 1: Click European Union lens in #news-spotlight, reset scrollY=0, capture full #news-spotlight
     await page.locator('#news-spotlight button[role="tab"]:has-text("European Union")').click();
@@ -158,19 +171,16 @@ async function main() {
     await page.waitForSelector('#pairwise-verdict-card:has-text("40%")');
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(200);
-    const overviewBox = await page.locator('#regime-overview').boundingBox();
-    if (overviewBox) {
-      await page.screenshot({
-        path: path.join(SCREENSHOTS_DIR, '03-desktop-compare-frameworks.png'),
-        fullPage: true,
-        clip: {
-          x: 0,
-          y: Math.max(0, Math.floor(overviewBox.y)),
-          width: 1440,
-          height: Math.min(Math.ceil(overviewBox.height), 1450),
-        },
-      });
-    }
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, '03-desktop-compare-frameworks.png'),
+      fullPage: true,
+      clip: {
+        x: 0,
+        y: 0,
+        width: 1440,
+        height: 1420,
+      },
+    });
 
     // 4. Tab 3: Check an AI Use Case -> Sticky Crosswalk Matrix + Clause Reader Drawer
     await page.locator('#workspace-tab-use-cases').click();
@@ -222,21 +232,20 @@ async function main() {
     await page.locator('#use-case-sandbox button:has-text("Run Instant Demo")').first().click();
     await page.waitForSelector('text=Scenario mapped — reviewing your cross-border compliance checklist below.');
 
-    // 8. Capture Mobile 390x844 (#top + #workspace-tabs) cleanly at scrollY=0
+    // 8. Capture true Mobile 390x844 above-the-fold first screen on Briefings
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.locator('#workspace-tab-compare').click();
+    await page.locator('#workspace-tab-spotlights').click();
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(250);
-    const mobileTabsBox = await page.locator('#workspace-tabs').boundingBox();
+    const mobileSpotlightBox = await page.locator('#news-spotlight').boundingBox();
+    if (!mobileSpotlightBox || mobileSpotlightBox.y > 240) {
+      throw new Error(
+        `Mobile above-the-fold failure: news spotlight starts too low (y=${mobileSpotlightBox?.y})`
+      );
+    }
     await page.screenshot({
       path: path.join(SCREENSHOTS_DIR, '06-mobile-task-navigation.png'),
-      fullPage: true,
-      clip: {
-        x: 0,
-        y: 0,
-        width: 390,
-        height: mobileTabsBox ? Math.ceil(mobileTabsBox.y + mobileTabsBox.height) : 1380,
-      },
+      fullPage: false,
     });
 
     // 9. Verify URL deep link ?tab=compare&pair=eu-ai-act-vs-iso-42001
@@ -268,7 +277,7 @@ async function main() {
     }
 
     console.log(
-      '[verify-ui] Passed all 4-tab desktop (1440x900), mobile (390x844), Quick Pairs, SEO/GEO, deep-link, and file:// standalone checks with 0 runtime errors.'
+      '[verify-ui] Passed all 4-tab desktop (1440x900), mobile (390x844), search toggle, Quick Pairs, SEO/GEO, deep-link, and file:// standalone checks with 0 runtime errors.'
     );
   } finally {
     await browser.close();

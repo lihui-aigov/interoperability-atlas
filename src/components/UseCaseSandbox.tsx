@@ -104,7 +104,7 @@ export function UseCaseSandbox({
         return;
       }
 
-      // Mode B: Server-side synthesis when running on AI Studio / Cloud Run Express backend
+      // Mode B: Server-side synthesis when running on Cloud Run / Node Express backend
       const response = await fetch('/api/atlas/map-use-case', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,7 +124,7 @@ export function UseCaseSandbox({
       ) {
         setShowByokPanel(true);
         setStaticModeHint(
-          'Static web edition detected (no live Node backend attached): paste a free Google AI Studio API key below to run custom Gemini synthesis directly in your browser, or launch any pre-verified simulation preset above with zero setup.'
+          'Static web edition detected (no live Node backend attached): paste a Google AI Studio API key below to run custom Gemini synthesis directly in your browser, or launch any pre-verified simulation preset above.'
         );
         return;
       }
@@ -142,7 +142,7 @@ export function UseCaseSandbox({
       if (/failed to fetch|network|not configured|404/i.test(msg) && !byokKey.trim()) {
         setShowByokPanel(true);
         setStaticModeHint(
-          'Static / offline web host detected: paste a personal Google AI Studio key below to run live synthesis in your browser, or run any instant simulation preset above.'
+          'Static or offline host detected: paste a personal Google AI Studio key below to run live synthesis in your browser, or run any instant simulation preset above.'
         );
       } else {
         setApiError(
@@ -158,37 +158,37 @@ export function UseCaseSandbox({
     <section
       id="use-case-sandbox"
       aria-labelledby="sandbox-section-heading"
-      className="scroll-mt-16 border-t border-slate-200 bg-[#F7F8FA] py-12"
+      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-6 pb-10"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Instant Simulations + Custom Scenario Mapper */}
-          <div className="lg:col-span-6 bg-white border border-slate-200 rounded-lg p-6 sm:p-8 shadow-xs">
-            <p className="text-xs font-mono text-slate-500">
-              03. Triple-Mode Scenario Workbench · Instant Presets + Live AI Synthesis
-            </p>
-            <h2
-              id="sandbox-section-heading"
-              className="font-editorial text-2xl sm:text-3xl font-medium text-slate-950 mt-1"
-            >
-              Map a New AI Use Case
-            </h2>
-            <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-              Launch a pre-verified simulation preset immediately (works offline and on static
-              hosting), or describe your own scenario to synthesize clause mappings across all{' '}
-              {dataset.instruments.length} tracked governance instruments.
-            </p>
+        <div className="pb-5 border-b border-[var(--atlas-rule)]">
+          <h1
+            id="sandbox-section-heading"
+            className="font-editorial text-[26px] sm:text-[30px] font-semibold tracking-[-0.015em] leading-[1.2] text-[var(--atlas-ink)]"
+          >
+            Custom Scenario Sandbox &amp; Open Data
+          </h1>
+          <p className="text-sm text-[var(--atlas-ink-secondary)] mt-1 max-w-[68ch]">
+            Launch a pre-verified offline simulation immediately, test your own AI deployment with a
+            session Gemini key, or inspect the open dataset schema below.
+          </p>
+        </div>
 
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Instant Simulations + Custom Scenario Mapper */}
+          <div className="lg:col-span-6 space-y-6">
             {/* Instant Pre-Verified Simulation Presets */}
-            <div className="mt-5 p-4 bg-slate-50 border border-slate-200 rounded-md">
-              <div className="flex items-center justify-between gap-2 mb-2.5">
-                <span className="text-xs font-semibold text-slate-900">
-                  Instant Pre-Verified Simulations (Zero Key Required)
+            <div className="p-5 bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] rounded-[2px]">
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <h2 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)]">
+                  Instant pre-verified simulations (no API key needed)
+                </h2>
+                <span className="text-[11px] font-mono text-[var(--align-equivalent-ink)]">
+                  Offline ready
                 </span>
-                <span className="text-[11px] font-mono text-emerald-800">Offline Ready</span>
               </div>
 
-              <div className="space-y-2">
+              <div className="divide-y divide-[var(--atlas-rule-subtle)] border-t border-[var(--atlas-rule-subtle)]">
                 {SANDBOX_PRESETS.map((preset) => {
                   const isLoaded = sandboxResults.some(
                     (r) => r.useCase.id === preset.result.useCase.id
@@ -196,14 +196,14 @@ export function UseCaseSandbox({
                   return (
                     <div
                       key={preset.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-white border border-slate-200 rounded"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3"
                     >
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-slate-900 truncate">
+                        <p className="text-xs font-semibold text-[var(--atlas-ink)] truncate">
                           {preset.label}
                         </p>
-                        <p className="text-[11px] text-slate-500 truncate">
-                          {preset.sector} · {preset.result.mappings.length} cited clauses
+                        <p className="text-[11px] text-[var(--atlas-ink-muted)] truncate">
+                          {preset.sector}, {preset.result.mappings.length} cited clauses
                         </p>
                       </div>
 
@@ -216,17 +216,17 @@ export function UseCaseSandbox({
                             setValidationError(null);
                             setApiError(null);
                           }}
-                          className="px-2.5 py-1.5 text-[11px] font-medium text-slate-600 hover:text-slate-900 border border-slate-200 rounded hover:bg-slate-50 transition-colors cursor-pointer"
+                          className="px-2.5 py-1.5 text-[11px] font-medium text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-ink)] bg-white border border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] rounded-[2px] transition-colors cursor-pointer"
                         >
                           Edit Prompt
                         </button>
                         <button
                           type="button"
                           onClick={() => handleRunInstantPreset(preset)}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded transition-colors whitespace-nowrap cursor-pointer ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-[2px] transition-colors whitespace-nowrap cursor-pointer ${
                             isLoaded
-                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                              : 'bg-[#0B1220] text-white hover:bg-slate-800'
+                              ? 'bg-[var(--align-equivalent-tint)] text-[var(--align-equivalent-ink)] border border-[var(--align-equivalent-rule)]'
+                              : 'bg-[var(--atlas-accent)] text-white hover:bg-[var(--atlas-accent-hover)]'
                           }`}
                         >
                           {isLoaded ? (
@@ -249,13 +249,14 @@ export function UseCaseSandbox({
             </div>
 
             {/* Custom Scenario Form */}
-            <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <div>
                 <label
                   htmlFor="sandbox-scenario-input"
-                  className="block text-xs font-semibold text-slate-800 mb-1.5"
+                  className="block text-xs font-medium text-[var(--atlas-ink)] mb-1.5"
                 >
-                  Custom AI Deployment Scenario <span className="text-rose-700">*</span>
+                  Custom AI Deployment Scenario{' '}
+                  <span className="text-[var(--align-friction-ink)]">*</span>
                 </label>
                 <textarea
                   id="sandbox-scenario-input"
@@ -266,14 +267,14 @@ export function UseCaseSandbox({
                     if (validationError) setValidationError(null);
                   }}
                   placeholder="e.g., Municipal wildfire evacuation routing agent integrating live satellite thermal feeds and automated traffic signal overrides..."
-                  className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-md text-slate-900 placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-slate-900"
+                  className="w-full px-3.5 py-2 text-base sm:text-sm bg-white border border-[var(--atlas-border-control)] rounded-[2px] text-[var(--atlas-ink)] placeholder:text-[var(--atlas-ink-muted)] focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="sandbox-sector-input"
-                  className="block text-xs font-semibold text-slate-800 mb-1.5"
+                  className="block text-xs font-medium text-[var(--atlas-ink)] mb-1.5"
                 >
                   Sector or Jurisdiction Context (Optional)
                 </label>
@@ -282,40 +283,40 @@ export function UseCaseSandbox({
                   type="text"
                   value={sector}
                   onChange={(e) => setSector(e.target.value)}
-                  placeholder="e.g., Emergency Management · Cross-Border Municipal Deployment"
-                  className="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-md text-slate-900 placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-slate-900"
+                  placeholder="e.g., Emergency Management, Cross-Border Municipal Deployment"
+                  className="w-full px-3.5 py-2 text-base sm:text-sm bg-white border border-[var(--atlas-border-control)] rounded-[2px] text-[var(--atlas-ink)] placeholder:text-[var(--atlas-ink-muted)] focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
                 />
               </div>
 
               {/* Collapsible Client-Side BYOK Key Configuration */}
-              <div className="border border-slate-200 rounded-md bg-slate-50/70">
+              <div className="border border-[var(--atlas-rule)] rounded-[2px] bg-[var(--atlas-surface)]">
                 <button
                   type="button"
                   onClick={() => setShowByokPanel((prev) => !prev)}
-                  className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-medium text-slate-700 hover:text-slate-950 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-medium text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-ink)] cursor-pointer"
                 >
                   <span className="inline-flex items-center gap-1.5">
-                    <KeyRound className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+                    <KeyRound className="w-3.5 h-3.5 text-[var(--atlas-ink-muted)]" aria-hidden="true" />
                     <span>
-                      Browser-Only Gemini Key (Optional BYOK for Static / Offline Hosts)
+                      Browser-Only Gemini Key (Optional BYOK for Static or Offline Hosts)
                     </span>
                   </span>
-                  <span className="font-mono text-[11px] text-slate-500">
-                    {byokKey.trim() ? 'Key Active (Session)' : showByokPanel ? 'Hide' : 'Configure'}
+                  <span className="font-mono text-[11px] text-[var(--atlas-ink-muted)]">
+                    {byokKey.trim() ? 'Key Active' : showByokPanel ? 'Hide' : 'Configure'}
                   </span>
                 </button>
 
                 {showByokPanel && (
-                  <div className="px-3.5 pb-3.5 pt-1 border-t border-slate-200 space-y-2">
+                  <div className="px-3.5 pb-3.5 pt-2 border-t border-[var(--atlas-rule)] space-y-2">
                     <input
                       id="sandbox-byok-key"
                       type="password"
                       value={byokKey}
                       onChange={(e) => handleSaveByokKey(e.target.value)}
-                      placeholder="AIza... (kept strictly in browser sessionStorage; never persisted to repo)"
-                      className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded text-slate-900 placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-slate-900"
+                      placeholder="AIza... (kept strictly in browser sessionStorage; never persisted)"
+                      className="w-full px-3 py-1.5 text-base sm:text-xs font-mono bg-white border border-[var(--atlas-border-control)] rounded-[2px] text-[var(--atlas-ink)] placeholder:text-[var(--atlas-ink-muted)] focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
                     />
-                    <p className="text-[11px] text-slate-500 leading-snug">
+                    <p className="text-[11px] text-[var(--atlas-ink-secondary)] leading-snug">
                       Requests route directly from your browser to Google Gemini REST API when a
                       key is set. Clear the field anytime to revert to server mode.
                     </p>
@@ -326,7 +327,7 @@ export function UseCaseSandbox({
               {staticModeHint && (
                 <div
                   role="status"
-                  className="p-3.5 text-xs text-amber-950 bg-amber-50 border border-amber-200 rounded-md leading-relaxed"
+                  className="p-3.5 text-xs text-[var(--align-delta-ink)] bg-[var(--align-delta-tint)] border border-[var(--align-delta-rule)] rounded-[2px] leading-relaxed"
                 >
                   {staticModeHint}
                 </div>
@@ -335,7 +336,7 @@ export function UseCaseSandbox({
               {validationError && (
                 <div
                   role="alert"
-                  className="p-3 text-xs text-rose-900 bg-rose-50 border border-rose-200 rounded-md"
+                  className="p-3 text-xs text-[var(--align-friction-ink)] bg-[var(--align-friction-tint)] border border-[var(--align-friction-rule)] rounded-[2px]"
                 >
                   {validationError}
                 </div>
@@ -344,7 +345,7 @@ export function UseCaseSandbox({
               {apiError && (
                 <div
                   role="alert"
-                  className="p-3.5 text-xs text-rose-900 bg-rose-50 border border-rose-200 rounded-md leading-relaxed"
+                  className="p-3.5 text-xs text-[var(--align-friction-ink)] bg-[var(--align-friction-tint)] border border-[var(--align-friction-rule)] rounded-[2px] leading-relaxed"
                 >
                   <p className="font-semibold">Live Grounded Mapping Error</p>
                   <p className="mt-1">{apiError}</p>
@@ -352,14 +353,14 @@ export function UseCaseSandbox({
               )}
 
               <div className="pt-1 flex items-center justify-between gap-4">
-                <span className="text-xs text-slate-500">
-                  Outputs structured <code className="font-mono">InteropMapping[]</code> edges
+                <span className="text-xs text-[var(--atlas-ink-muted)]">
+                  Outputs structured <code className="font-mono">InteropMapping[]</code> records
                 </span>
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 disabled:opacity-60 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-medium text-white bg-[var(--atlas-accent)] rounded-[2px] hover:bg-[var(--atlas-accent-hover)] disabled:opacity-60 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   {isLoading ? (
                     <>
@@ -378,27 +379,25 @@ export function UseCaseSandbox({
           </div>
 
           {/* Right Column: Live Mapped Sandbox Entries & Grounded Sources */}
-          <div className="lg:col-span-6 bg-white border border-slate-200 rounded-lg p-6 sm:p-8 shadow-xs">
-            <div className="pb-4 border-b border-slate-200 flex items-baseline justify-between gap-4">
-              <div>
-                <h3 className="font-editorial text-xl font-medium text-slate-950">
-                  Session Sandbox Mappings ({sandboxResults.length})
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Loaded scenarios inject directly into the Alluvial Flow, Heatmap, and Matrix.
-                </p>
-              </div>
+          <div className="lg:col-span-6 border border-[var(--atlas-rule)] rounded-[2px] p-5 sm:p-6 bg-white">
+            <div className="pb-4 border-b border-[var(--atlas-rule)]">
+              <h2 className="font-editorial text-xl font-semibold text-[var(--atlas-ink)]">
+                Session Sandbox Mappings ({sandboxResults.length})
+              </h2>
+              <p className="text-xs text-[var(--atlas-ink-secondary)] mt-0.5">
+                Loaded scenarios feed directly into the compliance table and 3-column pathway map.
+              </p>
             </div>
 
             {isLoading && (
               <div
                 aria-live="polite"
-                className="py-8 border-b border-slate-200 space-y-3 animate-pulse"
+                className="py-8 border-b border-[var(--atlas-rule)] space-y-3 animate-pulse"
               >
-                <div className="h-4 bg-slate-200 rounded w-2/3" />
-                <div className="h-3 bg-slate-100 rounded w-full" />
-                <div className="h-3 bg-slate-100 rounded w-5/6" />
-                <p className="text-xs font-mono text-slate-500 pt-1">
+                <div className="h-4 bg-[var(--atlas-elevated)] rounded-[2px] w-2/3" />
+                <div className="h-3 bg-[var(--atlas-surface)] rounded-[2px] w-full" />
+                <div className="h-3 bg-[var(--atlas-surface)] rounded-[2px] w-5/6" />
+                <p className="text-xs font-mono text-[var(--atlas-ink-muted)] pt-1">
                   Querying public regulatory texts &amp; verifying control alignments...
                 </p>
               </div>
@@ -406,17 +405,16 @@ export function UseCaseSandbox({
 
             {sandboxResults.length === 0 && !isLoading ? (
               <div className="py-10 text-center">
-                <p className="text-sm font-medium text-slate-800">
+                <p className="text-sm font-medium text-[var(--atlas-ink)]">
                   No sandbox scenarios loaded in this session yet.
                 </p>
-                <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
-                  Click <span className="font-semibold text-slate-800">Run Instant Demo</span> on
-                  any preset at left to watch the 3-column topology and matrix update immediately, or
-                  enter a custom scenario below.
+                <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1 max-w-md mx-auto leading-relaxed">
+                  Click <span className="font-semibold text-[var(--atlas-ink)]">Run Instant Demo</span> on
+                  any preset at left to generate a live checklist, or describe a custom AI deployment.
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-200">
+              <div className="divide-y divide-[var(--atlas-rule-subtle)]">
                 {sandboxResults.map((res) => {
                   const eqCount = res.mappings.filter((m) => m.alignmentType === 'equivalent').length;
                   const dlCount = res.mappings.filter((m) => m.alignmentType === 'delta').length;
@@ -435,33 +433,33 @@ export function UseCaseSandbox({
                     <article key={res.useCase.id} className="py-5">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <p className="text-xs font-mono text-slate-500 tabular-nums">
-                            {res.useCase.sector} · {eqCount} once · {dlCount} extra · {frCount} clash
+                          <p className="text-xs font-mono text-[var(--atlas-ink-muted)] tabular-nums">
+                            {res.useCase.sector}, {eqCount} once, {dlCount} extra, {frCount} clash
                           </p>
-                          <h4 className="text-base font-semibold text-slate-950 mt-0.5">
+                          <h3 className="font-sans text-base font-semibold text-[var(--atlas-ink)] mt-0.5">
                             {res.useCase.title}
-                          </h4>
+                          </h3>
                         </div>
                         <button
                           type="button"
                           onClick={() => onRemoveSandboxUseCase(res.useCase.id)}
                           aria-label={`Remove sandbox use case ${res.useCase.title}`}
-                          className="p-1.5 text-slate-400 hover:text-rose-700 rounded hover:bg-slate-100 transition-colors cursor-pointer"
+                          className="p-1.5 text-[var(--atlas-ink-muted)] hover:text-[var(--align-friction-ink)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </button>
                       </div>
 
                       {res.executiveSynthesis && (
-                        <p className="mt-2 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <p className="mt-2 text-xs sm:text-sm text-[var(--atlas-ink-secondary)] leading-relaxed max-w-[68ch]">
                           {res.executiveSynthesis}
                         </p>
                       )}
 
                       {res.groundingSources.length > 0 && (
                         <div className="mt-3">
-                          <p className="text-[11px] font-mono text-slate-500 mb-1">
-                            Grounded Public Reference Sources:
+                          <p className="text-[11px] font-mono text-[var(--atlas-ink-muted)] mb-1">
+                            Grounded public reference sources:
                           </p>
                           <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
                             {res.groundingSources.slice(0, 4).map((src) => (
@@ -470,7 +468,7 @@ export function UseCaseSandbox({
                                   href={src.uri}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 underline underline-offset-4"
+                                  className="inline-flex items-center gap-1 text-[var(--atlas-accent)] underline underline-offset-4"
                                 >
                                   <span className="truncate max-w-[220px]">{src.title}</span>
                                   <ArrowUpRight className="w-3 h-3 shrink-0" aria-hidden="true" />
@@ -481,11 +479,11 @@ export function UseCaseSandbox({
                         </div>
                       )}
 
-                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <div className="mt-4 flex flex-wrap items-center gap-2.5">
                         <button
                           type="button"
                           onClick={() => onFocusUseCaseInFlow(res.useCase.id)}
-                          className="px-3.5 py-1.5 text-xs font-medium text-white bg-slate-900 rounded-md hover:bg-slate-800 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                          className="px-3.5 py-1.5 text-xs font-medium text-white bg-[var(--atlas-accent)] rounded-[2px] hover:bg-[var(--atlas-accent-hover)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                         >
                           Open Compliance Checklist
                         </button>
@@ -493,7 +491,7 @@ export function UseCaseSandbox({
                         <button
                           type="button"
                           onClick={handleDownloadSnippet}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-slate-800 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[var(--atlas-ink)] bg-white border border-[var(--atlas-border-control)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                         >
                           <Download className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                           <span>Download atlas.json Snippet</span>

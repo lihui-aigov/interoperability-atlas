@@ -1,14 +1,4 @@
-import {
-  ArrowLeftRight,
-  BookOpen,
-  Check,
-  CheckCircle2,
-  Copy,
-  ExternalLink,
-  Layers,
-  Link2,
-  ShieldAlert,
-} from 'lucide-react';
+import { ArrowLeftRight, BookOpen, Check, Copy, ExternalLink, Link2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type {
   AtlasDataset,
@@ -107,7 +97,7 @@ function formatPairComparisonMarkdown(
       const citA = ctx.mappingsA.map((m) => m.clauseCitation).join('; ');
       const citB = ctx.mappingsB.map((m) => m.clauseCitation).join('; ');
       lines.push(
-        `- **${ctx.controlTitle}** (${ctx.useCaseTitle}): ${instA.shortName} [${citA}] ↔ ${instB.shortName} [${citB}]`
+        `- **${ctx.controlTitle}** (${ctx.useCaseTitle}): ${instA.shortName} [${citA}] <-> ${instB.shortName} [${citB}]`
       );
     }
     lines.push(``);
@@ -269,42 +259,35 @@ export function RegimeConvergenceOverview({
     <section
       id="regime-overview"
       aria-labelledby="regime-overview-heading"
-      className="scroll-mt-16 bg-[#F7F8FA] py-8 sm:py-10"
+      className="scroll-mt-16 bg-[var(--atlas-ground)] pt-6 pb-12"
     >
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 space-y-6">
-        {/* Top Selector & Quick Pairs Bar */}
-        <div className="bg-white border border-slate-200 rounded-lg p-5 sm:p-6">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-slate-200">
-            <div>
-              <p className="text-xs font-mono text-emerald-800">
-                FRAMEWORK-TO-FRAMEWORK GAP CHECKER
-              </p>
-              <h2
-                id="regime-overview-heading"
-                className="font-editorial text-2xl sm:text-3xl font-medium text-slate-950 mt-1"
-              >
-                Compare Two Governance Frameworks Side by Side
-              </h2>
-              <p className="text-sm text-slate-600 mt-1.5 max-w-3xl">
-                Pick any two frameworks below—or click a quick comparison—to see which controls you
-                satisfy once, what extra local steps are added, and where legal rules conflict.
-              </p>
-            </div>
-          </div>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 space-y-8">
+        {/* Clean Unboxed Header & Selector Bar */}
+        <div>
+          <h1
+            id="regime-overview-heading"
+            className="font-editorial text-[26px] sm:text-[30px] font-semibold tracking-[-0.015em] leading-[1.2] text-[var(--atlas-ink)]"
+          >
+            Compare Two Governance Frameworks Side by Side
+          </h1>
+          <p className="text-sm text-[var(--atlas-ink-secondary)] mt-1 max-w-[68ch]">
+            Select any two frameworks or pick a quick comparison to see shared Comply Once
+            baselines, added local obligations, and direct legal clashes.
+          </p>
 
-          <div className="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+          <div className="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-3 items-end">
             <div className="lg:col-span-5">
               <label
                 htmlFor="pair-select-a"
-                className="block text-xs font-semibold text-slate-800 mb-1.5"
+                className="block text-xs font-medium text-[var(--atlas-ink-secondary)] mb-1"
               >
-                Baseline Framework A
+                Baseline Framework
               </label>
               <select
                 id="pair-select-a"
                 value={selectedPair.aId}
                 onChange={(e) => handleSelectBaselineA(e.target.value)}
-                className="w-full text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-950 focus-visible:outline-2 focus-visible:outline-slate-900"
+                className="w-full text-base sm:text-sm bg-white border border-[var(--atlas-border-control)] rounded-[2px] px-3 py-2 text-[var(--atlas-ink)] focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
               >
                 {dataset.instruments.map((inst) => (
                   <option key={inst.id} value={inst.id}>
@@ -319,7 +302,7 @@ export function RegimeConvergenceOverview({
                 type="button"
                 onClick={handleSwapPair}
                 aria-label="Swap Baseline and Target Frameworks"
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-md transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[var(--atlas-ink-secondary)] bg-[var(--atlas-surface)] hover:text-[var(--atlas-ink)] hover:bg-[var(--atlas-elevated)] border border-[var(--atlas-rule)] rounded-[2px] transition-colors cursor-pointer"
               >
                 <ArrowLeftRight className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                 <span>Swap</span>
@@ -329,15 +312,15 @@ export function RegimeConvergenceOverview({
             <div className="lg:col-span-5">
               <label
                 htmlFor="pair-select-b"
-                className="block text-xs font-semibold text-slate-800 mb-1.5"
+                className="block text-xs font-medium text-[var(--atlas-ink-secondary)] mb-1"
               >
-                Target Framework B
+                Target Framework
               </label>
               <select
                 id="pair-select-b"
                 value={selectedPair.bId}
                 onChange={(e) => handleSelectTargetB(e.target.value)}
-                className="w-full text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-950 focus-visible:outline-2 focus-visible:outline-slate-900"
+                className="w-full text-base sm:text-sm bg-white border border-[var(--atlas-border-control)] rounded-[2px] px-3 py-2 text-[var(--atlas-ink)] focus-visible:outline-2 focus-visible:outline-[var(--atlas-accent)]"
               >
                 {dataset.instruments.map((inst) => (
                   <option key={inst.id} value={inst.id}>
@@ -348,11 +331,10 @@ export function RegimeConvergenceOverview({
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-slate-600 font-medium mr-1">Quick Pairs:</span>
+          <div className="mt-3.5 flex flex-wrap items-center gap-1.5 text-xs">
+            <span className="text-[var(--atlas-ink-muted)] mr-1">Quick Pairs:</span>
             {QUICK_PAIRS.map((qp) => {
-              const hasBoth =
-                instMap.has(qp.aId) && instMap.has(qp.bId);
+              const hasBoth = instMap.has(qp.aId) && instMap.has(qp.bId);
               if (!hasBoth) return null;
               const isActive =
                 (selectedPair.aId === qp.aId && selectedPair.bId === qp.bId) ||
@@ -363,10 +345,10 @@ export function RegimeConvergenceOverview({
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => commitPair(qp.aId, qp.bId)}
-                  className={`px-3 py-1.5 rounded-md border font-medium transition-colors cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-[2px] border font-medium transition-colors cursor-pointer ${
                     isActive
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                      ? 'bg-[var(--atlas-accent-tint)] border-[var(--atlas-accent)] text-[var(--atlas-accent)]'
+                      : 'bg-[var(--atlas-surface)] text-[var(--atlas-ink-secondary)] border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] hover:text-[var(--atlas-ink)]'
                   }`}
                 >
                   {qp.label}
@@ -376,141 +358,160 @@ export function RegimeConvergenceOverview({
           </div>
         </div>
 
-        {/* Immediate Above-the-Fold Pairwise Verdict Card */}
+        {/* Immediate Pairwise Verdict & 3-Column Hairline Breakdown */}
         {activeCell && selectedInstA && selectedInstB && verdict && (
-          <div
-            id="pairwise-verdict-card"
-            className="scroll-mt-20 bg-white border border-slate-200 rounded-lg p-5 sm:p-6 shadow-xs"
-          >
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200">
-              <div className="space-y-1.5">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <ArrowLeftRight className="w-4 h-4 text-slate-600 shrink-0" aria-hidden="true" />
-                  <h3 className="font-editorial text-xl sm:text-2xl font-medium text-slate-950">
-                    {selectedInstA.shortName} &harr; {selectedInstB.shortName}
-                  </h3>
-                  {activeCell.sharedContextsCount > 0 && activeCell.convergenceRate !== null && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white text-xs font-mono font-semibold tabular-nums">
-                      {activeCell.convergenceRate}% Baseline Overlap
+          <div id="pairwise-verdict-card" className="scroll-mt-20">
+            {/* Top & Bottom Hairline Verdict Summary Band */}
+            <div className="border-t border-b border-[var(--atlas-rule)] py-5 space-y-4">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                  <div className="flex flex-wrap items-baseline gap-3">
+                    <h2 className="font-editorial text-[20px] sm:text-[24px] font-semibold text-[var(--atlas-ink)]">
+                      {selectedInstA.shortName} &amp; {selectedInstB.shortName}
+                    </h2>
+                    {activeCell.sharedContextsCount > 0 &&
+                      activeCell.convergenceRate !== null && (
+                        <span className="font-mono text-xs font-semibold tabular-nums px-2 py-0.5 rounded-full bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)]">
+                          {activeCell.convergenceRate}% Baseline Overlap
+                        </span>
+                      )}
+                  </div>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-4 text-xs font-mono tabular-nums text-[var(--atlas-ink-secondary)]">
+                    <span className="inline-flex items-center gap-1.5 text-[var(--align-equivalent-ink)]">
+                      <span
+                        className="w-2 h-2 rounded-full bg-[var(--align-equivalent-ink)] inline-block"
+                        aria-hidden="true"
+                      />
+                      {activeCell.equivalentSharedCount} Comply Once
                     </span>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono tabular-nums pt-0.5">
-                  <span className="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-200 font-medium">
-                    {activeCell.equivalentSharedCount} Comply Once
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200 font-medium">
-                    {activeCell.deltaSharedCount} Extra Local Steps
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded bg-rose-50 text-rose-900 border border-rose-200 font-medium">
-                    {activeCell.frictionSharedCount} Direct Rule Clashes
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={handleCopyBrief}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-800 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors cursor-pointer"
-                >
-                  {copiedBrief ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
-                      <span>Comparison Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                      <span>Copy Comparison Brief (.md)</span>
-                    </>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleCopyShareLink}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-md hover:bg-slate-200 transition-colors cursor-pointer"
-                >
-                  {copiedLink ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
-                      <span>Link Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Link2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                      <span>Share Comparison Link</span>
-                    </>
-                  )}
-                </button>
-
-                {activeCell.sharedContextsCount > 0 && (
-                  <a
-                    href={`${CANONICAL_BASE_URL}compare/${encodeURIComponent(canonicalOrderedSlug)}.html`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-3 py-2 text-xs font-medium text-slate-700 hover:text-slate-950 border border-slate-200 hover:border-slate-400 rounded-md transition-colors"
-                  >
-                    <span>Printable Reference Page</span>
-                    <ExternalLink className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {/* Plain-English Verdict Summary */}
-            <div className="mt-4 p-4 rounded-md bg-slate-50 border border-slate-200 space-y-1.5">
-              <p className="text-sm font-semibold text-slate-950">{verdict.headline}</p>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                {verdict.summary}
-              </p>
-              <p className="text-xs text-slate-600 pt-1">
-                <span className="font-semibold text-slate-800">Practical Next Step: </span>
-                {verdict.actionAdvice}
-              </p>
-            </div>
-
-            {/* Three Side-by-Side Breakdown Columns */}
-            <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* Column 1: Reusable Baseline */}
-              <div className="border border-emerald-200/90 rounded-lg bg-emerald-50/25 p-4 flex flex-col">
-                <div className="flex items-center justify-between gap-2 pb-3 border-b border-emerald-200/80">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-950">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
-                    <span>1. Reusable Baseline — Do Once ({eqContexts.length})</span>
+                    <span className="inline-flex items-center gap-1.5 text-[var(--align-delta-ink)]">
+                      <span
+                        className="w-2 h-2 rounded-full bg-[var(--align-delta-ink)] inline-block"
+                        aria-hidden="true"
+                      />
+                      {activeCell.deltaSharedCount} Extra Local Steps
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-[var(--align-friction-ink)]">
+                      <span
+                        className="w-2 h-2 rounded-full bg-[var(--align-friction-ink)] inline-block"
+                        aria-hidden="true"
+                      />
+                      {activeCell.frictionSharedCount} Direct Rule Clashes
+                    </span>
                   </div>
                 </div>
-                <p className="text-[11.5px] text-slate-600 mt-2">
-                  One operational artifact satisfies both {selectedInstA.shortName} and{' '}
-                  {selectedInstB.shortName}. Click any clause badge to read full text.
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleCopyBrief}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--atlas-ink)] bg-white border border-[var(--atlas-border-control)] rounded-[2px] hover:bg-[var(--atlas-surface)] transition-colors cursor-pointer"
+                  >
+                    {copiedBrief ? (
+                      <>
+                        <Check
+                          className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)] shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span>Comparison Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                        <span>Copy Comparison Brief (.md)</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleCopyShareLink}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[var(--atlas-accent)] hover:underline underline-offset-4 transition-colors cursor-pointer"
+                  >
+                    {copiedLink ? (
+                      <>
+                        <Check
+                          className="w-3.5 h-3.5 text-[var(--align-equivalent-ink)] shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span>Link Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                        <span>Share Link</span>
+                      </>
+                    )}
+                  </button>
+
+                  {activeCell.sharedContextsCount > 0 && (
+                    <a
+                      href={`${CANONICAL_BASE_URL}compare/${encodeURIComponent(canonicalOrderedSlug)}.html`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-[var(--atlas-ink-secondary)] hover:text-[var(--atlas-accent)] hover:underline underline-offset-4 transition-colors"
+                    >
+                      <span>Printable Reference Page</span>
+                      <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-[var(--atlas-surface)] rounded-[2px] p-4 max-w-4xl space-y-1">
+                <p className="text-sm font-semibold text-[var(--atlas-ink)]">
+                  {verdict.headline}
+                </p>
+                <p className="text-sm text-[var(--atlas-ink-secondary)] leading-[1.55] max-w-[68ch]">
+                  {verdict.summary}
+                </p>
+                <p className="text-xs text-[var(--atlas-ink-secondary)] pt-0.5 max-w-[68ch]">
+                  <span className="font-semibold text-[var(--atlas-ink)]">Practical next step: </span>
+                  {verdict.actionAdvice}
+                </p>
+              </div>
+            </div>
+
+            {/* Three Hairline-Divided Breakdown Columns (zero card-inside-card boxes) */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[var(--atlas-rule)] border-b border-[var(--atlas-rule)]">
+              {/* Column 1: Reusable Baseline */}
+              <div className="py-5 lg:pr-6">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-2 h-2 rounded-full bg-[var(--align-equivalent-ink)] inline-block shrink-0"
+                    aria-hidden="true"
+                  />
+                  <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)]">
+                    Reusable Baseline — Comply Once ({eqContexts.length})
+                  </h3>
+                </div>
+                <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
+                  One shared operational artifact satisfies both {selectedInstA.shortName} and{' '}
+                  {selectedInstB.shortName}.
                 </p>
 
-                <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                <div className="mt-3 divide-y divide-[var(--atlas-rule-subtle)] max-h-72 overflow-y-auto pr-1">
                   {eqContexts.length === 0 ? (
-                    <p className="text-xs text-slate-500 py-4">
-                      No shared Comply Once controls recorded for this specific pair yet.
+                    <p className="text-xs text-[var(--atlas-ink-muted)] py-4">
+                      No shared Comply Once controls recorded for this pair yet.
                     </p>
                   ) : (
                     eqContexts.map((ctx) => {
                       const mapA = ctx.mappingsA[0];
                       const mapB = ctx.mappingsB[0];
                       return (
-                        <div
-                          key={`eq-${ctx.useCaseId}-${ctx.controlId}`}
-                          className="p-2.5 rounded border border-emerald-200 bg-white text-xs space-y-1.5"
-                        >
-                          <p className="font-semibold text-slate-900 leading-snug">
+                        <div key={`eq-${ctx.useCaseId}-${ctx.controlId}`} className="py-3 space-y-1.5">
+                          <p className="text-[13px] font-semibold text-[var(--atlas-ink)] leading-snug">
                             {ctx.controlTitle}
                           </p>
-                          <div className="flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                          <div className="flex items-center justify-between gap-2 text-xs text-[var(--atlas-ink-muted)]">
                             <span className="truncate">{ctx.useCaseTitle}</span>
                             {onOpenUseCaseChecklist && (
                               <button
                                 type="button"
                                 onClick={() => onOpenUseCaseChecklist(ctx.useCaseId)}
-                                className="text-emerald-800 hover:underline shrink-0 cursor-pointer"
+                                className="text-[var(--atlas-accent)] hover:underline underline-offset-4 shrink-0 cursor-pointer"
                               >
                                 Checklist
                               </button>
@@ -521,7 +522,7 @@ export function RegimeConvergenceOverview({
                               <button
                                 type="button"
                                 onClick={() => onInspectClause(mapA)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-50 border border-slate-200 hover:border-slate-400 text-[10.5px] font-mono text-slate-800 cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] text-[11px] font-mono text-[var(--atlas-ink)] cursor-pointer"
                               >
                                 <BookOpen className="w-2.5 h-2.5 shrink-0" aria-hidden="true" />
                                 <span className="truncate max-w-[165px]">{mapA.clauseCitation}</span>
@@ -531,7 +532,7 @@ export function RegimeConvergenceOverview({
                               <button
                                 type="button"
                                 onClick={() => onInspectClause(mapB)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-50 border border-slate-200 hover:border-slate-400 text-[10.5px] font-mono text-slate-800 cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] text-[11px] font-mono text-[var(--atlas-ink)] cursor-pointer"
                               >
                                 <BookOpen className="w-2.5 h-2.5 shrink-0" aria-hidden="true" />
                                 <span className="truncate max-w-[165px]">{mapB.clauseCitation}</span>
@@ -546,21 +547,23 @@ export function RegimeConvergenceOverview({
               </div>
 
               {/* Column 2: Extra Local Steps */}
-              <div className="border border-amber-200/90 rounded-lg bg-amber-50/25 p-4 flex flex-col">
-                <div className="flex items-center justify-between gap-2 pb-3 border-b border-amber-200/80">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-950">
-                    <Layers className="w-4 h-4 text-amber-700 shrink-0" aria-hidden="true" />
-                    <span>2. Extra Local Steps ({dlContexts.length})</span>
-                  </div>
+              <div className="py-5 lg:px-6">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-2 h-2 rounded-full bg-[var(--align-delta-ink)] inline-block shrink-0"
+                    aria-hidden="true"
+                  />
+                  <h3 className="font-sans text-[13px] font-semibold text-[var(--atlas-ink)]">
+                    Extra Local Steps ({dlContexts.length})
+                  </h3>
                 </div>
-                <p className="text-[11.5px] text-slate-600 mt-2">
-                  Supplemental statutory filing, public registration, or cohort threshold beyond the
-                  baseline control.
+                <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
+                  Supplemental statutory filing, public notice, or local threshold beyond baseline controls.
                 </p>
 
-                <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                <div className="mt-3 divide-y divide-[var(--atlas-rule-subtle)] max-h-72 overflow-y-auto pr-1">
                   {dlContexts.length === 0 ? (
-                    <p className="text-xs text-slate-500 py-4">
+                    <p className="text-xs text-[var(--atlas-ink-muted)] py-4">
                       No supplemental local steps recorded across co-mapped deployments here.
                     </p>
                   ) : (
@@ -568,20 +571,17 @@ export function RegimeConvergenceOverview({
                       const mapA = ctx.mappingsA[0];
                       const mapB = ctx.mappingsB[0];
                       return (
-                        <div
-                          key={`dl-${ctx.useCaseId}-${ctx.controlId}`}
-                          className="p-2.5 rounded border border-amber-200 bg-white text-xs space-y-1.5"
-                        >
-                          <p className="font-semibold text-slate-900 leading-snug">
+                        <div key={`dl-${ctx.useCaseId}-${ctx.controlId}`} className="py-3 space-y-1.5">
+                          <p className="text-[13px] font-semibold text-[var(--atlas-ink)] leading-snug">
                             {ctx.controlTitle}
                           </p>
-                          <div className="flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                          <div className="flex items-center justify-between gap-2 text-xs text-[var(--atlas-ink-muted)]">
                             <span className="truncate">{ctx.useCaseTitle}</span>
                             {onOpenUseCaseChecklist && (
                               <button
                                 type="button"
                                 onClick={() => onOpenUseCaseChecklist(ctx.useCaseId)}
-                                className="text-amber-800 hover:underline shrink-0 cursor-pointer"
+                                className="text-[var(--atlas-accent)] hover:underline underline-offset-4 shrink-0 cursor-pointer"
                               >
                                 Checklist
                               </button>
@@ -592,7 +592,7 @@ export function RegimeConvergenceOverview({
                               <button
                                 type="button"
                                 onClick={() => onInspectClause(mapA)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-50 border border-slate-200 hover:border-slate-400 text-[10.5px] font-mono text-slate-800 cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] text-[11px] font-mono text-[var(--atlas-ink)] cursor-pointer"
                               >
                                 <BookOpen className="w-2.5 h-2.5 shrink-0" aria-hidden="true" />
                                 <span className="truncate max-w-[165px]">{mapA.clauseCitation}</span>
@@ -602,7 +602,7 @@ export function RegimeConvergenceOverview({
                               <button
                                 type="button"
                                 onClick={() => onInspectClause(mapB)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-50 border border-slate-200 hover:border-slate-400 text-[10.5px] font-mono text-slate-800 cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[var(--atlas-surface)] border border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)] text-[11px] font-mono text-[var(--atlas-ink)] cursor-pointer"
                               >
                                 <BookOpen className="w-2.5 h-2.5 shrink-0" aria-hidden="true" />
                                 <span className="truncate max-w-[165px]">{mapB.clauseCitation}</span>
@@ -617,43 +617,42 @@ export function RegimeConvergenceOverview({
               </div>
 
               {/* Column 3: Direct Rule Clashes */}
-              <div className="border border-rose-200/90 rounded-lg bg-rose-50/25 p-4 flex flex-col">
-                <div className="flex items-center justify-between gap-2 pb-3 border-b border-rose-200/80">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-950">
-                    <ShieldAlert className="w-4 h-4 text-rose-700 shrink-0" aria-hidden="true" />
-                    <span>3. Direct Rule Clashes ({frContexts.length})</span>
-                  </div>
+              <div className="py-5 lg:pl-6">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-2 h-2 rounded-full bg-[var(--align-friction-ink)] inline-block shrink-0"
+                    aria-hidden="true"
+                  />
+                  <h3 className="font-sans text-[13px] font-semibold text-[var(--align-friction-ink)]">
+                    Direct Rule Clashes ({frContexts.length})
+                  </h3>
                 </div>
-                <p className="text-[11.5px] text-slate-600 mt-2">
-                  Hard legal prohibition, competing reporting window, or transparency clash requiring
-                  legal sign-off.
+                <p className="text-xs text-[var(--atlas-ink-secondary)] mt-1">
+                  Hard legal prohibition, competing reporting clock, or transparency rule requiring legal review.
                 </p>
 
-                <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                <div className="mt-3 divide-y divide-[var(--atlas-rule-subtle)] max-h-72 overflow-y-auto pr-1">
                   {frContexts.length === 0 ? (
-                    <div className="p-3 rounded border border-emerald-200 bg-emerald-50/80 text-xs text-emerald-950">
+                    <p className="text-xs text-[var(--align-equivalent-ink)] py-4">
                       Zero direct legal clashes recorded across co-mapped deployments between{' '}
                       {selectedInstA.shortName} and {selectedInstB.shortName}.
-                    </div>
+                    </p>
                   ) : (
                     frContexts.map((ctx) => {
                       const mapA = ctx.mappingsA[0];
                       const mapB = ctx.mappingsB[0];
                       return (
-                        <div
-                          key={`fr-${ctx.useCaseId}-${ctx.controlId}`}
-                          className="p-2.5 rounded border border-rose-200 bg-white text-xs space-y-1.5"
-                        >
-                          <p className="font-semibold text-rose-950 leading-snug">
+                        <div key={`fr-${ctx.useCaseId}-${ctx.controlId}`} className="py-3 space-y-1.5">
+                          <p className="text-[13px] font-semibold text-[var(--atlas-ink)] leading-snug">
                             {ctx.controlTitle}
                           </p>
-                          <div className="flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                          <div className="flex items-center justify-between gap-2 text-xs text-[var(--atlas-ink-muted)]">
                             <span className="truncate">{ctx.useCaseTitle}</span>
                             {onOpenUseCaseChecklist && (
                               <button
                                 type="button"
                                 onClick={() => onOpenUseCaseChecklist(ctx.useCaseId)}
-                                className="text-rose-800 hover:underline shrink-0 cursor-pointer"
+                                className="text-[var(--atlas-accent)] hover:underline underline-offset-4 shrink-0 cursor-pointer"
                               >
                                 Checklist
                               </button>
@@ -664,7 +663,7 @@ export function RegimeConvergenceOverview({
                               <button
                                 type="button"
                                 onClick={() => onInspectClause(mapA)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-50/70 border border-rose-200 hover:border-rose-400 text-[10.5px] font-mono text-rose-950 cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[var(--align-friction-tint)] border border-[var(--align-friction-rule)] hover:border-[var(--align-friction-ink)] text-[11px] font-mono text-[var(--align-friction-ink)] cursor-pointer"
                               >
                                 <BookOpen className="w-2.5 h-2.5 shrink-0" aria-hidden="true" />
                                 <span className="truncate max-w-[165px]">{mapA.clauseCitation}</span>
@@ -674,7 +673,7 @@ export function RegimeConvergenceOverview({
                               <button
                                 type="button"
                                 onClick={() => onInspectClause(mapB)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-50/70 border border-rose-200 hover:border-rose-400 text-[10.5px] font-mono text-rose-950 cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[var(--align-friction-tint)] border border-[var(--align-friction-rule)] hover:border-[var(--align-friction-ink)] text-[11px] font-mono text-[var(--align-friction-ink)] cursor-pointer"
                               >
                                 <BookOpen className="w-2.5 h-2.5 shrink-0" aria-hidden="true" />
                                 <span className="truncate max-w-[165px]">{mapB.clauseCitation}</span>
@@ -691,27 +690,28 @@ export function RegimeConvergenceOverview({
           </div>
         )}
 
-        {/* Bottom Overview: Regime Obligation Bars + 9x9 Convergence Matrix */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+        {/* Bottom Overview: Hairline Track Record + Low-Chroma 9x9 Convergence Matrix */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
           {/* Left Panel: Track Record Across All 9 Regimes */}
-          <div className="xl:col-span-5 bg-white border border-slate-200 rounded-lg p-5 flex flex-col">
-            <div className="flex items-baseline justify-between gap-2 pb-3 border-b border-slate-200">
+          <div className="xl:col-span-5">
+            <div className="flex items-baseline justify-between gap-2 pb-3 border-b border-[var(--atlas-rule)]">
               <div>
-                <h3 className="text-sm font-semibold text-slate-950">
+                <h2 className="font-editorial text-lg font-semibold text-[var(--atlas-ink)]">
                   Track Record Across All {dataset.instruments.length} Regimes
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Click any regime to compare it against {selectedInstA?.shortName ?? 'Baseline A'}
+                </h2>
+                <p className="text-xs text-[var(--atlas-ink-secondary)] mt-0.5">
+                  Click any regime to compare against {selectedInstA?.shortName ?? 'Baseline'}.
                 </p>
               </div>
-              <span className="text-[11px] font-mono text-slate-500 shrink-0">Clauses Mapped</span>
+              <span className="text-[11px] font-mono text-[var(--atlas-ink-muted)] shrink-0">
+                Clauses mapped
+              </span>
             </div>
 
-            <div className="mt-3 space-y-2.5 flex-1">
+            <div className="divide-y divide-[var(--atlas-rule-subtle)]">
               {breakdown.map(({ instrument, counts, useCasesCovered }) => {
                 const isBaselineA = selectedPair.aId === instrument.id;
                 const isTargetB = selectedPair.bId === instrument.id;
-                const isSelected = isBaselineA || isTargetB;
                 const widthScale = Math.max(10, Math.round((counts.total / maxTotal) * 100));
                 const eqW = counts.total > 0 ? (counts.equivalent / counts.total) * 100 : 0;
                 const dlW = counts.total > 0 ? (counts.delta / counts.total) * 100 : 0;
@@ -722,69 +722,60 @@ export function RegimeConvergenceOverview({
                     key={instrument.id}
                     type="button"
                     onClick={() => handleSelectTargetB(instrument.id)}
-                    className={`w-full text-left p-2.5 rounded-md border transition-colors cursor-pointer ${
-                      isBaselineA
-                        ? 'bg-slate-900 border-slate-900 text-white'
-                        : isTargetB
-                          ? 'bg-emerald-950 border-emerald-900 text-white'
-                          : 'bg-slate-50/70 hover:bg-slate-100/80 border-slate-200/80 text-slate-900'
+                    className={`w-full text-left py-2.5 px-2 transition-colors cursor-pointer ${
+                      isBaselineA || isTargetB
+                        ? 'bg-[var(--atlas-accent-tint)]'
+                        : 'hover:bg-[var(--atlas-surface)]'
                     }`}
                   >
                     <div className="flex items-baseline justify-between gap-2">
-                      <div className="min-w-0 flex flex-wrap items-center gap-1.5">
-                        <span className="text-xs font-semibold truncate">
+                      <div className="min-w-0 flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-semibold text-[var(--atlas-ink)] truncate">
                           {instrument.shortName}
                         </span>
                         {isBaselineA && (
-                          <span className="px-1.5 py-0.2 rounded bg-white/15 text-[10px] font-mono">
-                            Framework A
+                          <span className="px-1.5 py-0.5 rounded-[2px] bg-[var(--atlas-accent)] text-white text-[10px] font-mono">
+                            Baseline
                           </span>
                         )}
                         {isTargetB && (
-                          <span className="px-1.5 py-0.2 rounded bg-emerald-400/20 text-emerald-200 text-[10px] font-mono">
-                            Framework B
+                          <span className="px-1.5 py-0.5 rounded-[2px] bg-white border border-[var(--atlas-accent)] text-[var(--atlas-accent)] text-[10px] font-mono">
+                            Target
                           </span>
                         )}
-                        <span
-                          className={`text-[10.5px] font-mono hidden sm:inline ${
-                            isSelected ? 'text-slate-300' : 'text-slate-500'
-                          }`}
-                        >
-                          · {useCasesCovered} systems
+                        <span className="text-[11px] font-mono tabular-nums text-[var(--atlas-ink-muted)] hidden sm:inline">
+                          {useCasesCovered} systems
                         </span>
                       </div>
-                      <span
-                        className={`text-[10.5px] font-mono tabular-nums shrink-0 ${
-                          isSelected ? 'text-slate-200' : 'text-slate-700'
-                        }`}
-                      >
-                        <span className={isSelected ? 'text-emerald-300' : 'text-emerald-700'}>
-                          {counts.equivalent} once
-                        </span>
-                        {' · '}
-                        <span className={isSelected ? 'text-amber-300' : 'text-amber-700'}>
-                          {counts.delta} extra
-                        </span>
-                        {' · '}
-                        <span className={isSelected ? 'text-rose-300' : 'text-rose-700'}>
-                          {counts.friction} clash
-                        </span>
+                      <span className="text-[11px] font-mono tabular-nums shrink-0 text-[var(--atlas-ink-secondary)]">
+                        <span className="text-[var(--align-equivalent-ink)]">{counts.equivalent} once</span>,{' '}
+                        <span className="text-[var(--align-delta-ink)]">{counts.delta} extra</span>,{' '}
+                        <span className="text-[var(--align-friction-ink)]">{counts.friction} clash</span>
                       </span>
                     </div>
 
-                    <div className="mt-2 h-2 w-full bg-slate-200/70 rounded-xs overflow-hidden">
+                    <div className="mt-1.5 h-1.5 w-full bg-[var(--atlas-elevated)] rounded-[1px] overflow-hidden">
                       <div
                         style={{ width: `${widthScale}%` }}
-                        className="h-full flex rounded-xs overflow-hidden"
+                        className="h-full flex rounded-[1px] overflow-hidden"
                       >
                         {counts.equivalent > 0 && (
-                          <div style={{ width: `${eqW}%` }} className="bg-emerald-600 h-full" />
+                          <div
+                            style={{ width: `${eqW}%` }}
+                            className="bg-[var(--align-equivalent-ink)] h-full"
+                          />
                         )}
                         {counts.delta > 0 && (
-                          <div style={{ width: `${dlW}%` }} className="bg-amber-500 h-full" />
+                          <div
+                            style={{ width: `${dlW}%` }}
+                            className="bg-[var(--align-delta-ink)] h-full"
+                          />
                         )}
                         {counts.friction > 0 && (
-                          <div style={{ width: `${frW}%` }} className="bg-rose-600 h-full" />
+                          <div
+                            style={{ width: `${frW}%` }}
+                            className="bg-[var(--align-friction-ink)] h-full"
+                          />
                         )}
                       </div>
                     </div>
@@ -794,27 +785,23 @@ export function RegimeConvergenceOverview({
             </div>
           </div>
 
-          {/* Right Panel: N x N Cross-Regime Pairwise Matrix */}
-          <div className="xl:col-span-7 bg-white border border-slate-200 rounded-lg p-5 flex flex-col">
-            <div className="flex flex-wrap items-baseline justify-between gap-2 pb-3 border-b border-slate-200">
+          {/* Right Panel: Restraint-first N x N Cross-Regime Pairwise Matrix */}
+          <div id="crosswalk-matrix" className="xl:col-span-7">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 pb-3 border-b border-[var(--atlas-rule)]">
               <div>
-                <h3 className="text-sm font-semibold text-slate-950">
+                <h2 className="font-editorial text-lg font-semibold text-[var(--atlas-ink)]">
                   Full {matrix.instruments.length}&times;{matrix.instruments.length} Pairwise Overlap
                   Grid
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Click any cell to update the comparison verdict above. Rose dot flags at least one
-                  legal clash.
+                </h2>
+                <p className="text-xs text-[var(--atlas-ink-secondary)] mt-0.5">
+                  Click any cell to load the comparison above. Dot marks at least one legal clash.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-[11px] font-mono text-slate-500">
+              <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--atlas-ink-muted)]">
+                <span>Bold % = 60%+ baseline</span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-emerald-200 border border-emerald-400 inline-block" />
-                  High Reuse
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-rose-600 inline-block" />
-                  Rule Clash
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--align-friction-ink)] inline-block" />
+                  Rule clash
                 </span>
               </div>
             </div>
@@ -826,7 +813,7 @@ export function RegimeConvergenceOverview({
               >
                 <thead>
                   <tr>
-                    <th className="p-1.5 text-left text-[10.5px] font-mono text-slate-400 w-24">
+                    <th className="p-1.5 text-left text-[11px] font-mono font-normal text-[var(--atlas-ink-muted)] w-24">
                       Regime
                     </th>
                     {matrix.instruments.map((inst) => {
@@ -840,8 +827,10 @@ export function RegimeConvergenceOverview({
                           className="p-1 text-[10.5px] font-semibold leading-tight"
                         >
                           <span
-                            className={`inline-block rounded px-1.5 py-0.5 ${
-                              isColActive ? 'bg-slate-900 text-white' : 'text-slate-700'
+                            className={`inline-block rounded-[2px] px-1.5 py-0.5 ${
+                              isColActive
+                                ? 'bg-[var(--atlas-accent)] text-white'
+                                : 'text-[var(--atlas-ink-secondary)]'
                             }`}
                           >
                             {shortCode(inst.id, inst.shortName)}
@@ -863,8 +852,10 @@ export function RegimeConvergenceOverview({
                           className="py-1 pr-2 text-left text-[11px] font-semibold whitespace-nowrap"
                         >
                           <span
-                            className={`inline-block rounded px-1.5 py-0.5 ${
-                              isRowActive ? 'bg-slate-900 text-white' : 'text-slate-800'
+                            className={`inline-block rounded-[2px] px-1.5 py-0.5 ${
+                              isRowActive
+                                ? 'bg-[var(--atlas-accent)] text-white'
+                                : 'text-[var(--atlas-ink)]'
                             }`}
                           >
                             {shortCode(instA.id, instA.shortName)}
@@ -876,50 +867,25 @@ export function RegimeConvergenceOverview({
                             !cell.isDiagonal &&
                             ((selectedPair.aId === instA.id && selectedPair.bId === instB.id) ||
                               (selectedPair.aId === instB.id && selectedPair.bId === instA.id));
-                          const isRelatedAxis =
-                            instA.id === selectedPair.aId ||
-                            instA.id === selectedPair.bId ||
-                            instB.id === selectedPair.aId ||
-                            instB.id === selectedPair.bId;
 
                           if (cell.isDiagonal) {
                             return (
                               <td key={`${instA.id}-${instB.id}`} className="p-0.5">
                                 <div
                                   title={`${instA.shortName}: ${cell.totalA} verified clause mappings`}
-                                  className="h-11 rounded bg-slate-900 text-white flex flex-col items-center justify-center font-mono tabular-nums"
+                                  className="h-11 rounded-[2px] bg-[var(--atlas-elevated)] text-[var(--atlas-ink)] flex flex-col items-center justify-center font-mono tabular-nums"
                                 >
                                   <span className="text-[11px] font-semibold">{cell.totalA}</span>
-                                  <span className="text-[9px] text-slate-300">clauses</span>
+                                  <span className="text-[9px] text-[var(--atlas-ink-muted)]">
+                                    clauses
+                                  </span>
                                 </div>
                               </td>
                             );
                           }
 
-                          let cellBg =
-                            'bg-slate-50 text-slate-400 border-slate-200/70 hover:border-slate-400';
-                          if (cell.sharedContextsCount > 0) {
-                            const rate = cell.convergenceRate ?? 0;
-                            if (cell.frictionSharedCount > 0 && rate < 50) {
-                              cellBg =
-                                'bg-rose-50 text-rose-950 border-rose-200 hover:border-rose-400';
-                            } else if (rate >= 75) {
-                              cellBg =
-                                'bg-emerald-100/90 text-emerald-950 border-emerald-300 hover:border-emerald-500';
-                            } else if (rate >= 40) {
-                              cellBg =
-                                'bg-emerald-50 text-emerald-900 border-emerald-200 hover:border-emerald-400';
-                            } else {
-                              cellBg =
-                                'bg-amber-50 text-amber-950 border-amber-200 hover:border-amber-400';
-                            }
-                          }
-
-                          const opacityClass = isPairSelected
-                            ? 'ring-2 ring-slate-950 ring-offset-2 scale-[1.04] shadow-sm z-10 opacity-100'
-                            : isRelatedAxis
-                              ? 'opacity-95 hover:opacity-100'
-                              : 'opacity-60 hover:opacity-100';
+                          const hasShared = cell.sharedContextsCount > 0;
+                          const rate = cell.convergenceRate ?? 0;
 
                           return (
                             <td key={`${instA.id}-${instB.id}`} className="p-0.5">
@@ -927,33 +893,45 @@ export function RegimeConvergenceOverview({
                                 type="button"
                                 onClick={() => handleCellSelect(instA.id, instB.id)}
                                 title={
-                                  cell.sharedContextsCount > 0
-                                    ? `${shortCode(instA.id, instA.shortName)} × ${shortCode(instB.id, instB.shortName)}: ${cell.convergenceRate}% shared baseline (${cell.equivalentSharedCount}/${cell.sharedContextsCount} shared controls, ${cell.frictionSharedCount} clashes)`
+                                  hasShared
+                                    ? `${shortCode(instA.id, instA.shortName)} × ${shortCode(instB.id, instB.shortName)}: ${rate}% shared baseline (${cell.equivalentSharedCount}/${cell.sharedContextsCount} shared controls, ${cell.frictionSharedCount} clashes)`
                                     : `${shortCode(instA.id, instA.shortName)} × ${shortCode(instB.id, instB.shortName)}: currently mapped to separate AI deployments`
                                 }
-                                className={`relative w-full h-11 rounded border flex flex-col items-center justify-center font-mono tabular-nums transition-all cursor-pointer ${cellBg} ${opacityClass}`}
+                                className={`relative w-full h-11 rounded-[2px] border flex flex-col items-center justify-center font-mono tabular-nums transition-colors cursor-pointer ${
+                                  hasShared
+                                    ? 'bg-white border-[var(--atlas-rule)] hover:border-[var(--atlas-border-control)]'
+                                    : 'bg-[var(--atlas-surface)] border-[var(--atlas-rule-subtle)] text-[var(--atlas-ink-muted)]'
+                                } ${
+                                  isPairSelected
+                                    ? 'ring-2 ring-[var(--atlas-accent)] bg-[var(--atlas-accent-tint)] border-[var(--atlas-accent)] z-10'
+                                    : ''
+                                }`}
                               >
                                 {cell.frictionSharedCount > 0 && (
                                   <span
                                     aria-label="Contains direct rule clash"
-                                    className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-rose-600"
+                                    className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--align-friction-ink)]"
                                   />
                                 )}
-                                {cell.sharedContextsCount > 0 ? (
+                                {hasShared ? (
                                   <>
-                                    <span className="text-[11px] font-semibold leading-none">
-                                      {cell.convergenceRate}%
+                                    <span
+                                      className={`text-[11px] leading-none ${
+                                        rate >= 60
+                                          ? 'font-semibold text-[var(--atlas-ink)]'
+                                          : 'font-normal text-[var(--atlas-ink-secondary)]'
+                                      }`}
+                                    >
+                                      {rate}%
                                     </span>
-                                    <span className="text-[9px] opacity-75 mt-0.5 leading-none">
+                                    <span className="text-[9px] text-[var(--atlas-ink-muted)] mt-0.5 leading-none">
                                       {cell.equivalentSharedCount}/{cell.sharedContextsCount}
                                     </span>
                                   </>
                                 ) : (
                                   <>
-                                    <span className="text-[10.5px] leading-none">&mdash;</span>
-                                    <span className="text-[8px] opacity-70 mt-0.5 leading-none">
-                                      separate UCs
-                                    </span>
+                                    <span className="text-[10px] leading-none">—</span>
+                                    <span className="text-[8.5px] mt-0.5 leading-none">0/{cell.sharedContextsCount}</span>
                                   </>
                                 )}
                               </button>
