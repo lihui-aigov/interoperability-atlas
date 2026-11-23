@@ -5,6 +5,21 @@ Automated runs via `scripts/curate-atlas.mjs` enforce HTTP `200–399` source re
 
 ---
 
+## [2026.11.8] — 2026-11-23 (`gh-run-45139699901`)
+
+- **Change Type:** `new_mapping`
+- **Summary:** Added uc-tax-audit-scoring with 5 clause mappings across CoE CETS 225, Singapore Agentic MGF v1.5, Expanded ASEAN GenAI Guide, AU Continental AI Strategy, and EU AI Act, plus an EU AI Office Art. 91 sandbox-escape enforcement spotlight.
+- **New Use Case Added:** `uc-tax-audit-scoring` — *Automated Tax Audit Selection & Public Revenue Fraud Scoring AI* (Public Finance & Revenue Administration)
+- **News Spotlight Published:** `spot-eu-ai-office-art91-agent-rfi` — *EU AI Office Triggers First Article 91 Enforcement Requests After Frontier AI Agents Escape Testing Sandboxes* ([Source](https://iaim.ai/ai-insights/member-briefing-october-2026/))
+- **Verified Mappings Added (5):**
+  - `equivalent` · **CoE AI Convention (CETS 225) Art. 12 & Art. 16(1)-(2)(f)** (`uc-tax-audit-scoring` → `ctrl-post-market` → `inst-coe-treaty`) — [Verified Source](https://rm.coe.int/1680afae3c)
+  - `delta` · **Singapore Agentic AI Framework v1.5 (2026) Dimension 1 (p. 14) & Dimension 3 (§2.3.1, p. 33)** (`uc-tax-audit-scoring` → `ctrl-agent-boundaries` → `inst-sg-agentic`) — [Verified Source](https://aiverifyfoundation.sg/)
+  - `friction` · **Expanded ASEAN Guide on AI Governance and Ethics - GenAI (2025) §3.2 (pp. 20-23) & §3.7; ASEAN Guide (2024) Part C** (`uc-tax-audit-scoring` → `ctrl-data-aibom` → `inst-asean-guide`) — [Verified Source](https://asean.org/wp-content/uploads/2025/01/Expanded-ASEAN-Guide-on-AI-Governance-and-Ethics-Generative-AI.pdf)
+  - `delta` · **AU Continental AI Strategy (2024) Core Values (Environment & Ecosystem Flourishing) & Infrastructure/Sustainability Pillar** (`uc-tax-audit-scoring` → `ctrl-env-footprint` → `inst-au-strategy`) — [Verified Source](https://au.int/en/documents/20240809/continental-artificial-intelligence-strategy)
+  - `friction` · **EU AI Act Art. 53(1)(a), Annex XI §1(2)(e), Art. 40(2) & Art. 95(2)(b) (as amended by Reg. (EU) 2026/1744)** (`uc-tax-audit-scoring` → `ctrl-env-footprint` → `inst-eu-ai-act`) — [Verified Source](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:02024R1689-20260727)
+- **Source Reference:** CoE CETS 225 Art. 12 & 16; IMDA Agentic AI MGF v1.5; Expanded ASEAN GenAI Guide §3.2; AU Continental AI Strategy; EU AI Act Reg. (EU) 2024/1689 & 2026/1744 Art. 53(1)(a), 91, Annex XI; IRS IRM 10.24.1.
+- **Dataset Totals:** 13 Use Cases · 8 Operational Controls · 9 Global Instruments · 129 Verified Citations
+
 ## [2026.11.7] — 2026-11-19 (`gh-run-44487247089`)
 
 - **Change Type:** `new_mapping`
